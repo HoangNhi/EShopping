@@ -1,0 +1,1 @@
+Scaffold-DbContext -UseDatabaseNames "Data Source=congnghetientien.database.windows.net;Initial Catalog=EShopping;User ID=develop;Password=Aa123456.; TrustServerCertificate=True" Microsoft.EntityFrameworkCore.SqlServer -OutputDir Entity -Force -NoOnConfiguring
