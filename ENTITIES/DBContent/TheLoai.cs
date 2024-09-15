@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace ENTITIES.DBContent;
+namespace ENTITIES.DbContent;
 
 public partial class TheLoai
 {

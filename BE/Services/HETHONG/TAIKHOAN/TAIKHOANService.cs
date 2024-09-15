@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using BE.Helper;
-using ENTITIES.DBContent;
+using ENTITIES.DbContent;
 using MODELS.Base;
 using MODELS.HETHONG.TAIKHOAN.Dtos;
 using MODELS.HETHONG.TAIKHOAN.Requests;
@@ -26,7 +26,7 @@ namespace BE.Services.HETHONG.TAIKHOAN
             try
             {
                 var data = new MODELTaiKhoan();
-                var taiKhoan = _context.ApplicationUsers.FirstOrDefault(x => x.Username == request.Username && x.IsDeleted!);
+                var taiKhoan = _context.ApplicationUsers.FirstOrDefault(x => x.Username == request.Username && !x.IsDeleted);
                 if (taiKhoan == null)
                 {
                     throw new Exception("Tên đăng nhập hoặc mật khẩu không đúng");
@@ -47,6 +47,8 @@ namespace BE.Services.HETHONG.TAIKHOAN
                     var token = Encrypt_Decrypt.GenerateJwtToken(new MODELTaiKhoan { Id = taiKhoan.Id, Username = request.Username }, _config);
                     data = _mapper.Map<MODELTaiKhoan>(taiKhoan);
                     data.Token = token;
+
+                    response.Data = data;
                 }
             }
             catch (Exception ex)

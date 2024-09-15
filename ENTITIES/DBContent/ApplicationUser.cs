@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace ENTITIES.DBContent;
+namespace ENTITIES.DbContent;
 
 public partial class ApplicationUser
 {
@@ -29,9 +29,9 @@ public partial class ApplicationUser
 
     public string NguoiTao { get; set; } = null!;
 
-    public DateTime NgaySua { get; set; }
+    public DateTime? NgaySua { get; set; }
 
-    public string NguoiSua { get; set; } = null!;
+    public string? NguoiSua { get; set; }
 
     public DateTime? NgayXoa { get; set; }
 

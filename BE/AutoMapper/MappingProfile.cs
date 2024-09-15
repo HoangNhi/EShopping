@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using ENTITIES.DBContent;
+using ENTITIES.DbContent;
 using MODELS.HETHONG.TAIKHOAN.Dtos;
 using MODELS.HETHONG.TAIKHOAN.Requests;
 
@@ -11,6 +11,7 @@ namespace BE.AutoMapper
         {
             // TAIKHOAN
             CreateMap<ApplicationUser, MODELTaiKhoan>().ReverseMap();
+            CreateMap<ApplicationUser, PostRegisterRequest>().ReverseMap();
         }
     }
 }

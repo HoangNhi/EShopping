@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 
-namespace ENTITIES.DBContent;
+namespace ENTITIES.DbContent;
 
 public partial class EShoppingContext : DbContext
 {
