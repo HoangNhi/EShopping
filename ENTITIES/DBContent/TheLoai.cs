@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace BE.Entities;
+namespace ENTITIES.DBContent;
 
-public partial class DM_THUONGHIEU
+public partial class TheLoai
 {
-    public Guid Id { get; set; }
+    public int Id { get; set; }
 
     public string Name { get; set; } = null!;
 
@@ -27,5 +27,5 @@ public partial class DM_THUONGHIEU
 
     public bool IsDeleted { get; set; }
 
-    public virtual ICollection<DM_SANPHAM> DM_SANPHAMs { get; set; } = new List<DM_SANPHAM>();
+    public virtual ICollection<SanPham> SanPhams { get; set; } = new List<SanPham>();
 }

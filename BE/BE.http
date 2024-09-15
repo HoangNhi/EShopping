@@ -1,6 +1,0 @@
-@BE_HostAddress = http://localhost:5266
-
-GET {{BE_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###
