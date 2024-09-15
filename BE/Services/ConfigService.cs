@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using BE.AutoMapper;
+using BE.Services.HETHONG.TAIKHOAN;
 
 namespace BE.Services
 {
@@ -14,6 +15,9 @@ namespace BE.Services
 
             IMapper mapper = mapperConfig.CreateMapper();
             services.AddSingleton(mapper);
+
+            // Register Services
+            services.AddTransient<ITAIKHOANService, TAIKHOANService>();
         }
     }
 }
