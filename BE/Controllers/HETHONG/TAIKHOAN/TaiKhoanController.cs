@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MODELS.HETHONG.TAIKHOAN.Requests;
 
-namespace BE.Controllers
+namespace BE.Controllers.HETHONG.TAIKHOAN
 {
     [Route("[controller]/[action]")]
     [ApiController]
@@ -24,19 +24,19 @@ namespace BE.Controllers
             {
                 if (!ModelState.IsValid)
                 {
-                    return Ok(new ApiResponse(false, (int)StatusCodes.Status400BadRequest, CommonFunc.GetModelStateAPI(ModelState)));
+                    return Ok(new ApiResponse(false, StatusCodes.Status400BadRequest, CommonFunc.GetModelStateAPI(ModelState)));
                 }
                 var result = await _service.Login(request);
                 if (result.Error)
                 {
                     throw new Exception(result.Message);
                 }
-                
+
                 return Ok(new ApiOkResponse(result.Data));
             }
             catch (Exception ex)
             {
-                return Ok(new ApiResponse(false, (int)StatusCodes.Status500InternalServerError, ex.Message));
+                return Ok(new ApiResponse(false, StatusCodes.Status500InternalServerError, ex.Message));
             }
         }
 
@@ -48,19 +48,19 @@ namespace BE.Controllers
             {
                 if (!ModelState.IsValid)
                 {
-                    return Ok(new ApiResponse(false, (int)StatusCodes.Status400BadRequest, CommonFunc.GetModelStateAPI(ModelState)));
+                    return Ok(new ApiResponse(false, StatusCodes.Status400BadRequest, CommonFunc.GetModelStateAPI(ModelState)));
                 }
                 var result = await _service.Register(request);
                 if (result.Error)
                 {
                     throw new Exception(result.Message);
                 }
-                
+
                 return Ok(new ApiOkResponse(result.Data));
             }
             catch (Exception ex)
             {
-                return Ok(new ApiResponse(false, (int)StatusCodes.Status500InternalServerError, ex.Message));
+                return Ok(new ApiResponse(false, StatusCodes.Status500InternalServerError, ex.Message));
             }
         }
     }

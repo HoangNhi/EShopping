@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FluentValidation;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -13,5 +14,14 @@ namespace MODELS.HETHONG.TAIKHOAN.Requests
         public string Username { get; set; }
         [Required(AllowEmptyStrings = false, ErrorMessage = "Mật khẩu không được để trống")]
         public string Password { get; set; }
+    }
+
+    public class PostLoginRequestValidator : AbstractValidator<PostLoginRequest>
+    {
+        public PostLoginRequestValidator()
+        {
+            RuleFor(x => x.Username).NotEmpty().WithMessage("Tên đăng nhập không được để trống");
+            RuleFor(x => x.Password).NotEmpty().WithMessage("Mật khẩu không được để trống");
+        }
     }
 }

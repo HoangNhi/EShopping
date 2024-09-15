@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using BE.AutoMapper;
 using BE.Services.HETHONG.TAIKHOAN;
+using FluentValidation.AspNetCore;
+using MODELS.HETHONG.TAIKHOAN.Requests;
 
 namespace BE.Services
 {
@@ -8,6 +10,15 @@ namespace BE.Services
     {
         public static void Config(this IServiceCollection services)
         {
+            services.AddMvc()
+                .AddFluentValidation(config =>
+                {
+                    config.ImplicitlyValidateChildProperties = true;
+                    config.DisableDataAnnotationsValidation = true;
+                    config.RegisterValidatorsFromAssemblyContaining<PostLoginRequestValidator>();
+                })
+                .AddJsonOptions(options => options.JsonSerializerOptions.PropertyNamingPolicy = null);
+
             var mapperConfig = new MapperConfiguration(mc =>
             {
                 mc.AddProfile(new MappingProfile());

@@ -1,0 +1,78 @@
+﻿@model MODELS.HETHONG.TAIKHOAN.Requests.PostRegisterRequest
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm("Register", "Account", FormMethod.Post, new { id = "frmLogin" }))
+{
+    @if ((bool)ViewBag.IsError)
+    {
+        <div class="alert alert-danger">
+            <button class="close" data-close="alert"></button>
+            <span> @ViewBag.Message </span>
+        </div>
+    }
+
+    <!-- Họ và tên input -->
+    <div data-mdb-input-init class="form-outline mb-4">
+        <input type="text" id="form2Example1" class="form-control" asp-for="HoVaTen" />
+        <label class="form-label" for="form2Example1">Họ và tên</label>
+        <span class="text-danger" asp-validation-for="HoVaTen"></span>
+    </div>
+
+    <!-- Email input -->
+    <div data-mdb-input-init class="form-outline mb-4">
+        <input type="email" id="form2Example1" class="form-control" asp-for="Email" />
+        <label class="form-label" for="form2Example1">Email</label>
+        <span class="text-danger" asp-validation-for="Email"></span>
+    </div>
+
+    <!-- Số điện thoại input -->
+    <div data-mdb-input-init class="form-outline mb-4">
+        <input type="text" id="form2Example1" class="form-control" asp-for="PhoneNumber" />
+        <label class="form-label" for="form2Example1">Số điện thoại</label>
+        <span class="text-danger" asp-validation-for="PhoneNumber"></span>
+    </div>
+
+    <!-- Password input -->
+    <div data-mdb-input-init class="form-outline mb-4">
+        <input type="password" id="form2Example2" class="form-control" asp-for="Password" />
+        <label class="form-label" for="form2Example2">Mật khẩu</label>
+        <span class="text-danger" asp-validation-for="Password"></span>
+    </div>
+
+    <!-- Confirm password input -->
+    <div data-mdb-input-init class="form-outline mb-4">
+        <input type="password" id="form2Example2" class="form-control" name="ConfirmPassword" />
+        <label class="form-label" for="form2Example2">Nhập lại mật khẩu</label>
+        @Html.ValidationMessageFor(model => model.RePassword, "", new { @class = "text-danger" })
+    </div>
+
+    <!-- Submit button -->
+    <button type="submit" data-mdb-button-init data-mdb-ripple-init class="btn btn-primary btn-block mb-4">Đăng ký</button>
+
+    <!-- Register buttons -->
+    <div class="text-center">
+        <p>Not a member? <a href="@Url.Action("Register", "TaiKhoan")">Đăng ký</a></p>
+        <p>or sign up with:</p>
+        <button type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-link btn-floating mx-1">
+            <i class="fab fa-facebook-f"></i>
+        </button>
+
+        <button type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-link btn-floating mx-1">
+            <i class="fab fa-google"></i>
+        </button>
+
+        <button type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-link btn-floating mx-1">
+            <i class="fab fa-twitter"></i>
+        </button>
+
+        <button type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-link btn-floating mx-1">
+            <i class="fab fa-github"></i>
+        </button>
+    </div>
+}
+
+<script>
+
+</script>

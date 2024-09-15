@@ -1,4 +1,4 @@
-﻿namespace BE.Helper
+﻿namespace MODELS.COMMON
 {
     public static class CommonConst
     {
