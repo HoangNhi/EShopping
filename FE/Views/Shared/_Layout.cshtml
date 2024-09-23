@@ -3,9 +3,12 @@
     <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>@ViewData["Title"] - FE</title>
+        <title>EShopping - Thương mại điện tử</title>
         <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
         <link rel="stylesheet" href="~/css/style.css" asp-append-version="true" />
+        <link href="~/lib/fontawesome/css/fontawesome.css" rel="stylesheet" />
+        <link href="~/lib/fontawesome/css/brands.css" rel="stylesheet" />
+        <link href="~/lib/fontawesome/css/solid.css" rel="stylesheet" />
     </head>
     <body>
         <section class=" top-txt ">
@@ -14,8 +17,8 @@
                     <p style="margin: 0">Free shipping, 30-day return or refund guarantee.</p>
                 </div>
                 <div class="sing_in_up ">
-                    <a href="# ">SIGN IN</a>
-                    <a href="# ">SIGN UP</a>
+                    <a href="@Url.Action("Login", "TaiKhoan")">Đăng nhập</a>
+                    <a href="@Url.Action("Register", "TaiKhoan")">Đăng ký</a>
                 </div>
             </div>
         </section>
@@ -39,7 +42,7 @@
             </div>
         </nav>
         
-        <main>
+        <main id="mainContent" class="w-100 align-content-center" style="min-height: 600px">
             @RenderBody()
         </main>
         

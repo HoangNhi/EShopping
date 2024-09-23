@@ -12,18 +12,26 @@ namespace MODELS.HETHONG.TAIKHOAN.Requests
     public class PostRegisterRequest : BaseRequest
     {
         public Guid Id { get; set; }
+
         [Required(AllowEmptyStrings = false, ErrorMessage = "Họ và tên không được để trống")]
         public string HoVaTen { get; set; } = null!;
+
         [Required(AllowEmptyStrings = false, ErrorMessage = "Email không được để trống")]
         [EmailAddress(ErrorMessage = "Email không đúng định dạng")]
         public string Username { get; set; } = null!;
+
         [Required(AllowEmptyStrings = false, ErrorMessage = "Email không được để trống")]
         [EmailAddress(ErrorMessage = "Email không đúng định dạng")]
         public string Email { get; set; } = null!;
+
         [Required(AllowEmptyStrings = false, ErrorMessage = "Mật khẩu không được để trống")]
         public string Password { get; set; } = null!;
+
+        [Required(AllowEmptyStrings = false, ErrorMessage = "Nhập lại mật khẩu không được để trống")]
         public string? RePassword { get; set; }
+
         [Required(AllowEmptyStrings = false, ErrorMessage = "Số điện thoại không được để trống")]
+        [RegularExpression(@"^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$", ErrorMessage = "Not a valid phone number")]
         public string PhoneNumber { get; set; } = null!;
     }
 
