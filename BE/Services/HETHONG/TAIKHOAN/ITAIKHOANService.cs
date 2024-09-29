@@ -8,5 +8,6 @@ namespace BE.Services.HETHONG.TAIKHOAN
     {
         Task<BaseResponse<MODELTaiKhoan>> Login(PostLoginRequest request);
         Task<BaseResponse<MODELTaiKhoan>> Register(PostRegisterRequest request);
+        Task<BaseResponse<MODELTaiKhoan>> ConfirmEmail(string UserIdEncode);
     }
 }

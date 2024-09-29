@@ -3,9 +3,9 @@ using System.Collections.Generic;
 
 namespace ENTITIES.DbContent;
 
-public partial class TheLoai
+public partial class NhanHieu
 {
-    public string Id { get; set; } = null!;
+    public Guid Id { get; set; }
 
     public string Name { get; set; } = null!;
 

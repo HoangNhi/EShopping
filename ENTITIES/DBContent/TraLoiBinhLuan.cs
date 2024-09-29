@@ -12,4 +12,6 @@ public partial class TraLoiBinhLuan
     public string Content { get; set; } = null!;
 
     public DateTime NgayTao { get; set; }
+
+    public virtual BinhLuan BinhLuan { get; set; } = null!;
 }

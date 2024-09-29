@@ -5,37 +5,35 @@ namespace ENTITIES.DbContent;
 
 public partial class SanPham
 {
-    public int Id { get; set; }
+    public Guid Id { get; set; }
 
     public string Name { get; set; } = null!;
 
     public decimal Price { get; set; }
 
-    public string Decription { get; set; } = null!;
+    public string Description { get; set; } = null!;
 
     public string ImageUrl { get; set; } = null!;
 
-    public int TheLoaiId { get; set; }
+    public string TheLoaiId { get; set; } = null!;
 
-    public int ThuongHieuId { get; set; }
+    public Guid NhanHieuId { get; set; }
 
-    public DateTime NgayTao { get; set; }
+    public DateTime DateCreate { get; set; }
 
-    public string NguoiTao { get; set; } = null!;
+    public int? Quantity { get; set; }
 
-    public DateTime NgaySua { get; set; }
+    public int? Sold { get; set; }
 
-    public string NguoiSua { get; set; } = null!;
+    public bool Status { get; set; }
 
-    public DateTime? NgayXoa { get; set; }
+    public virtual ICollection<BinhLuan> BinhLuans { get; set; } = new List<BinhLuan>();
 
-    public string? NguoiXoa { get; set; }
+    public virtual NhanHieu NhanHieu { get; set; } = null!;
 
-    public bool IsActived { get; set; }
+    public virtual ICollection<NhomPhanLoai1> NhomPhanLoai1s { get; set; } = new List<NhomPhanLoai1>();
 
-    public bool IsDeleted { get; set; }
+    public virtual ICollection<SanPham_Anh> SanPham_Anhs { get; set; } = new List<SanPham_Anh>();
 
     public virtual TheLoai TheLoai { get; set; } = null!;
-
-    public virtual ThuongHieu ThuongHieu { get; set; } = null!;
 }

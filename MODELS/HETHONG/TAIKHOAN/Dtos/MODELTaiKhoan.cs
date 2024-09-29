@@ -7,10 +7,10 @@ using System.Threading.Tasks;
 
 namespace MODELS.HETHONG.TAIKHOAN.Dtos
 {
-    public class MODELTaiKhoan : BaseModel
+    public class MODELTaiKhoan
     {
         public Guid Id { get; set; }
-        public string HoVaTen { get; set; } = null!;
+        public string Fullname { get; set; } = null!;
         public string Username { get; set; } = null!;
         public string Email { get; set; } = null!;
         public string? Address { get; set; }

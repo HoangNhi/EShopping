@@ -102,7 +102,7 @@ namespace FE.Controllers.HETHONG.TAIKHOAN
                         throw new Exception("Email chưa đúng định dạng");
                     }
 
-                    if (param.HoVaTen == "" || param.PhoneNumber == "" || param.Email == "" || param.Password == "" || param.RePassword == "")
+                    if (param.Fullname == "" || param.PhoneNumber == "" || param.Email == "" || param.Password == "" || param.RePassword == "")
                     {
                         throw new Exception("Vui lòng nhập đầy đủ thông tin đăng nhập");
                     }

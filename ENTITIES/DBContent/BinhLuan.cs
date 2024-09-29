@@ -7,7 +7,7 @@ public partial class BinhLuan
 {
     public int Id { get; set; }
 
-    public int SanPhamId { get; set; }
+    public Guid SanPhamId { get; set; }
 
     public int UserId { get; set; }
 
@@ -16,4 +16,8 @@ public partial class BinhLuan
     public string? YKien { get; set; }
 
     public DateTime NgayTao { get; set; }
+
+    public virtual SanPham SanPham { get; set; } = null!;
+
+    public virtual ICollection<TraLoiBinhLuan> TraLoiBinhLuans { get; set; } = new List<TraLoiBinhLuan>();
 }

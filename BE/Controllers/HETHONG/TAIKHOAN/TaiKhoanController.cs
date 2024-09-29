@@ -64,5 +64,29 @@ namespace BE.Controllers.HETHONG.TAIKHOAN
                 return Ok(new ApiResponse(false, StatusCodes.Status500InternalServerError, ex.Message));
             }
         }
+
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<IActionResult> ConfirmEmail(string request)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    return Ok(new ApiResponse(false, StatusCodes.Status400BadRequest, CommonFunc.GetModelStateAPI(ModelState)));
+                }
+                var result = await _service.ConfirmEmail(request);
+                if (result.Error)
+                {
+                    throw new Exception(result.Message);
+                }
+
+                return Ok(new ApiOkResponse(result.Data));
+            }
+            catch (Exception ex)
+            {
+                return Ok(new ApiResponse(false, StatusCodes.Status500InternalServerError, ex.Message));
+            }
+        }
     }
 }

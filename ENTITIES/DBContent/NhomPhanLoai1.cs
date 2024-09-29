@@ -5,25 +5,15 @@ namespace ENTITIES.DbContent;
 
 public partial class NhomPhanLoai1
 {
-    public int Id { get; set; }
+    public Guid Id { get; set; }
 
-    public int SanPhamId { get; set; }
+    public Guid SanPhamId { get; set; }
 
     public string TenGoi { get; set; } = null!;
 
-    public DateTime NgayTao { get; set; }
+    public string? ImageURL { get; set; }
 
-    public string NguoiTao { get; set; } = null!;
+    public virtual ICollection<NhomPhanLoai2> NhomPhanLoai2s { get; set; } = new List<NhomPhanLoai2>();
 
-    public DateTime NgaySua { get; set; }
-
-    public string NguoiSua { get; set; } = null!;
-
-    public DateTime? NgayXoa { get; set; }
-
-    public string? NguoiXoa { get; set; }
-
-    public bool IsActived { get; set; }
-
-    public bool IsDeleted { get; set; }
+    public virtual SanPham SanPham { get; set; } = null!;
 }

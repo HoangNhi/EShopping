@@ -7,23 +7,13 @@ public partial class Role
 {
     public Guid Id { get; set; }
 
-    public string TenGoi { get; set; } = null!;
+    public string Name { get; set; } = null!;
 
-    public DateTime NgayTao { get; set; }
+    public DateTime DateCreate { get; set; }
 
-    public string NguoiTao { get; set; } = null!;
+    public string CreateBy { get; set; } = null!;
 
-    public DateTime? NgaySua { get; set; }
-
-    public string? NguoiSua { get; set; }
-
-    public DateTime? NgayXoa { get; set; }
-
-    public string? NguoiXoa { get; set; }
-
-    public bool IsActived { get; set; }
-
-    public bool IsDeleted { get; set; }
+    public bool Status { get; set; }
 
     public virtual ICollection<ApplicationUser> ApplicationUsers { get; set; } = new List<ApplicationUser>();
 
