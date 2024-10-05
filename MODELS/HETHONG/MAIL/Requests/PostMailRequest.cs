@@ -1,10 +1,4 @@
 ﻿using Microsoft.AspNetCore.Http;
-using MODELS.Base;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MODELS.HETHONG.MAIL.Requests
 {

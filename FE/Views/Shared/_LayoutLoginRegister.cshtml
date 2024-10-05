@@ -1,0 +1,45 @@
+﻿<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>@ViewData["Title"] - EShopping</title>
+        <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+        <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+        <link rel="stylesheet" href="~/css/style.css" asp-append-version="true" />
+        <script src="~/lib/jquery/dist/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/4.0.0/jquery.validate.unobtrusive.js"></script>
+        <link href="~/lib/fontawesome/css/fontawesome.css" rel="stylesheet" />
+        <link href="~/lib/fontawesome/css/brands.css" rel="stylesheet" />
+        <link href="~/lib/fontawesome/css/solid.css" rel="stylesheet" />
+        <link href="https://font.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet" />
+        <link rel="stylesheet"
+              href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+        <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+        <style>
+            html, body {
+                overflow: auto;
+                font-family: Montserrat, sans-serif !important;
+                color: rgb(35, 49, 75)
+            }
+            .toast:not(.show) {
+                display: block;
+            }
+        </style>
+    </head>
+    <body class="d-flex align-items-center justify-content-center" style="background: url('/Image/Background/BackgroundAccount.jpg') no-repeat fixed center; background-size: cover; margin: 0; height: 100vh">
+        <div class="container">
+            @RenderBody()
+        </div>
+
+        @* Thông báo - alert *@
+        <div id="ThongBao-container" class="toast-container"></div>
+
+        <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="~/js/site.js" asp-append-version="true"></script>
+        <script src="~/js/index.js" asp-append-version="true"></script>
+        <script src="https://malsup.github.io/jquery.blockUI.js"></script>
+        @await RenderSectionAsync("Scripts", required: false)
+    </body>
+</html>

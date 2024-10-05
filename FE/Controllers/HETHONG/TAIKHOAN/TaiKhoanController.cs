@@ -26,16 +26,11 @@ namespace FE.Controllers.HETHONG.TAIKHOAN
 
         public IActionResult Login()
         {
-            ViewBag.IsError = false;
-            ViewBag.Message = "";
             return View("~/Views/HETHONG/TAIKHOAN/Login.cshtml", new PostLoginRequest());
         }
 
         public IActionResult Register()
         {
-            ViewBag.RegisterIsError = false;
-            ViewBag.RegisterIsSuccess = false;
-            ViewBag.Message = "";
             return View("~/Views/HETHONG/TAIKHOAN/Register.cshtml", new PostRegisterRequest());
         }
 
@@ -69,7 +64,7 @@ namespace FE.Controllers.HETHONG.TAIKHOAN
                         );
 
 
-                        return Redirect("/Home/Index");
+                        return Json(new { IsSuccess = true, Message = "Đăng nhập thành công", Data = "" });
                     }
                     else
                     {
@@ -83,9 +78,8 @@ namespace FE.Controllers.HETHONG.TAIKHOAN
             }
             catch (Exception ex)
             {
-                ViewBag.IsError = true;
-                ViewBag.Message = ex.Message;
-                return View("~/Views/HETHONG/TaiKhoan/Login.cshtml", request);
+                string message = "Lỗi đăng nhập: " + ex.Message;
+                return Json(new { IsSuccess = false, Message = message, Data = "" });
             }
         }
 
@@ -181,7 +175,6 @@ namespace FE.Controllers.HETHONG.TAIKHOAN
         {
             return new ConfigurationBuilder().AddJsonFile("appsettings.json").Build().GetSection("BEUrl").Value.ToString();
         }
-
         private ResponseData ExecuteAPIResponse(Task<HttpResponseMessage> responseTask)
         {
             ResponseData response = new ResponseData();

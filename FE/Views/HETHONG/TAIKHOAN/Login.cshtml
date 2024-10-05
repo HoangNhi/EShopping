@@ -1,111 +1,180 @@
 ﻿@model MODELS.HETHONG.TAIKHOAN.Requests.PostLoginRequest
 @{
-    Layout = "~/Views/Shared/_Layout.cshtml";
+    Layout = "~/Views/Shared/_LayoutLoginRegister.cshtml";
 }
+
+<script>
+    $(document).ready(function () {
+        $("#frmLogin").submit(async function (event) {
+            event.preventDefault();
+            if ($("#frmLogin").valid()) {
+                DangNhap();
+            }
+        });
+    });
+
+    function DangNhap() {
+        var data = $("#frmLogin").serialize();
+        showLoading(true)
+        $.ajax({
+            url: "@Url.Action("Login", "TaiKhoan")",
+            type: "POST",
+            data: data,
+            success: function (response) {
+                showLoading(false)
+                if (response.IsSuccess) {
+                    ShowThongBaoThanhCong(response.Message);
+                    window.location.href = "/Home/Index"
+                } else {
+                    ShowThongBaoThatBai(response.Message)  
+                }
+            },
+            error: function (xhr, error) {
+                ShowThongBaoThatBai(response.Message)  
+            }
+        })
+    }
+</script>
 
 <style>
     #mainContent{
         background:url('@Url.Content("~/image/Background/BackgroundAccount.jpg")') no-repeat center;
     }
+
+    .swiper {
+        width: auto;
+        height: 100%;
+    }
+
+    .swiper-slide {
+        text-align: center;
+        font-size: 18px;
+        background: #fff;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .swiper-pagination-bullet{
+        background-color: white
+    }
+
+    @@media only screen and (max-width: 992px) {
+        #slider {
+            display: none;
+        }
+        #LoginContainer{
+            width: 500px
+        }
+    }
+    #ForgotPassword:hover{
+        font-weight: bold;
+        text-decoration: underline!important;
+    }
 </style>
 
-<div class="container">
-    <div class="d-flex justify-content-center m-auto">
-        <div class="card">
-            <div class="card-header d-flex justify-content-center align-content-center">
-                <p style="margin: 20px 10px; font-size: 28px; font-weight: bold; ">Đăng nhập</p>
+<div id="modalLoading">
+    <div id="LoginContainer" class="row m-auto" style="height: auto; max-width: 1080px; box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px">
+        <div id="slider" class="col-lg-6 px-0">
+            <div class="swiper">
+                <!-- Additional required wrapper -->
+                <div class="swiper-wrapper">
+                    <!-- Slides -->
+                    <div class="swiper-slide"
+                         style="background-image: url('/Image/Login_Ad/Login_Ad01.png');
+                                background-repeat: round;
+                                background-attachment: fixed;
+                                background-size: cover;"></div>
+                    <div class="swiper-slide"
+                         style="background-image: url('/Image/Login_Ad/Login_Ad02.png');
+                                background-repeat: round;
+                                background-attachment: fixed;
+                                background-size: cover;"></div>
+                    <div class="swiper-slide"
+                         style="background-image: url('/Image/Login_Ad/Login_Ad03.png');
+                                background-repeat: round;
+                                background-attachment: fixed;
+                                background-size: cover;"></div>
+                </div>
+                <!-- If we need pagination -->
+                <div class="swiper-pagination" style="color: aliceblue"></div>
             </div>
-            <div class="card-body">
-                @using (Html.BeginForm("Login", "TaiKhoan", FormMethod.Post, new { id = "frmLogin", style = "width: 400px", @class = "bg-white" }))
-                {
-                    @if ((bool)ViewBag.IsError)
-                    {
-                        <div class="alert alert-danger">
-                            <button class="close" data-close="alert"></button>
-                            <span> @ViewBag.Message </span>
-                        </div>
-                    }
-                    <!-- Email input -->
-                    <div data-mdb-input-init class="input-group mb-3">
-                        <span class="input-group-text" id="inputUsername">
-                            <i class="far fa-envelope"></i>
-                        </span>
-                        <input required type="email" id="form2Example1" class="form-control" aria-label="Username" aria-describedby="inputUsername" asp-for="Username" />
+        </div>
+        <div  class="col-lg-6 align-content-center" style="background-color: white; text-align: -webkit-center;">
+            @using (Html.BeginForm(null, null, FormMethod.Post, new { id = "frmLogin", @class = "", @style= "max-width: 400px" }))
+            {
+                <div class="d-flex justify-content-center align-content-center">
+                    <p style="margin: 20px 10px; font-size: 28px; font-weight: bold; ">Đăng nhập</p>
+                </div>
+
+                <!-- Email input -->
+                <div class="mb-3">
+                    <div class="form-floating mb-3">
+                        <input asp-for="@Model.Username" class="form-control" autocomplete="name@example.com" aria-required="true" placeholder="name@example.com" />
+                        <label asp-for="@Model.Username" class="form-label">Email</label>
+                    </div>
+                    <div style="text-align: left">
                         @Html.ValidationMessageFor(m => m.Username, "", new { @class = "text-danger" })
                     </div>
+                </div>
 
-                    <!-- Password input -->
-                    <div data-mdb-input-init class="input-group mb-3">
-                        <span class="input-group-text" id="inputPassword">
-                            <i class="far fa-envelope"></i>
-                        </span>
-                        <input required type="password" id="form2Example1" class="form-control" aria-label="Password" aria-describedby="inputPassword" asp-for="Password" />
+                <!-- Password input -->
+                <div class="mb-3">
+                    <div class="form-floating mb-3">
+                        <input type="password" asp-for="@Model.Password" class="form-control" autocomplete="current-password" aria-required="true" placeholder="Mật khẩu" />
+                        <label asp-for="@Model.Password" class="form-label">Mật khẩu</label>
+                        @* <span asp-validation-for="Input.Password" class="text-danger"></span> *@
+                    </div>
+                    <div style="text-align: left">
                         @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger" })
                     </div>
+                </div>
 
-                    <!-- 2 column grid layout for inline styling -->
-                    <div class="row mb-4">
-                        <div class="col d-flex justify-content-center">
-                            <!-- Checkbox -->
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="@Model.RememberMe" id="form2Example31" asp-for="RememberMe" />
-                                <label class="form-check-label" for="form2Example31">Ghi nhớ tôi</label>
-                            </div>
-                        </div>
-
-                        <div class="col">
-                            <!-- Simple link -->
-                            <a href="#!">Forgot password?</a>
+                <!-- 2 column grid layout for inline styling -->
+                <div class="row mb-4">
+                    <div class="col d-flex justify-content-center">
+                        <!-- Checkbox -->
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="@Model.RememberMe" id="form2Example31" asp-for="RememberMe" />
+                            <label class="form-check-label" for="form2Example31">Ghi nhớ tôi</label>
                         </div>
                     </div>
 
-                    <!-- Submit button -->
-                    <button type="submit" data-mdb-button-init data-mdb-ripple-init class="btn btn-primary btn-block mb-4">Đăng nhập</button>
-
-                    <!-- Register buttons -->
-                    <div class="text-center">
-                        <p>Not a member? <a href="@Url.Action("Register", "TaiKhoan")">Đăng ký</a></p>
-                        <p>or sign up with:</p>
-                        <button type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-link btn-floating mx-1">
-                            <i class="fab fa-facebook-f"></i>
-                        </button>
-
-                        <button type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-link btn-floating mx-1">
-                            <i class="fab fa-google"></i>
-                        </button>
-
-                        <button type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-link btn-floating mx-1">
-                            <i class="fab fa-twitter"></i>
-                        </button>
-
-                        <button type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-link btn-floating mx-1">
-                            <i class="fab fa-github"></i>
-                        </button>
+                    <div class="col">
+                        <!-- Simple link -->
+                        <a id="ForgotPassword" style="color: inherit; text-decoration: none" href="#!">Quên mật khẩu?</a>
                     </div>
-                }
-            </div>
+                </div>
+
+                <!-- Submit button -->
+                <button type="submit" data-mdb-button-init data-mdb-ripple-init class="btn btn-primary btn-block mb-4">Đăng nhập</button>
+
+                <!-- Register buttons -->
+                <div class="text-center">
+                    <p>Bạn chưa có tài khoản? <a href="@Url.Action("Register", "TaiKhoan")">Đăng ký</a></p>
+                    <p>hoặc đăng nhập với</p>
+                    <button type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-link btn-floating mx-1">
+                        <i class="fab fa-google"></i>
+                    </button>
+                </div>
+            }
         </div>
     </div>
 </div>
 
-
 <script>
-    $.document.ready(function () {
-        $("#frmLogin").submit(event => {
-            event.preventDefault();
-            var data = $("#frmLogin").serialize();
-            $.ajax({
-                url: "@Url.Action("Login", "TaiKhoan")",
-                type: "POST",
-                data: data,
-                success: function (response) {
-                    if (response.success) {
-                        window.location.href = "/Home/Index"
-                    } else {
+    const swiper = new Swiper('.swiper', {
+        // Optional parameters
+        loop: true,
 
-                    }
-                }
-            })
-        })
+        // If we need pagination
+        pagination: {
+            el: '.swiper-pagination',
+            clickable: true,
+        },
+        autoplay: {
+            delay: 2500,
+            disableOnInteraction: false,
+        },
     });
 </script>

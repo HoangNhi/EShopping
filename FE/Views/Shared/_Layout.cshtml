@@ -9,6 +9,18 @@
         <link href="~/lib/fontawesome/css/fontawesome.css" rel="stylesheet" />
         <link href="~/lib/fontawesome/css/brands.css" rel="stylesheet" />
         <link href="~/lib/fontawesome/css/solid.css" rel="stylesheet" />
+        <script src="~/lib/jquery/dist/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/4.0.0/jquery.validate.unobtrusive.js"></script>
+        <style>
+            * {
+                font-family: Montserrat, sans-serif;
+                color: rgb(35, 49, 75)
+            }
+            .toast:not(.show) {
+                display: block;
+            }
+        </style>
     </head>
     <body>
         <section class=" top-txt ">
@@ -41,11 +53,11 @@
                 </div>
             </div>
         </nav>
-        
+
         <main id="mainContent" class="w-100 align-content-center" style="min-height: 600px">
             @RenderBody()
         </main>
-        
+
         <footer>
             <div class="footer-container container">
                 <div class="content_1">
@@ -83,10 +95,13 @@
                 </div>
             </div>
         </footer>
-        <script src="~/lib/jquery/dist/jquery.min.js"></script>
+
+        @* Thông báo - aleart *@
+        <div id="ThongBao-container" class="toast-container"></div>
         <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
         <script src="~/js/site.js" asp-append-version="true"></script>
         <script src="~/js/index.js" asp-append-version="true"></script>
+        <script src="https://malsup.github.io/jquery.blockUI.js"></script>
         @await RenderSectionAsync("Scripts", required: false)
     </body>
 </html>

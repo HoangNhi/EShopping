@@ -16,3 +16,13 @@ html {
   position: relative;
   min-height: 100%;
 }
+
+.blockUI.blockMsg.blockPage {
+    top: auto !important;
+    border: 0 !important;
+    background-color: unset !important;
+}
+
+.loader-demo-box{
+    
+}
