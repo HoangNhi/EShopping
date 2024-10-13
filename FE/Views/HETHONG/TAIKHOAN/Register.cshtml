@@ -1,78 +1,123 @@
 ﻿@model MODELS.HETHONG.TAIKHOAN.Requests.PostRegisterRequest
 @{
-    Layout = "~/Views/Shared/_Layout.cshtml";
+    Layout = "~/Views/Shared/_LayoutLoginRegister.cshtml";
 }
 
-@using (Html.BeginForm("Register", "Account", FormMethod.Post, new { id = "frmLogin" }))
-{
-    @if ((bool)ViewBag.IsError)
-    {
-        <div class="alert alert-danger">
-            <button class="close" data-close="alert"></button>
-            <span> @ViewBag.Message </span>
-        </div>
+<style>
+    #ForgotPassword:hover,
+    #LoginWithGoogle:hover,
+    #linkDangNhap:hover {
+        font-weight: bold;
+        color: #222831 !important;
     }
 
-    <!-- Họ và tên input -->
-    <div data-mdb-input-init class="form-outline mb-4">
-        <input type="text" id="form2Example1" class="form-control" asp-for="Fullname" />
-        <label class="form-label" for="form2Example1">Họ và tên</label>
-        <span class="text-danger" asp-validation-for="Fullname"></span>
-    </div>
+    #btnDangKy:hover {
+        background-color: #393e46b3 !important
+    }
+</style>
 
-    <!-- Email input -->
-    <div data-mdb-input-init class="form-outline mb-4">
-        <input type="email" id="form2Example1" class="form-control" asp-for="Email" />
-        <label class="form-label" for="form2Example1">Email</label>
-        <span class="text-danger" asp-validation-for="Email"></span>
-    </div>
+<div class="align-content-center" style="background-color: white; text-align: -webkit-center; max-width: 500px; margin: auto; box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px; border-radius: 20px; overflow: hidden">
+    @using (Html.BeginForm(null, null, FormMethod.Post, new { id = "frmRegister", @class = "", @style = "max-width: 400px; margin: 10px", }))
+    {
+        <div class="d-flex justify-content-center align-content-center">
+            <a href="@Url.Action("Index", "Website")" style="font-size: 28px; font-weight: bold; margin: 32px; text-decoration: none; display: flex; align-items: center; color: #222831">
+                EShopping
+            </a>
+        </div>
 
-    <!-- Số điện thoại input -->
-    <div data-mdb-input-init class="form-outline mb-4">
-        <input type="text" id="form2Example1" class="form-control" asp-for="PhoneNumber" />
-        <label class="form-label" for="form2Example1">Số điện thoại</label>
-        <span class="text-danger" asp-validation-for="PhoneNumber"></span>
-    </div>
+        <div class="d-flex justify-content-center align-content-center">
+            <p style="font-size: 16px; font-weight: bold; color: #393e46b3">
+                Hãy nhập thông tin chi tiết
+            </p>
+        </div>
 
-    <!-- Password input -->
-    <div data-mdb-input-init class="form-outline mb-4">
-        <input type="password" id="form2Example2" class="form-control" asp-for="Password" />
-        <label class="form-label" for="form2Example2">Mật khẩu</label>
-        <span class="text-danger" asp-validation-for="Password"></span>
-    </div>
+        <div class="mb-3">
+            <div class="form-floating">
+                <input type="text" asp-for="@Model.Fullname" class="form-control" autocomplete="Họ và tên" aria-required="true" placeholder="Họ và tên" />
+                <label asp-for="@Model.Fullname" class="form-label">Họ và tên</label>
+            </div>
+            <div style="text-align: left">
+                @Html.ValidationMessageFor(m => m.Fullname, "", new { @class = "text-danger" })
+            </div>
+        </div>
 
-    <!-- Confirm password input -->
-    <div data-mdb-input-init class="form-outline mb-4">
-        <input type="password" id="form2Example2" class="form-control" name="ConfirmPassword" />
-        <label class="form-label" for="form2Example2">Nhập lại mật khẩu</label>
-        @Html.ValidationMessageFor(model => model.RePassword, "", new { @class = "text-danger" })
-    </div>
+        <div class="mb-3">
+            <div class="form-floating">
+                <input type="email" asp-for="@Model.Email" class="form-control" autocomplete="name@example.com" aria-required="true" placeholder="name@example.com" />
+                <label asp-for="@Model.Email" class="form-label">Email</label>
+            </div>
+            <div style="text-align: left">
+                @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger" })
+            </div>
+        </div>
 
-    <!-- Submit button -->
-    <button type="submit" data-mdb-button-init data-mdb-ripple-init class="btn btn-primary btn-block mb-4">Đăng ký</button>
+        <!-- Password input -->
+        <div class="mb-3">
+            <div class="form-floating">
+                <input type="password" asp-for="@Model.Password" class="form-control" autocomplete="" aria-required="true" placeholder="Mật khẩu" />
+                <label asp-for="@Model.Password" class="form-label">Mật khẩu</label>
+            </div>
+            <div style="text-align: left">
+                @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger" })
+            </div>
+        </div>
 
-    <!-- Register buttons -->
-    <div class="text-center">
-        <p>Not a member? <a href="@Url.Action("Register", "TaiKhoan")">Đăng ký</a></p>
-        <p>or sign up with:</p>
-        <button type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-link btn-floating mx-1">
-            <i class="fab fa-facebook-f"></i>
-        </button>
+        <!-- Confirm password input -->
+        <div class="mb-3">
+            <div class="form-floating">
+                <input type="password" asp-for="@Model.RePassword" class="form-control" autocomplete="" aria-required="true" placeholder="Xác nhận mật khẩu" />
+                <label asp-for="@Model.RePassword" class="form-label">Xác nhận mật khẩu</label>
+            </div>
+            <div style="text-align: left">
+                @Html.ValidationMessageFor(m => m.RePassword, "", new { @class = "text-danger" })
+            </div>
+        </div>
 
-        <button type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-link btn-floating mx-1">
-            <i class="fab fa-google"></i>
-        </button>
+        <!-- Submit button -->
+        <button id="btnDangKy" type="submit" data-mdb-button-init data-mdb-ripple-init class="btn btn-block m-0 rounded-pill" style="font-weight: 600; width: 180px; background-color: #222831; color: #EEEEEE ">Đăng ký</button>
 
-        <button type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-link btn-floating mx-1">
-            <i class="fab fa-twitter"></i>
-        </button>
-
-        <button type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-link btn-floating mx-1">
-            <i class="fab fa-github"></i>
-        </button>
-    </div>
-}
+        <div class="text-center" style="margin: 20px 0">
+            <a id="LoginWithGoogle" href="#" style="color: #222831; text-decoration: none">
+                <img width="24" height="24" src="https://img.icons8.com/color/48/google-logo.png" alt="google-logo" />
+                Đăng nhập với google
+            </a>
+        </div>
+        <div>
+            <p style="color: #393E46">Bạn đã có tài khoản? <a id="linkDangNhap" href="@Url.Action("Login", "TaiKhoan")" style="color: #222831;">Đăng nhập</a></p>
+        </div>
+    }
+</div>
 
 <script>
+    $(document).ready(function () {
+        $("#frmRegister").submit(async function (event) {
+            event.preventDefault();
+            if ($("#frmRegister").valid()) {
+                DangKy();
+            }
+        });
+    });
 
+    function DangKy() {
+        var data = $("#frmRegister").serializeArray();
+        data.push({ name: "Username", value: $("#Email").val() });
+        showLoading(true)
+        $.ajax({
+            url: "@Url.Action("Register", "TaiKhoan")",
+            type: "POST",
+            data: data,
+            success: function (response) {
+                showLoading(false)
+                if (response.IsSuccess) {
+                    ShowThongBaoThanhCong("Đăng ký thành công </br> Vui lòng kiểm tra Email để xác thực tài khoản.");
+                } else {
+                    ShowThongBaoThatBai(response.Message)
+                }
+            },
+            error: function (xhr, error) {
+                console.log(xhr, error)
+                ShowThongBaoThatBai(response.Message)
+            }
+        })
+}
 </script>

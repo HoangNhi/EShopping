@@ -15,7 +15,15 @@ public partial class EShoppingContext : DbContext
 
     public virtual DbSet<BinhLuan> BinhLuans { get; set; }
 
+    public virtual DbSet<CauHinhSanPham> CauHinhSanPhams { get; set; }
+
+    public virtual DbSet<ChiTietDonHang> ChiTietDonHangs { get; set; }
+
     public virtual DbSet<DiaChi> DiaChis { get; set; }
+
+    public virtual DbSet<GioHang> GioHangs { get; set; }
+
+    public virtual DbSet<HoaDon> HoaDons { get; set; }
 
     public virtual DbSet<NhanHieu> NhanHieus { get; set; }
 
@@ -69,12 +77,56 @@ public partial class EShoppingContext : DbContext
             entity.ToTable("BinhLuan");
 
             entity.Property(e => e.Id).ValueGeneratedNever();
-            entity.Property(e => e.NgayTao).HasColumnType("datetime");
+            entity.Property(e => e.DateCreate).HasColumnType("datetime");
 
             entity.HasOne(d => d.SanPham).WithMany(p => p.BinhLuans)
                 .HasForeignKey(d => d.SanPhamId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_BinhLuan_SanPham");
+        });
+
+        modelBuilder.Entity<CauHinhSanPham>(entity =>
+        {
+            entity.ToTable("CauHinhSanPham");
+
+            entity.Property(e => e.Id).ValueGeneratedNever();
+            entity.Property(e => e.Detail)
+                .HasMaxLength(80)
+                .IsUnicode(false);
+            entity.Property(e => e.Name).HasMaxLength(80);
+
+            entity.HasOne(d => d.SanPham).WithMany(p => p.CauHinhSanPhams)
+                .HasForeignKey(d => d.SanPhamId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_CauHinhSanPham_SanPham");
+        });
+
+        modelBuilder.Entity<ChiTietDonHang>(entity =>
+        {
+            entity.ToTable("ChiTietDonHang");
+
+            entity.Property(e => e.Id).ValueGeneratedNever();
+            entity.Property(e => e.DateCreated).HasColumnType("datetime");
+
+            entity.HasOne(d => d.HoaDon).WithMany(p => p.ChiTietDonHangs)
+                .HasForeignKey(d => d.HoaDonId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_ChiTietDonHang_HoaDon");
+
+            entity.HasOne(d => d.NhomPhanLoai1).WithMany(p => p.ChiTietDonHangs)
+                .HasForeignKey(d => d.NhomPhanLoai1Id)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_ChiTietDonHang_NhomPhanLoai1");
+
+            entity.HasOne(d => d.NhomPhanLoai2).WithMany(p => p.ChiTietDonHangs)
+                .HasForeignKey(d => d.NhomPhanLoai2Id)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_ChiTietDonHang_NhomPhanLoai2");
+
+            entity.HasOne(d => d.SanPham).WithMany(p => p.ChiTietDonHangs)
+                .HasForeignKey(d => d.SanPhamId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_ChiTietDonHang_SanPham");
         });
 
         modelBuilder.Entity<DiaChi>(entity =>
@@ -88,10 +140,44 @@ public partial class EShoppingContext : DbContext
                 .HasMaxLength(20)
                 .IsUnicode(false);
 
-            entity.HasOne(d => d.ApplicationUser).WithMany(p => p.DiaChis)
-                .HasForeignKey(d => d.ApplicationUserId)
+            entity.HasOne(d => d.User).WithMany(p => p.DiaChis)
+                .HasForeignKey(d => d.UserId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_DiaChi_ApplicationUser");
+        });
+
+        modelBuilder.Entity<GioHang>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK_GioHang_1");
+
+            entity.ToTable("GioHang");
+
+            entity.Property(e => e.Id).ValueGeneratedNever();
+            entity.Property(e => e.DateCreated).HasColumnType("datetime");
+        });
+
+        modelBuilder.Entity<HoaDon>(entity =>
+        {
+            entity.ToTable("HoaDon");
+
+            entity.Property(e => e.Id).ValueGeneratedNever();
+            entity.Property(e => e.DateCreate).HasColumnType("datetime");
+            entity.Property(e => e.PhoneNumber)
+                .HasMaxLength(10)
+                .IsFixedLength();
+            entity.Property(e => e.Status)
+                .HasDefaultValue(1)
+                .HasComment("1: Chờ thanh toán, 2: Chờ giao hàng, 3: Đã giao, 4: Đã hủy");
+
+            entity.HasOne(d => d.DiaChi).WithMany(p => p.HoaDons)
+                .HasForeignKey(d => d.DiaChiId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_HoaDon_DiaChi");
+
+            entity.HasOne(d => d.User).WithMany(p => p.HoaDons)
+                .HasForeignKey(d => d.UserId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_HoaDon_ApplicationUser");
         });
 
         modelBuilder.Entity<NhanHieu>(entity =>
@@ -116,8 +202,8 @@ public partial class EShoppingContext : DbContext
             entity.Property(e => e.Event).HasMaxLength(50);
             entity.Property(e => e.Name).HasMaxLength(100);
 
-            entity.HasOne(d => d.ApplicationUser).WithMany(p => p.NhatKis)
-                .HasForeignKey(d => d.ApplicationUserId)
+            entity.HasOne(d => d.User).WithMany(p => p.NhatKis)
+                .HasForeignKey(d => d.UserId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_NhatKi_ApplicationUser");
         });
@@ -130,7 +216,7 @@ public partial class EShoppingContext : DbContext
             entity.Property(e => e.ImageURL)
                 .HasMaxLength(500)
                 .IsUnicode(false);
-            entity.Property(e => e.TenGoi).HasMaxLength(50);
+            entity.Property(e => e.Name).HasMaxLength(50);
 
             entity.HasOne(d => d.SanPham).WithMany(p => p.NhomPhanLoai1s)
                 .HasForeignKey(d => d.SanPhamId)
@@ -236,7 +322,7 @@ public partial class EShoppingContext : DbContext
             entity.ToTable("TraLoiBinhLuan");
 
             entity.Property(e => e.Id).ValueGeneratedNever();
-            entity.Property(e => e.NgayTao).HasColumnType("datetime");
+            entity.Property(e => e.DateCreate).HasColumnType("datetime");
 
             entity.HasOne(d => d.BinhLuan).WithMany(p => p.TraLoiBinhLuans)
                 .HasForeignKey(d => d.BinhLuanId)

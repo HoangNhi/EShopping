@@ -4,6 +4,7 @@
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>EShopping - Thương mại điện tử</title>
+        <title>@ViewData["Title"] - EShopping</title>
         <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
         <link rel="stylesheet" href="~/css/style.css" asp-append-version="true" />
         <link href="~/lib/fontawesome/css/fontawesome.css" rel="stylesheet" />
@@ -14,8 +15,8 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/4.0.0/jquery.validate.unobtrusive.js"></script>
         <style>
             * {
-                font-family: Montserrat, sans-serif;
-                color: rgb(35, 49, 75)
+                font-family: Montserrat, sans-serif !important;
+                color: #222831
             }
             .toast:not(.show) {
                 display: block;
@@ -54,7 +55,7 @@
             </div>
         </nav>
 
-        <main id="mainContent" class="w-100 align-content-center" style="min-height: 600px">
+        <main id="mainContent" class="w-100 align-content-center" style="background-color: #EEEEEE;">
             @RenderBody()
         </main>
 

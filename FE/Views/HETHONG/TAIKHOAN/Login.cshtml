@@ -24,7 +24,9 @@
                 showLoading(false)
                 if (response.IsSuccess) {
                     ShowThongBaoThanhCong(response.Message);
-                    window.location.href = "/Home/Index"
+                    setTimeout(function () {
+                        window.location.href = "/Home/Index"
+                    }, 1000);
                 } else {
                     ShowThongBaoThatBai(response.Message)  
                 }
@@ -67,14 +69,46 @@
             width: 500px
         }
     }
-    #ForgotPassword:hover{
+    #ForgotPassword:hover,
+    #LoginWithGoogle:hover,
+    #linkDangKy:hover {
         font-weight: bold;
-        text-decoration: underline!important;
+        color: #222831 !important;
     }
+
+    #LinkToWebsite:hover {
+        color: #08D9D6 !important;
+    }
+
+    .divider {
+        display: flex;
+        align-items: center;
+        text-align: center;
+        margin: 40px 0;
+    }
+
+    .divider::before,
+    .divider::after {
+        content: '';
+        flex: 1;
+        border-bottom: 1px solid #ccc;
+        margin: 0 10px;
+    }
+
+    .divider span {
+        color: #999;
+        font-size: 14px;
+        white-space: nowrap;
+    }
+
+    #btnDangNhap:hover {
+        background-color: #393e46b3!important
+    }
+
 </style>
 
 <div id="modalLoading">
-    <div id="LoginContainer" class="row m-auto" style="height: auto; max-width: 1080px; box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px">
+    <div id="LoginContainer" class="row m-auto" style="height: auto; max-width: 1000px; box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px; border-radius: 20px; overflow: hidden">
         <div id="slider" class="col-lg-6 px-0">
             <div class="swiper">
                 <!-- Additional required wrapper -->
@@ -100,16 +134,24 @@
                 <div class="swiper-pagination" style="color: aliceblue"></div>
             </div>
         </div>
-        <div  class="col-lg-6 align-content-center" style="background-color: white; text-align: -webkit-center;">
-            @using (Html.BeginForm(null, null, FormMethod.Post, new { id = "frmLogin", @class = "", @style= "max-width: 400px" }))
+        <div class="col-lg-6 align-content-center" style="background-color: white; text-align: -webkit-center;">
+            @using (Html.BeginForm(null, null, FormMethod.Post, new { id = "frmLogin", @class = "", @style = "max-width: 400px; margin: 10px", }))
             {
                 <div class="d-flex justify-content-center align-content-center">
-                    <p style="margin: 20px 10px; font-size: 28px; font-weight: bold; ">Đăng nhập</p>
+                    <a href="@Url.Action("Index", "Website")" style="font-size: 28px; font-weight: bold; margin: 32px; text-decoration: none; display: flex; align-items: center; color: #222831">
+                        EShopping
+                    </a>
+                </div>
+
+                <div class="d-flex justify-content-center align-content-center">
+                    <p style="font-size: 16px; font-weight: bold; color: #393e46b3">
+                        Chào mừng bạn đã quay trở lại
+                    </p>
                 </div>
 
                 <!-- Email input -->
                 <div class="mb-3">
-                    <div class="form-floating mb-3">
+                    <div class="form-floating">
                         <input asp-for="@Model.Username" class="form-control" autocomplete="name@example.com" aria-required="true" placeholder="name@example.com" />
                         <label asp-for="@Model.Username" class="form-label">Email</label>
                     </div>
@@ -120,7 +162,7 @@
 
                 <!-- Password input -->
                 <div class="mb-3">
-                    <div class="form-floating mb-3">
+                    <div class="form-floating">
                         <input type="password" asp-for="@Model.Password" class="form-control" autocomplete="current-password" aria-required="true" placeholder="Mật khẩu" />
                         <label asp-for="@Model.Password" class="form-label">Mật khẩu</label>
                         @* <span asp-validation-for="Input.Password" class="text-danger"></span> *@
@@ -131,31 +173,30 @@
                 </div>
 
                 <!-- 2 column grid layout for inline styling -->
-                <div class="row mb-4">
-                    <div class="col d-flex justify-content-center">
-                        <!-- Checkbox -->
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" value="@Model.RememberMe" id="form2Example31" asp-for="RememberMe" />
-                            <label class="form-check-label" for="form2Example31">Ghi nhớ tôi</label>
-                        </div>
-                    </div>
-
-                    <div class="col">
+                <div class="d-flex mb-3" style="flex-direction: row-reverse;">
+                    <div>
                         <!-- Simple link -->
-                        <a id="ForgotPassword" style="color: inherit; text-decoration: none" href="#!">Quên mật khẩu?</a>
+                        <a id="ForgotPassword" style="color: #393e46b3; text-decoration: none " href="#!">Quên mật khẩu?</a>
                     </div>
                 </div>
 
                 <!-- Submit button -->
-                <button type="submit" data-mdb-button-init data-mdb-ripple-init class="btn btn-primary btn-block mb-4">Đăng nhập</button>
+                <button id="btnDangNhap"  type="submit" data-mdb-button-init data-mdb-ripple-init class="btn btn-block m-0 rounded-pill" style="font-weight: 600; width: 180px; background-color: #222831; color: #EEEEEE ">Đăng nhập</button>
 
                 <!-- Register buttons -->
-                <div class="text-center">
-                    <p>Bạn chưa có tài khoản? <a href="@Url.Action("Register", "TaiKhoan")">Đăng ký</a></p>
-                    <p>hoặc đăng nhập với</p>
-                    <button type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-link btn-floating mx-1">
-                        <i class="fab fa-google"></i>
-                    </button>
+
+                <div class="divider" style="width: 180px">
+                    <span>Hoặc</span>
+                </div>
+
+                <div class="text-center" style="margin: 40px 0">
+                    <a id="LoginWithGoogle" href="#" style="color: #222831; text-decoration: none">
+                        <img width="24" height="24" src="https://img.icons8.com/color/48/google-logo.png" alt="google-logo" />
+                        Đăng nhập với google
+                    </a>
+                </div>
+                <div>
+                    <p style="color: #393E46">Bạn chưa có tài khoản? <a id="linkDangKy" href="@Url.Action("Register", "TaiKhoan")" style="color: #222831;">Đăng ký</a></p>
                 </div>
             }
         </div>

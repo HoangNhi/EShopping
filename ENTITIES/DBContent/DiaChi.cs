@@ -5,9 +5,9 @@ namespace ENTITIES.DbContent;
 
 public partial class DiaChi
 {
-    public int Id { get; set; }
+    public Guid Id { get; set; }
 
-    public Guid ApplicationUserId { get; set; }
+    public Guid UserId { get; set; }
 
     public string Name { get; set; } = null!;
 
@@ -19,5 +19,7 @@ public partial class DiaChi
 
     public DateOnly DateCreate { get; set; }
 
-    public virtual ApplicationUser ApplicationUser { get; set; } = null!;
+    public virtual ICollection<HoaDon> HoaDons { get; set; } = new List<HoaDon>();
+
+    public virtual ApplicationUser User { get; set; } = null!;
 }

@@ -1,8 +1,10 @@
-﻿using BE.Helper;
+﻿using BE.Attributes;
+using BE.Helper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MODELS.COMMON;
+using MODELS.HETHONG.ENCRYPTDECRYPT.Reuqests;
 using MODELS.HETHONG.TAIKHOAN.Requests;
 
 namespace BE.Controllers.HETHONG
@@ -17,8 +19,8 @@ namespace BE.Controllers.HETHONG
             _config = config;
         }
         [HttpPost]
-        [AllowAnonymous]
-        public async Task<IActionResult> Encrypt(string request)
+        [CustomAuthorize(Permission.Add)]
+        public async Task<IActionResult> Encrypt(EncryptDecryptRequest request)
         {
             try
             {
@@ -26,7 +28,7 @@ namespace BE.Controllers.HETHONG
                 {
                     return Ok(new ApiResponse(false, StatusCodes.Status400BadRequest, CommonFunc.GetModelStateAPI(ModelState)));
                 }
-                var result = Encrypt_Decrypt.Encrypt(request, _config);
+                var result = Encrypt_Decrypt.Encrypt(request.Request, _config);
 
                 return Ok(new ApiOkResponse(result));
             }
@@ -37,8 +39,8 @@ namespace BE.Controllers.HETHONG
         }
 
         [HttpPost]
-        [AllowAnonymous]
-        public async Task<IActionResult> Decrypt(string request)
+        [CustomAuthorize(Permission.Update)]
+        public async Task<IActionResult> Decrypt(EncryptDecryptRequest request)
         {
             try
             {
@@ -46,7 +48,7 @@ namespace BE.Controllers.HETHONG
                 {
                     return Ok(new ApiResponse(false, StatusCodes.Status400BadRequest, CommonFunc.GetModelStateAPI(ModelState)));
                 }
-                var result = Encrypt_Decrypt.Decrypt(request, _config);
+                var result = Encrypt_Decrypt.Decrypt(request.Request, _config);
 
                 return Ok(new ApiOkResponse(result));
             }

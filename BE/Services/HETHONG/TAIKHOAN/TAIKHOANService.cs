@@ -5,6 +5,8 @@ using ENTITIES.DbContent;
 using MimeKit;
 using MODELS.Base;
 using MODELS.HETHONG.MAIL.Requests;
+using MODELS.HETHONG.PHANQUYEN.Dtos;
+using MODELS.HETHONG.ROLE.Dtos;
 using MODELS.HETHONG.TAIKHOAN.Dtos;
 using MODELS.HETHONG.TAIKHOAN.Requests;
 using static System.Runtime.InteropServices.JavaScript.JSType;
@@ -56,8 +58,14 @@ namespace BE.Services.HETHONG.TAIKHOAN
                         throw new Exception("Tài khoản chưa được xác thực. Vui lòng kiểm tra email để xác thực tài khoản");
                     }
 
-                    var token = Encrypt_Decrypt.GenerateJwtToken(new MODELTaiKhoan { Id = taiKhoan.Id, Username = request.Username }, _config);
                     data = _mapper.Map<MODELTaiKhoan>(taiKhoan);
+                    // Lấy role và phân quyền
+                    var roles = await _context.Roles.FindAsync(data.RoleId);
+                    data.Role = _mapper.Map<MODELRole>(roles);
+                    var phanQuens = _context.PhanQuyens.Where(x => x.RoleId == data.RoleId).ToList();
+                    data.ListPhanQuyen = _mapper.Map<List<MODELPhanQuyen>>(phanQuens);
+
+                    var token = Encrypt_Decrypt.GenerateJwtToken(data, _config);
                     data.Token = token;
 
                     response.Data = data;
@@ -115,7 +123,7 @@ namespace BE.Services.HETHONG.TAIKHOAN
                 var UserIdEncode = Encrypt_Decrypt.Encrypt(UserId.ToString(), _config);
 
                 // Url xác thực
-                string callBackUrl = "https://" + _httpContextAccessor.HttpContext.Request.Host.Value + "/taikhoan/ConfirmEmail?request=" + UserIdEncode;
+                string callBackUrl = _config["FEUrl"] + "/taikhoan/ConfirmEmail?request=" + UserIdEncode;
 
                 // Đường dẫn Template
                 string templateFullPath = Path.Combine(_webHostEnvironment.WebRootPath, @"EmailTemplate\ConfirmEmail.html");

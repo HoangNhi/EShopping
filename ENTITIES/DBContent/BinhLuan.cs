@@ -11,11 +11,11 @@ public partial class BinhLuan
 
     public int UserId { get; set; }
 
-    public double DanhGia { get; set; }
+    public double Rate { get; set; }
 
-    public string? YKien { get; set; }
+    public string? Content { get; set; }
 
-    public DateTime NgayTao { get; set; }
+    public DateTime DateCreate { get; set; }
 
     public virtual SanPham SanPham { get; set; } = null!;
 
