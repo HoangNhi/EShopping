@@ -44,8 +44,7 @@ namespace BE.Helper
                 new Claim(JwtRegisteredClaimNames.Name, taiKhoan.Id.ToString()),
                 new Claim(JwtRegisteredClaimNames.UniqueName, taiKhoan.Username),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                new Claim("role", JsonConvert.SerializeObject(taiKhoan.Role)),
-                new Claim("listphanquyen", JsonConvert.SerializeObject(taiKhoan.ListPhanQuyen))
+                new Claim("ListPhanQuyen", JsonConvert.SerializeObject(taiKhoan.ListPhanQuyen))
             };
 
             var token = new JwtSecurityToken(config["Jwt:Issuer"],

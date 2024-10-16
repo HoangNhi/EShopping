@@ -1,13 +1,9 @@
-﻿using ENTITIES.DbContent;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using Microsoft.EntityFrameworkCore;
 using MODELS.COMMON;
 using MODELS.HETHONG.PHANQUYEN.Dtos;
-using MODELS.HETHONG.ROLE.Dtos;
 using Newtonsoft.Json;
-using System.Diagnostics.CodeAnalysis;
-using System.Security.Policy;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace BE.Attributes
 {
@@ -24,7 +20,7 @@ namespace BE.Attributes
         {
             try
             {
-                var userId = context.HttpContext.User.Claims.FirstOrDefault(c => c.Type == "name")?.Value;
+                var userId = context.HttpContext.User.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Name)?.Value;
 
                 if (string.IsNullOrEmpty(userId))
                 {
@@ -36,8 +32,8 @@ namespace BE.Attributes
                 var controllerName = context.ActionDescriptor.RouteValues["controller"];
 
                 // Lấy ListPhanQuyen từ context
-                var ListPhanQuyen = context.HttpContext.User.Claims.FirstOrDefault(c => c.Type == "listphanquyen");
-                if(ListPhanQuyen == null)
+                var ListPhanQuyen = context.HttpContext.User.Claims.FirstOrDefault(c => c.Type == "ListPhanQuyen");
+                if (ListPhanQuyen == null)
                 {
                     throw new Exception("Không có quyền truy cập");
                 }
@@ -50,11 +46,11 @@ namespace BE.Attributes
                     context.Result = new ForbidResult();
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 context.Result = new UnauthorizedResult();
             }
-            
+
         }
 
         private bool CheckPermission(MODELPhanQuyen roleGroup, Permission permission)

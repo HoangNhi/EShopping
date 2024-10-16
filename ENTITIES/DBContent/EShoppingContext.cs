@@ -33,6 +33,8 @@ public partial class EShoppingContext : DbContext
 
     public virtual DbSet<NhomPhanLoai2> NhomPhanLoai2s { get; set; }
 
+    public virtual DbSet<PHANQUYEN_NHOMQUYEN> PHANQUYEN_NHOMQUYENs { get; set; }
+
     public virtual DbSet<PhanQuyen> PhanQuyens { get; set; }
 
     public virtual DbSet<Role> Roles { get; set; }
@@ -235,6 +237,18 @@ public partial class EShoppingContext : DbContext
                 .HasForeignKey(d => d.NhomPhanLoai1Id)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_NhomPhanLoai2_NhomPhanLoai1");
+        });
+
+        modelBuilder.Entity<PHANQUYEN_NHOMQUYEN>(entity =>
+        {
+            entity
+                .HasNoKey()
+                .ToTable("PHANQUYEN_NHOMQUYEN");
+
+            entity.Property(e => e.Icon)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.TenGoi).HasMaxLength(256);
         });
 
         modelBuilder.Entity<PhanQuyen>(entity =>
