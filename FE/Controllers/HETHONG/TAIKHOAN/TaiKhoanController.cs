@@ -77,22 +77,22 @@ namespace FE.Controllers.HETHONG.TAIKHOAN
                     if (response.Status)
                     {
                         var taikhoanData = JsonConvert.DeserializeObject<MODELTaiKhoan>(response.Data.ToString());
-
                         var claims = new List<Claim>();
 
-                        claims.Add(new Claim(ClaimTypes.Name, taikhoanData.Username));
+                        claims.Add(new Claim("Id", taikhoanData.Id.ToString()));
+                        claims.Add(new Claim("Name", taikhoanData.Username));
+                        claims.Add(new Claim("FullName", taikhoanData.Fullname));
+                        claims.Add(new Claim("Email", taikhoanData.Email));
+                        claims.Add(new Claim("ListPhanQuyen", JsonConvert.SerializeObject(taikhoanData.ListPhanQuyen)));
+                        claims.Add(new Claim("Role", JsonConvert.SerializeObject(taikhoanData.Role)));
+                        claims.Add(new Claim("Token", taikhoanData.Token));
 
+                        // Create the identity from the user info
                         var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                        // Create the principal
                         var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
-
-                        await HttpContext.SignInAsync(claimsPrincipal,
-                            new AuthenticationProperties
-                            {
-                                // Lưu cookie 
-                                IsPersistent = request.RememberMe,
-                            }
-                        );
-
+                        // Save token in cookie
+                        await HttpContext.SignInAsync(claimsPrincipal);
 
                         return Json(new { IsSuccess = true, Message = "Đăng nhập thành công", Data = "" });
                     }
