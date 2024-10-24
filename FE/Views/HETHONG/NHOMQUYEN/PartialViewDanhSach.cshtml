@@ -1,0 +1,64 @@
+﻿@using MODELS.HETHONG.NHOMQUYEN.Dtos;
+@using MODELS.BASE;
+@model GetListPagingResponse
+@{ 
+    int i = 1;
+    int k = Model.TotalRow % 10 == 0 ? 0 : 1;
+}
+
+<table class="table table-hover" style="border: 2px solid #000">
+    <thead>
+        <tr>
+            <th scope="col">STT</th>
+            <th class="text-center" width="300" scope="col">Tên gọi</th>
+            <th class="text-center" scope="col">Icon</th>
+            <th class="text-center" scope="col">Ngày cập nhật</th>
+        </tr>
+    </thead>
+    <tbody class="table-group-divider" style="border-top-color: black; border-top: 2px">
+        @foreach (var item in (List<MODELNhomQuyen>)Model.Data)
+        {
+            <tr>
+                <th class="align-content-center" scope="row">@i</th>
+                <td class="align-content-center">@item.TenGoi</td>
+                <td class="text-center align-content-center">@item.Icon</td>
+                <td class="text-center align-content-center">@item.DateCreate.ToString()</td>
+                <td class="text-center align-content-center">
+                    @if (item.Status == 1)
+                    {
+                        <p>Đang hoạt động</p>
+                    }
+                    else
+                    {
+                        <p>Không hoạt động</p>
+                    }
+                </td>
+            </tr>
+            i++;
+        }
+        <tr>
+            <td colspan="5" class="">
+                <nav aria-label="Page navigation example">
+                    <ul class="pagination justify-content-center">
+                        <li class="page-item">
+                            <a class="page-link" href="#">
+                                <i class="fa-solid fa-chevron-left"></i>
+                            </a>
+                        </li>
+                        @for (int j = 1; j <= Model.TotalRow / 10 + k; j++)
+                        {
+                            <li class="page-item">
+                                <button class="page-link" onclick="GetListPaging(@j)">@j</button>
+                            </li>
+                        }
+                        <li class="page-item">
+                            <a class="page-link" href="#">
+                                <i class="fa-solid fa-chevron-right"></i>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </td>
+        </tr>
+    </tbody>
+</table>
