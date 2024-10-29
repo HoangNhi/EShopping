@@ -6,40 +6,57 @@
     int k = Model.TotalRow % 10 == 0 ? 0 : 1;
 }
 
-<table class="table table-hover" style="border: 2px solid #000">
+<table class="table table-hover" style="margin: 0; background-color: white;">
     <thead>
         <tr>
-            <th scope="col">STT</th>
-            <th class="text-center" width="300" scope="col">Tên gọi</th>
-            <th class="text-center" scope="col">Icon</th>
-            <th class="text-center" scope="col">Ngày cập nhật</th>
+            <th width="10" style="justify-items: center">
+                <div class="d-flex align-items-center" style="width: 15px; height: 15px">
+                    <label class="containerCheckbox">
+                        <input type="checkbox">
+                        <span class="checkmark rounded"></span>
+                    </label>
+                </div>
+            </th>
+            <th class="fw-bold text-center" width="10" scope="col">STT</th>
+            <th class="fw-bold" width="120" scope="col">Tên gọi</th>
+            <th class="fw-bold" width="120" scope="col">Icon</th>
+            <th class="fw-bold text-center" width="120" scope="col">Ngày cập nhật</th>
+            <th class="fw-bold text-center" width="120" scope="col">Trạng thái</th>
         </tr>
     </thead>
-    <tbody class="table-group-divider" style="border-top-color: black; border-top: 2px">
+    <tbody class="table-group-divider">
         @foreach (var item in (List<MODELNhomQuyen>)Model.Data)
         {
-            <tr>
-                <th class="align-content-center" scope="row">@i</th>
+            <tr id="@item.Id">
+                <th style="justify-items: center">
+                    <div class="d-flex align-items-center" style="width: 15px; height: 15px">
+                        <label class="containerCheckbox">
+                            <input type="checkbox" onclick="SelectRow('@item.Id')">
+                            <span class="checkmark rounded"></span>
+                        </label>
+                    </div>
+                </th>
+                <th class="align-content-center text-center" scope="row">@i</th>
                 <td class="align-content-center">@item.TenGoi</td>
-                <td class="text-center align-content-center">@item.Icon</td>
-                <td class="text-center align-content-center">@item.DateCreate.ToString()</td>
-                <td class="text-center align-content-center">
+                <td class="align-content-center">@item.Icon</td>
+                <td class="align-content-center text-center">@item.DateCreate.ToString()</td>
+                <td class="align-content-center text-center">
                     @if (item.Status == 1)
                     {
-                        <p>Đang hoạt động</p>
+                        <p class="m-0" style="color: rgba(13, 110, 253) ">Đang hoạt động</p>
                     }
                     else
                     {
-                        <p>Không hoạt động</p>
+                        <p class="m-0 text-danger">Không hoạt động</p>
                     }
                 </td>
             </tr>
             i++;
         }
         <tr>
-            <td colspan="5" class="">
+            <td colspan="6" class="">
                 <nav aria-label="Page navigation example">
-                    <ul class="pagination justify-content-center">
+                    <ul class="pagination justify-content-center m-0">
                         <li class="page-item">
                             <a class="page-link" href="#">
                                 <i class="fa-solid fa-chevron-left"></i>
@@ -62,3 +79,4 @@
         </tr>
     </tbody>
 </table>
+

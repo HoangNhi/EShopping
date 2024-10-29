@@ -1,0 +1,316 @@
+﻿html, body {
+    font-family: "Montserrat", sans-serif;
+}
+
+.pageContentCustom {
+    background-color: white;
+    padding: 20px;
+    border-radius: 20px;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+}
+
+.table.table-hover > tbody > tr > td {
+    color: black;
+    font-weight: 500;
+}
+
+.table thead th i {
+    margin-left: 0;
+}
+
+.btn-outline-primary:hover, .btn-outline-primary:focus, .btn-outline-primary:active {
+    background: none;
+    color: #fff;
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+}
+
+button.accordion-button {
+    font-family: "Montserrat", sans-serif;
+    font-weight: 600
+}
+
+tr {
+    height: 50px;
+    min-height: 50px;
+}
+
+.table-active,
+.table-active > *
+{
+    background-color: #3F72AF;
+    color: #F9F7F7 !important;
+}
+
+.table-active > * > *{
+    color: #F9F7F7 !important;
+}
+
+.containerCheckbox {
+    display: block;
+    position: relative;
+    padding-left: 35px;
+    margin-bottom: 12px;
+    cursor: pointer;
+    font-size: 22px;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+/* Hide the browser's default checkbox */
+.containerCheckbox input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+}
+
+/* Create a custom checkbox */
+.checkmark {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 15px;
+    width: 15px;
+    border: 1px solid;
+}
+
+/* On mouse-over, add a grey background color */
+.containerCheckbox:hover input ~ .checkmark {
+    border-color: #112D4E
+}
+
+/* When the checkbox is checked, add a blue background */
+.containerCheckbox input:checked ~ .checkmark {
+    color: #2196F3;
+    background-color: white;
+    border-color: #112D4E
+}
+
+/* Create the checkmark/indicator (hidden when not checked) */
+.checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+}
+
+/* Show the checkmark when checked */
+.containerCheckbox input:checked ~ .checkmark:after {
+    display: block;
+}
+
+/* Style the checkmark/indicator */
+.containerCheckbox .checkmark:after {
+    left: 5px;
+    top: 1px;
+    width: 5px;
+    height: 10px;
+    border: solid #3F72AF;
+    border-width: 0 3px 3px 0;
+    -webkit-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    transform: rotate(45deg);
+}
+
+select.form-control {
+    display: block;
+    width: 100%;
+    padding: .375rem .75rem;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: #212529;
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid #ced4da;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    border-radius: .25rem;
+    transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+    font-family: "Montserrat", sans-serif;
+}
+
+.btn-check:active + .btn-primary, 
+.btn-check:checked + .btn-primary, 
+.btn-primary.active, .btn-primary:active, .show > .btn-primary.dropdown-toggle
+.btn-primary:not(.btn-light):focus, .btn-primary:not(.btn-light):active,
+.btn-primary:not(.btn-light):focus, .btn-primary:not(.btn-light):active {
+    color: #fff;
+    background-color: #0a58ca;
+    border-color: #0a53be;
+}
+
+.toast:not(.show) {
+    display: block;
+}
+
+/* Thông báo */
+#ThongBao-container {
+    position: fixed;
+    bottom: 1.5rem;
+    right: 1.5rem;
+    z-index: 8888;
+    display: block;
+    width: auto;
+}
+
+/* TOASTS */
+@keyframes toastDuration {
+    from {
+        width: 0%;
+    }
+
+    to {
+        Width: 100%;
+    }
+}
+
+.toast {
+    display: block;
+    width: 300px;
+    min-height: 3.75rem;
+    margin-bottom: 1rem;
+    border-radius: 5px;
+    box-shadow: 0 3px 15px rgba(0, 0, 0, 0.2078431373);
+    ;
+    background-color: hsl(240, 5%, 95%);
+    overflow: hidden;
+    --color-status: hsl(240, 5%, 40%);
+}
+
+.toast-status-icon {
+    display: block;
+    float: left;
+    height: 3.75rem;
+    width: 3rem;
+    padding: 1rem 0 1rem 0.5rem;
+}
+
+.toast-content {
+    display: block;
+    float: left;
+    width: calc(100% - 5.75rem);
+    padding: 0.75rem 1rem 0.75rem 0.5rem;
+    line-height: 1.25;
+    span
+
+{
+    font-size: 18px;
+    font-weight: 700;
+    color: hsl(240, 5%, 40%);
+    line-height: inherit;
+}
+
+p {
+    font-size: 14px;
+    color: hsl(240, 5%, 20%);
+    line-height: inherit;
+    margin-top: 1px;
+}
+
+}
+
+.toast-close {
+    display: block;
+    float: right;
+    clear: right;
+    width: 2.25rem;
+    height: 2.25rem;
+    margin-top: 0.25rem;
+    margin-right: 0.5rem;
+    padding: 0.5rem;
+    background: transparent;
+    background-color: transparent;
+    border-color: #00000000;
+    cursor: pointer;
+    i
+
+{
+    display: block;
+    width: 100%;
+    height: 100%;
+    margin-right: 0;
+    margin-left: 0;
+    transform: none;
+}
+
+}
+
+.toast-duration {
+    position: relative;
+    display: block;
+    float: none;
+    clear: both;
+    height: 3px;
+    width: 100%;
+    background-color: hsl(120, 70%, 80%);
+}
+
+    .toast-duration::after {
+        display: block;
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 0%;
+        height: inherit;
+        background-color: hsl(240, 5%, 50%);
+        animation-name: toastDuration;
+        animation-duration: 10s;
+        animation-timing-function: linear;
+    }
+
+.success {
+    background: hsl(120, 70%, 95%);
+    .toast-close i::before
+
+{
+    color: hsl(120, 70%, 40%);
+}
+
+span {
+    color: hsl(120, 70%, 40%);
+}
+
+p {
+    color: hsl(120, 70%, 30%);
+}
+
+.toast-duration {
+    background-color: hsl(120, 70%, 80%);
+}
+
+    .toast-duration::after {
+        background-color: hsl(120, 70%, 40%);
+    }
+
+}
+
+.error {
+    background: hsl(5, 85%, 95%);
+    .toast-close i::before
+
+{
+    color: hsl(5, 85%, 50%);
+}
+
+span {
+    color: hsl(5, 85%, 50%);
+}
+
+p {
+    color: hsl(5, 85%, 30%);
+}
+
+.toast-duration {
+    background-color: hsl(5, 85%, 80%)
+}
+
+    .toast-duration::after {
+        background-color: hsl(5, 85%, 50%);
+    }
+}
