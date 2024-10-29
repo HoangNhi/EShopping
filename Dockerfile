@@ -13,7 +13,6 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["FE/FE.csproj", "FE/"]
-COPY ["ENTITIES/ENTITIES.csproj", "ENTITIES/"]
 COPY ["MODELS/MODELS.csproj", "MODELS/"]
 RUN dotnet restore "./FE/FE.csproj"
 COPY . .
@@ -29,4 +28,5 @@ RUN dotnet publish "./FE.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseA
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-CMD ASPNETCORE_URLS=http://*:$PORT dotnet FE.dll
+ENTRYPOINT ["dotnet", "FE.dll"]
+#CMD ASPNETCORE_URLS=http://*:$PORT dotnet FE.dll
