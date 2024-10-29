@@ -42,4 +42,4 @@ jobs:
         run: git commit -m "Auto-merged master into fe, ignoring config files"
 
       - name: Push changes to fe branch
-        run: git push origin fe
+        run: git push origin remotes/origin/FE
