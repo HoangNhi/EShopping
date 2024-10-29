@@ -13,5 +13,7 @@ public partial class NhomPhanLoai2
 
     public int Price { get; set; }
 
+    public virtual ICollection<ChiTietDonHang> ChiTietDonHangs { get; set; } = new List<ChiTietDonHang>();
+
     public virtual NhomPhanLoai1 NhomPhanLoai1 { get; set; } = null!;
 }

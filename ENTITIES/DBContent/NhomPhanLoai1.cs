@@ -9,9 +9,11 @@ public partial class NhomPhanLoai1
 
     public Guid SanPhamId { get; set; }
 
-    public string TenGoi { get; set; } = null!;
+    public string Name { get; set; } = null!;
 
     public string? ImageURL { get; set; }
+
+    public virtual ICollection<ChiTietDonHang> ChiTietDonHangs { get; set; } = new List<ChiTietDonHang>();
 
     public virtual ICollection<NhomPhanLoai2> NhomPhanLoai2s { get; set; } = new List<NhomPhanLoai2>();
 

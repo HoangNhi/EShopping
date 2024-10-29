@@ -15,7 +15,7 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
     options.LoginPath = "/TaiKhoan/Index";
 });
 
-builder.Services.AddAntiforgery(o => o.SuppressXFrameOptionsHeader = true);
+builder.Services.AddHttpContextAccessor();
 
 var app = builder.Build();
 

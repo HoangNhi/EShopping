@@ -2,6 +2,7 @@
 using Microsoft.IdentityModel.Tokens;
 using MODELS.COMMON;
 using MODELS.HETHONG.TAIKHOAN.Dtos;
+using Newtonsoft.Json;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
@@ -42,7 +43,8 @@ namespace BE.Helper
             var claims = new[] {
                 new Claim(JwtRegisteredClaimNames.Name, taiKhoan.Id.ToString()),
                 new Claim(JwtRegisteredClaimNames.UniqueName, taiKhoan.Username),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                new Claim("ListPhanQuyen", JsonConvert.SerializeObject(taiKhoan.ListPhanQuyen))
             };
 
             var token = new JwtSecurityToken(config["Jwt:Issuer"],

@@ -3,7 +3,6 @@ using FE.MODELS;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 using MODELS.Base;
 using MODELS.COMMON;
@@ -34,6 +33,37 @@ namespace FE.Controllers.HETHONG.TAIKHOAN
             return View("~/Views/HETHONG/TAIKHOAN/Register.cshtml", new PostRegisterRequest());
         }
 
+        public IActionResult ConfirmEmail(string request)
+        {
+            try
+            {
+                if (request != null)
+                {
+                    ResponseData response;
+                    response = this.ExcuteAPIWithoutToken(URL_API.TAIKHOAN_CONFIRM_EMAIL + "?request=" + request, request, HttpAction.Get);
+                    if (response.Status)
+                    {
+                        ViewBag.IsSuccess = true;
+                        return View("~/Views/HETHONG/TAIKHOAN/ConfirmEmail.cshtml");
+                    }
+                    else
+                    {
+                        throw new Exception(response.Message);
+                    }
+                }
+                else
+                {
+                    throw new Exception("Xác thực không thành công");
+                }
+            }
+            catch (Exception ex)
+            {
+                ViewBag.IsSuccess = false;
+                ViewBag.Message = "Lỗi xác thực: " + ex.Message;
+                return View("~/Views/HETHONG/TAIKHOAN/ConfirmEmail.cshtml");
+            }
+        }
+
         [HttpPost]
         [AllowAnonymous]
         public async Task<IActionResult> Login([FromForm] PostLoginRequest request)
@@ -43,26 +73,26 @@ namespace FE.Controllers.HETHONG.TAIKHOAN
             {
                 if (request != null && ModelState.IsValid)
                 {
-                    ResponseData response = this.LoginAPI(URL_API.TAIKHOAN_LOGIN, request);
+                    ResponseData response = this.ExcuteAPIWithoutToken(URL_API.TAIKHOAN_LOGIN, request, HttpAction.Post);
                     if (response.Status)
                     {
                         var taikhoanData = JsonConvert.DeserializeObject<MODELTaiKhoan>(response.Data.ToString());
-
                         var claims = new List<Claim>();
 
-                        claims.Add(new Claim(ClaimTypes.Name, taikhoanData.Username));
+                        claims.Add(new Claim("Id", taikhoanData.Id.ToString()));
+                        claims.Add(new Claim("Name", taikhoanData.Username));
+                        claims.Add(new Claim("FullName", taikhoanData.Fullname));
+                        claims.Add(new Claim("Email", taikhoanData.Email));
+                        claims.Add(new Claim("ListPhanQuyen", JsonConvert.SerializeObject(taikhoanData.ListPhanQuyen)));
+                        claims.Add(new Claim("Role", JsonConvert.SerializeObject(taikhoanData.Role)));
+                        claims.Add(new Claim("Token", taikhoanData.Token));
 
+                        // Create the identity from the user info
                         var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                        // Create the principal
                         var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
-
-                        await HttpContext.SignInAsync(claimsPrincipal, 
-                            new AuthenticationProperties 
-                            {
-                                // Lưu cookie 
-                                IsPersistent = request.RememberMe,
-                            }
-                        );
-
+                        // Save token in cookie
+                        await HttpContext.SignInAsync(claimsPrincipal);
 
                         return Json(new { IsSuccess = true, Message = "Đăng nhập thành công", Data = "" });
                     }
@@ -96,23 +126,21 @@ namespace FE.Controllers.HETHONG.TAIKHOAN
                         throw new Exception("Email chưa đúng định dạng");
                     }
 
-                    if (param.Fullname == "" || param.PhoneNumber == "" || param.Email == "" || param.Password == "" || param.RePassword == "")
+                    if (param.Fullname == "" || param.Email == "" || param.Password == "" || param.RePassword == "")
                     {
                         throw new Exception("Vui lòng nhập đầy đủ thông tin đăng nhập");
                     }
 
                     if (param.Password != param.RePassword)
                     {
-                        throw new Exception("Nhập lại mật khẩu không đúng");
+                        throw new Exception("Xác nhận mật khẩu không đúng");
                     }
 
                     ResponseData response;
-                    // Tên đăng nhập mặc định là email
-                    param.Username = param.Email;
-                    response = this.LoginAPI(URL_API.TAIKHOAN_REGISTER, param);
+                    response = this.ExcuteAPIWithoutToken(URL_API.TAIKHOAN_REGISTER, param, HttpAction.Post);
                     if (response.Status)
                     {
-                        throw new Exception("Đăng ký tài khoản thành công");
+                        return Json(new { IsSuccess = true, Message = "Đăng ký thành công", Data = "" });
                     }
                     else
                     {
@@ -126,18 +154,8 @@ namespace FE.Controllers.HETHONG.TAIKHOAN
             }
             catch (Exception ex)
             {
-                if (ex.Message == "Đăng ký tài khoản thành công")
-                {
-                    ViewBag.RegisterIsError = false;
-                    ViewBag.RegisterIsSuccess = true;
-                }
-                else
-                {
-                    ViewBag.RegisterIsSuccess = false;
-                    ViewBag.RegisterIsError = true;
-                }
-                ViewBag.Message = ex.Message;
-                return View("~/Views/Account/Register.cshtml", param);
+                string message = "Lỗi đăng ký: " + ex.Message;
+                return Json(new { IsSuccess = false, Message = message, Data = "" });
             }
         }
 
@@ -149,7 +167,7 @@ namespace FE.Controllers.HETHONG.TAIKHOAN
         }
 
         // Function
-        private ResponseData LoginAPI(string action, object model)
+        private ResponseData ExcuteAPIWithoutToken(string action, object model, HttpAction method)
         {
             ResponseData response = new ResponseData();
             try
@@ -159,7 +177,27 @@ namespace FE.Controllers.HETHONG.TAIKHOAN
                     client.BaseAddress = new Uri(GetBEUrl());
                     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                     client.DefaultRequestHeaders.Accept.Clear();
-                    var responseTask = client.PostAsJsonAsync(action, model);
+
+                    Task<HttpResponseMessage> responseTask;
+                    switch (method)
+                    {
+                        case HttpAction.Get:
+                            responseTask = client.GetAsync(action);
+                            break;
+                        case HttpAction.Post:
+                            responseTask = client.PostAsJsonAsync(action, model);
+                            break;
+                        case HttpAction.Put:
+                            responseTask = client.PutAsJsonAsync(action, model);
+                            break;
+                        case HttpAction.Delete:
+                            responseTask = client.DeleteAsync(action);
+                            break;
+                        default:
+                            responseTask = client.PostAsJsonAsync(action, model);
+                            break;
+                    }
+
                     responseTask.Wait();
                     response = ExecuteAPIResponse(responseTask);
                 }
@@ -181,13 +219,6 @@ namespace FE.Controllers.HETHONG.TAIKHOAN
 
             //To store result of web api response.   
             var result = responseTask.Result;
-
-            //CHECK 401
-            //if (result.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-            //{
-            //    HttpContext.SignOutAsync().Wait();
-            //    RedirectToAction("Index", "Login").ExecuteResultAsync(this.ControllerContext).Wait();
-            //}
 
             if (result.IsSuccessStatusCode)
             {

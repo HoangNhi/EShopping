@@ -15,7 +15,7 @@ public partial class NhatKi
 
     public int TargetId { get; set; }
 
-    public Guid ApplicationUserId { get; set; }
+    public Guid UserId { get; set; }
 
-    public virtual ApplicationUser ApplicationUser { get; set; } = null!;
+    public virtual ApplicationUser User { get; set; } = null!;
 }
