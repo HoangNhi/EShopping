@@ -123,3 +123,6 @@ function showLoadingElement(value, id) {
         $('#' + id).unblock();
     }
 }
+
+const updateSuccess = "Cập nhật dữ liệu thành công"
+const addSuccess = "Thêm dữ liệu thành công"

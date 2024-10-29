@@ -1,0 +1,125 @@
+﻿@model MODELS.HETHONG.NHOMQUYEN.Requests.NhomQuyenRequest
+
+<script>
+    $(document).ready(function () {
+        $("#frmNhomQuyen").submit(async function (event) {
+            event.preventDefault();
+            if ($("#frmNhomQuyen").valid()) {
+                luuThongTin();
+            }
+        });
+
+        $("#btnLuuTiep").click(function (event) {
+            event.preventDefault();
+            if ($("#frmNhomQuyen").valid()) { //Nhập hợp lệ
+                luuThongTin(true);
+            }
+        })
+
+    });
+
+    function luuThongTin(isThemTiep = false) {
+        var data = $("#frmNhomQuyen").serialize();
+        showLoading(true)
+        $.ajax({
+            url: "@Url.Action("Post", "NhomQuyen")",
+            type: "POST",
+            data: data,
+            success: function (response) {
+                showLoading(false)
+                if (response.IsSuccess) {
+                    if (response.Data) {
+                        ShowThongBaoThanhCong(updateSuccess);
+                        closePopup();
+                    } else {
+                        ShowThongBaoThanhCong(addSuccess);
+                        if (isThemTiep) {
+                            themThongTin()
+                        } else {
+                            closePopup();
+                        }
+                    }
+                } else {
+                    ShowThongBaoThatBai(response.Message)
+                }
+            },
+            error: function (xhr, error) {
+                ShowThongBaoThatBai(response.Message)
+            }
+        })
+    }
+
+    function closePopup() {
+        $('#modal-default').modal('hide');
+    }
+</script>
+
+<div class="card modal-content" id="modalLoading" style="">
+    @using (Html.BeginForm(null, null, FormMethod.Post, new { id = "frmNhomQuyen" }))
+    {
+        @Html.HiddenFor(model => model.Id)
+        @Html.HiddenFor(model => model.IsEdit)
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <div class="modal-title">
+                @if (Model.IsEdit == true)
+                {
+                    <p class="fw-bold m-0">Cập nhật Nhóm quyền</p>
+                }
+                else
+                {
+                    <p class="fw-bold m-0">Thêm mới Nhóm quyền</p>
+                }
+            </div>
+            <button type="button" onclick="closePopup()" class="btn p-0">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+        <div class="modal-body d-flex flex-column justify-content-evenly">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="row align-items-center">
+                        <p class="col-md-4 m-0" style="font-weight: 600">Tên gọi <span style="color: red">*</span></p>
+                        <div class="col-md-8">
+                            <input asp-for="@Model.TenGoi" type="text" class="form-control" value="@Model.TenGoi"/>
+                            @Html.ValidationMessageFor(m => m.TenGoi, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="row align-items-center">
+                        <p class="col-md-4 m-0" style="font-weight: 600">Icon</p>
+                        <div class="col-md-8">
+                            <input asp-for="@Model.Icon" type="text" class="form-control" value="@Model.Icon" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-md-6">
+                    <div class="row align-items-center">
+                        <p class="col-md-4 m-0" style="font-weight: 600">Trạng thái <span style="color: red">*</span></p>
+                        <div class="col-md-8">
+                            <select asp-for="@Model.Status" class="form-control" aria-label="Default select example">
+                                <option value="1">Đang hoạt động</option>
+                                <option value="0">Không hoạt động</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-footer d-flex justify-content-end">
+            <button type="submit"  class="btn btn-primary ms-2">
+                Lưu
+            </button>
+            <button id="btnLuuTiep" type="button" class="btn btn-primary ms-2">
+                Lưu và thêm
+            </button>
+            <button onclick="closePopup()" type="button" class="btn btn-secondary mx-2">
+                Hủy
+            </button>
+        </div>
+    }
+</div>
+

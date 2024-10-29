@@ -1425,19 +1425,19 @@ p {
     background-color: hsl(120, 70%, 80%);
 }
 
-.toast-duration::after {
-    display: block;
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 0%;
-    height: inherit;
-    background-color: hsl(240, 5%, 50%);
-    animation-name: toastDuration;
-    animation-duration: 10s;
-    animation-timing-function: linear;
-}
+    .toast-duration::after {
+        display: block;
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 0%;
+        height: inherit;
+        background-color: hsl(240, 5%, 50%);
+        animation-name: toastDuration;
+        animation-duration: 10s;
+        animation-timing-function: linear;
+    }
 
 .success {
     background: hsl(120, 70%, 95%);
