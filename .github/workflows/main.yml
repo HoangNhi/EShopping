@@ -24,7 +24,7 @@ jobs:
         run: git fetch --all
 
       - name: Switch to fe branch
-        run: git checkout fe
+        run: git checkout FE
 
       - name: Merge master into fe without committing
         run: git merge --no-commit origin/master
