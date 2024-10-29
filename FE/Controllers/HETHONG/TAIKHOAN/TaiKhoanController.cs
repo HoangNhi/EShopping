@@ -92,7 +92,11 @@ namespace FE.Controllers.HETHONG.TAIKHOAN
                         // Create the principal
                         var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
                         // Save token in cookie
-                        await HttpContext.SignInAsync(claimsPrincipal);
+                        await HttpContext.SignInAsync(claimsPrincipal, new AuthenticationProperties
+                        {
+                            IsPersistent = true, // Giữ cookie sau khi trình duyệt đóng
+                            ExpiresUtc = DateTimeOffset.UtcNow.AddDays(CommonConst.ExpireTime) // Hạn sử dụng là 7 ngày
+                        });
 
                         return Json(new { IsSuccess = true, Message = "Đăng nhập thành công", Data = "" });
                     }
