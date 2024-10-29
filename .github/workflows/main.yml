@@ -23,6 +23,9 @@ jobs:
       - name: Fetch all branches
         run: git fetch --all
 
+      - name: List all branches
+        run: git branch -a
+        
       - name: Switch to fe branch
         run: git checkout FE
 
