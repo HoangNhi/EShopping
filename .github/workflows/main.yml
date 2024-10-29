@@ -27,7 +27,7 @@ jobs:
         run: git branch -a
         
       - name: Switch to fe branch
-        run: git checkout FE
+        run: git checkout remotes/origin/FE
 
       - name: Merge master into fe without committing
         run: git merge --no-commit origin/master
