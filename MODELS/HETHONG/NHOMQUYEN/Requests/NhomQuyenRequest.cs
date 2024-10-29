@@ -13,7 +13,7 @@ namespace MODELS.HETHONG.NHOMQUYEN.Requests
         public Guid Id { get; set; }
 
         [Required(AllowEmptyStrings = false, ErrorMessage = "Tên gọi không được để trống")]
-        public string TenGoi { get; set; } = null!;
+        public string? TenGoi { get; set; }
 
         public string? Icon { get; set; }
 
