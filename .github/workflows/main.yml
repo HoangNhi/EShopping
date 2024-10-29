@@ -1,0 +1,42 @@
+name: Auto Merge Master to FE
+
+on:
+  push:
+    branches:
+      - master  # Kích hoạt workflow khi có thay đổi trên nhánh master
+
+jobs:
+  auto-merge:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # Lấy đầy đủ lịch sử commit để thực hiện merge
+
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Fetch all branches
+        run: git fetch origin
+
+      - name: Switch to fe branch
+        run: git checkout fe
+
+      - name: Merge master into fe without committing
+        run: git merge --no-commit origin/master
+
+      - name: Restore specific config files to keep FE version
+        run: |
+          git restore --source=HEAD --staged Dockerfile
+          # Thêm các file khác nếu cần, ví dụ:
+          # git restore --source=HEAD --staged path/to/another_config_file
+
+      - name: Commit the merge
+        run: git commit -m "Auto-merged master into fe, ignoring config files"
+
+      - name: Push changes to fe branch
+        run: git push origin fe
