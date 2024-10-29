@@ -61,7 +61,7 @@ namespace FE.Controllers.HETHONG.NHOMQUYEN
                     obj = JsonConvert.DeserializeObject<NhomQuyenRequest>(response.Data.ToString());
                 }
 
-                return PartialView("~/Views/HeThong/NhomQuyen/PartialViewDanhSach.cshtml", obj);
+                return PartialView("~/Views/HeThong/NhomQuyen/PopupDetail.cshtml", obj);
             }
             catch (Exception ex)
             {
@@ -113,14 +113,14 @@ namespace FE.Controllers.HETHONG.NHOMQUYEN
 
                     if (!response.Status)
                     {
-                        return Json(new { IsSuccess = false, Message = response.Message, Data = "" });
+                        return Json(new { IsSuccess = false, Message = response.Message, Data = ""});
                     }
                 }
                 else
                 {
                     return Json(new { IsSuccess = false, Message = CommonFunc.GetModelState(this.ModelState), Data = "" });
                 }
-                return Json(new { IsSuccess = true, Message = "", Data = "" });
+                return Json(new { IsSuccess = true, Message = "", Data = request.IsEdit });
             }
             catch (Exception ex)
             {
