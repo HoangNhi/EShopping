@@ -126,7 +126,7 @@ namespace BE.Services.HETHONG.TAIKHOAN
                 string callBackUrl = _config["FEUrl"] + "/taikhoan/ConfirmEmail?request=" + UserIdEncode;
 
                 // Đường dẫn Template
-                string templateFullPath = Path.Combine(_webHostEnvironment.WebRootPath, @"EmailTemplate\ConfirmEmail.html");
+                string templateFullPath = Path.Combine(_webHostEnvironment.WebRootPath, @"EmailTemplate//ConfirmEmail.html");
                 var builder = new BodyBuilder();
                 using (StreamReader SourceReader = System.IO.File.OpenText(templateFullPath))
                 {

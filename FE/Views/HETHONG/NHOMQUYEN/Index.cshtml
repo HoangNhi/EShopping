@@ -1,0 +1,85 @@
+﻿@{
+    Layout = "~/Views/Shared/Admin/_Layout.cshtml";
+}
+
+<div class="page-header" style="justify-content: flex-start!important;">
+    <h3 class="page-title">
+        <span class="page-title-icon bg-gradient-primary text-white me-2">
+            <i class="mdi mdi-home"></i>
+        </span> Hệ thống
+    </h3>
+    <nav style="--bs-breadcrumb-divider: url(&#34;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z' fill='%236c757d'/%3E%3C/svg%3E&#34;);" aria-label="breadcrumb">
+        <ol class="breadcrumb" style="padding: 0">
+            <li class="breadcrumb-item"></li>
+            <li class="breadcrumb-item active" aria-current="page">Nhóm quyền</li>
+        </ol>
+    </nav>
+</div>
+
+<div class="page-content pageContentCustom">
+    <div class="row">
+        <div class="col-md-9" style="margin-top:auto">
+            <h4 class="card-title card-title-grid">
+                Danh sách Nhóm quyền
+            </h4>
+        </div>
+        <div class="col-md-3"></div>
+    </div>
+
+    <div class="accordion" id="LocDanhSach">
+        <div class="accordion-item">
+            <h2 class="accordion-header">
+                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                    Lọc danh sách
+                </button>
+            </h2>
+            <div id="collapseOne" class="accordion-collapse collapse show" data-bs-parent="#LocDanhSach">
+                <div class="accordion-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="input-group mb-3">
+                                <input id="TextSearch" type="text" class="form-control" placeholder="Tìm kiếm" aria-label="Recipient's username" aria-describedby="button-addon2">
+                                <button class="btn btn-outline-secondary" type="button" id="button-addon2">
+                                    <i class="fas fa-search"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <section class="content">
+        <div class="box">
+            <div id="mainTable" class="box-body"></div>
+        </div>
+    </section>
+</div>
+
+<script>
+    var index = 0;
+    $(document).ready(function () {
+        GetListPaging(index);
+    });
+
+    function GetListPaging(pageIndex) {
+        index = pageIndex;
+        $.ajax({
+            url: '@Url.Action("GetListPaging", "NhomQuyen")',
+            data: {
+                PageIndex: index,
+                RowsPerPage: 10,
+                TextSearch: $("#TextSearch").val()
+            },
+            type: 'GET',
+            success: function (res) {
+                $("#mainTable").html(res);
+            }
+        })
+    }
+
+    function refreshGrid() {
+        GetListPaging(index);
+    }
+</script>

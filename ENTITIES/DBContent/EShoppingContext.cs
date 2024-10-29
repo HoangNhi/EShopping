@@ -245,9 +245,14 @@ public partial class EShoppingContext : DbContext
                 .HasNoKey()
                 .ToTable("PHANQUYEN_NHOMQUYEN");
 
+            entity.Property(e => e.CreateBy).HasMaxLength(256);
+            entity.Property(e => e.DateCreate).HasColumnType("datetime");
             entity.Property(e => e.Icon)
                 .HasMaxLength(50)
                 .IsUnicode(false);
+            entity.Property(e => e.Status)
+                .HasDefaultValue(1)
+                .HasComment("1: Đang hoạt động, 0: Không hoạt động, -1: Đã xóa");
             entity.Property(e => e.TenGoi).HasMaxLength(256);
         });
 

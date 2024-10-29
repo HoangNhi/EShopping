@@ -12,8 +12,10 @@ namespace MODELS.HETHONG.NHOMQUYEN.Dtos
 
         public string TenGoi { get; set; } = null!;
 
-        public string Icon { get; set; } = null!;
+        public string? Icon { get; set; }
 
-        public bool Status { get; set; }
+        public int Status { get; set; } = 1;
+
+        public DateTime DateCreate {  get; set; }
     }
 }
