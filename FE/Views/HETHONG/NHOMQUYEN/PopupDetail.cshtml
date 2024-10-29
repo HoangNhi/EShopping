@@ -81,7 +81,6 @@
                         <p class="col-md-4 m-0" style="font-weight: 600">Tên gọi <span style="color: red">*</span></p>
                         <div class="col-md-8">
                             <input asp-for="@Model.TenGoi" type="text" class="form-control" value="@Model.TenGoi"/>
-                            @Html.ValidationMessageFor(m => m.TenGoi, "", new { @class = "text-danger" })
                         </div>
                     </div>
                 </div>
