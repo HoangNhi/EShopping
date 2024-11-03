@@ -215,7 +215,13 @@ namespace FE.Controllers.HETHONG.TAIKHOAN
         }
         private string GetBEUrl()
         {
-            return new ConfigurationBuilder().AddJsonFile("appsettings.json").Build().GetSection("BEUrl").Value.ToString();
+            var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Production";
+            var configuration = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                .AddJsonFile($"appsettings.{environment}.json", optional: true, reloadOnChange: true)
+                .Build();
+            return configuration.GetSection("BEUrl").Value;
         }
         private ResponseData ExecuteAPIResponse(Task<HttpResponseMessage> responseTask)
         {
