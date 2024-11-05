@@ -14,5 +14,14 @@
         public const string NHOMQUYEN_CREATE = "/NhomQuyen/Create";
         public const string NHOMQUYEN_UPDATE = "/NhomQuyen/Update";
         public const string NHOMQUYEN_DELETE = "/NhomQuyen/Delete";
+
+        // THELOAI
+        public const string THELOAI_GETLISTPAGING = "/TheLoai/GetListPaging";
+        public const string THELOAI_GETBYID = "/TheLoai/GetById";
+        public const string THELOAI_GETBYPOST = "/TheLoai/GetByPost";
+        public const string THELOAI_CREATE = "/TheLoai/Create";
+        public const string THELOAI_UPDATE = "/TheLoai/Update";
+        public const string THELOAI_DELETE = "/TheLoai/Delete";
+
     }
 }

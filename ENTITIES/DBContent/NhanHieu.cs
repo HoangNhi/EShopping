@@ -13,7 +13,7 @@ public partial class NhanHieu
 
     public DateTime DateCreate { get; set; }
 
-    public bool Status { get; set; }
+    public int Status { get; set; }
 
     public virtual ICollection<SanPham> SanPhams { get; set; } = new List<SanPham>();
 }

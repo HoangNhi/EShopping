@@ -1,0 +1,81 @@
+﻿@using MODELS.DANHMUC.THELOAI.Dtos;
+@using MODELS.BASE;
+@model GetListPagingResponse
+@{
+    int i = 1;
+    int k = Model.TotalRow % 10 == 0 ? 0 : 1;
+}
+
+<table class="table table-hover" style="margin: 0; background-color: white;">
+    <thead>
+        <tr>
+            <th width="10" style="justify-items: center">
+                <div class="d-flex align-items-center" style="width: 15px; height: 15px">
+                    <label class="containerCheckbox">
+                        <input type="checkbox">
+                        <span class="checkmark rounded"></span>
+                    </label>
+                </div>
+            </th>
+            <th class="fw-bold text-center" width="10" scope="col">STT</th>
+            <th class="fw-bold" width="120" scope="col">Tên gọi</th>
+            <th class="fw-bold" width="120" scope="col">Icon</th>
+            <th class="fw-bold text-center" width="120" scope="col">Ngày cập nhật</th>
+            <th class="fw-bold text-center" width="120" scope="col">Trạng thái</th>
+        </tr>
+    </thead>
+    <tbody class="table-group-divider">
+        @foreach (var item in (List<MODELTheLoai>)Model.Data)
+        {
+            <tr id="@item.Id">
+                <th style="justify-items: center">
+                    <div class="d-flex align-items-center" style="width: 15px; height: 15px">
+                        <label class="containerCheckbox">
+                            <input type="checkbox" onclick="SelectRow('@item.Id')">
+                            <span class="checkmark rounded"></span>
+                        </label>
+                    </div>
+                </th>
+                <th class="align-content-center text-center" scope="row">@i</th>
+                <td class="align-content-center">@item.Name</td>
+                <td class="align-content-center text-center">@item.DateCreate.ToString()</td>
+                <td class="align-content-center text-center">
+                    @if (item.Status == 1)
+                    {
+                        <p class="m-0" style="color: rgba(13, 110, 253) ">Đang hoạt động</p>
+                    }
+                    else
+                    {
+                        <p class="m-0 text-danger">Không hoạt động</p>
+                    }
+                </td>
+            </tr>
+            i++;
+        }
+        <tr>
+            <td colspan="6" class="">
+                <nav aria-label="Page navigation example">
+                    <ul class="pagination justify-content-center m-0">
+                        <li class="page-item">
+                            <a class="page-link" href="#">
+                                <i class="fa-solid fa-chevron-left"></i>
+                            </a>
+                        </li>
+                        @for (int j = 1; j <= Model.TotalRow / 10 + k; j++)
+                        {
+                            <li class="page-item">
+                                <button class="page-link" onclick="GetListPaging(@j)">@j</button>
+                            </li>
+                        }
+                        <li class="page-item">
+                            <a class="page-link" href="#">
+                                <i class="fa-solid fa-chevron-right"></i>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </td>
+        </tr>
+    </tbody>
+</table>
+

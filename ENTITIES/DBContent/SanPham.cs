@@ -25,7 +25,7 @@ public partial class SanPham
 
     public int? Sold { get; set; }
 
-    public bool Status { get; set; }
+    public int Status { get; set; }
 
     public virtual ICollection<BinhLuan> BinhLuans { get; set; } = new List<BinhLuan>();
 

@@ -14,6 +14,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Remove="Helpers\BaseController.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Content Remove="appsettings.Production.json" />
   </ItemGroup>
 
@@ -32,6 +36,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\MODELS\MODELS.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Helpers\" />
   </ItemGroup>
 
 </Project>

@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using BE.AutoMapper;
+using BE.Services.DANHMUC.THELOAI;
 using BE.Services.HETHONG.MAIL;
 using BE.Services.HETHONG.NHOMQUYEN;
 using BE.Services.HETHONG.TAIKHOAN;
@@ -16,6 +17,9 @@ namespace BE
             services.AddTransient<ITAIKHOANService, TAIKHOANService>();
             services.AddTransient<IMAILService, MAILService>();
             services.AddTransient<INHOMQUYENService, NHOMQUYENService>();
+            
+            // DANH MỤC
+            services.AddTransient<ITHELOAIService, THELOAIService>();
         }
 
         public static void StartSetting(IServiceCollection services)

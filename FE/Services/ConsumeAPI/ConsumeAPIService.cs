@@ -1,31 +1,21 @@
 ﻿using FE.MODELS;
-using Microsoft.AspNetCore.Mvc;
 using MODELS.Base;
 using MODELS.COMMON;
 using Newtonsoft.Json;
 using System.Net.Http.Headers;
 using System.Net;
-using Microsoft.Extensions.Options;
 
-namespace FE.Helpers
+namespace FE.Services.ConsumeAPI
 {
-    public class BaseController<T> : Controller
+    public class ConsumeAPIService : IConsumeAPIService
     {
-        string environment = Environment.CurrentDirectory;
-        private readonly IConfiguration configuration = new ConfigurationBuilder()
-                                                        .SetBasePath(Directory.GetCurrentDirectory())
-                                                        .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-                                                        .AddJsonFile($"appsettings.{environment}.json", optional: true, reloadOnChange: true)
-                                                        .AddEnvironmentVariables();
-
-        // Cấu hình ConfigurationBuilder để load các file cấu hình
-
-        public BaseController()
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IConfiguration _configuration;
+        public ConsumeAPIService(IHttpContextAccessor httpContextAccessor, IConfiguration configuration)
         {
-
+            _httpContextAccessor = httpContextAccessor;
+            _configuration = configuration;
         }
-
-        // Function
         public ResponseData ExcuteAPI(string action, object? model, HttpAction method)
         {
             ResponseData response = new ResponseData();
@@ -39,7 +29,7 @@ namespace FE.Helpers
                     client.Timeout = TimeSpan.FromMinutes(5);
                     // Set header cho request
                     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", HttpContext.User.Claims.Where(x => x.Type == "Token").FirstOrDefault().Value.ToString());
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _httpContextAccessor.HttpContext.User.Claims.Where(x => x.Type == "Token").FirstOrDefault().Value.ToString());
 
                     client.DefaultRequestHeaders.Accept.Clear();
 
@@ -87,6 +77,7 @@ namespace FE.Helpers
                     client.Timeout = TimeSpan.FromMinutes(5);
                     // Set header cho request
                     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
                     client.DefaultRequestHeaders.Accept.Clear();
 
                     Task<HttpResponseMessage> responseTask;
@@ -122,7 +113,7 @@ namespace FE.Helpers
         }
         public string GetBEUrl()
         {
-            return new ConfigurationBuilder().AddJsonFile("appsettings.json").Build().GetSection("BEUrl").Value.ToString();
+            return _configuration["BEUrl"].ToString();
         }
         public ResponseData ExecuteAPIResponse(Task<HttpResponseMessage> responseTask)
         {
