@@ -29,4 +29,8 @@
     <ProjectReference Include="..\MODELS\MODELS.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Services\DANHMUC\SANPHAM\" />
+  </ItemGroup>
+
 </Project>

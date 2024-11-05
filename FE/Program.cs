@@ -1,3 +1,4 @@
+﻿using FE.Services.ConsumeAPI;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using System.Net;
 
@@ -15,7 +16,19 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
     options.LoginPath = "/TaiKhoan/Index";
 });
 
+// Lấy tên môi trường hiện tại
+var environment = builder.Environment.EnvironmentName;
+
+// Cấu hình ConfigurationBuilder để load các file cấu hình
+builder.Configuration
+    .SetBasePath(Directory.GetCurrentDirectory())
+    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+    .AddJsonFile($"appsettings.{environment}.json", optional: true, reloadOnChange: true)
+    .AddEnvironmentVariables();
+
 builder.Services.AddHttpContextAccessor();
+
+builder.Services.AddTransient<IConsumeAPIService, ConsumeAPIService>();
 
 var app = builder.Build();
 

@@ -8,6 +8,6 @@ namespace MODELS.Base
 {
     public class DeleteListRequest
     {
-        public List<int> Ids { get; set; }
+        public List<Guid> Ids { get; set; }
     }
 }

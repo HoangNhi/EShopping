@@ -5,24 +5,24 @@ using Microsoft.AspNetCore.Mvc;
 using MODELS.Base;
 using MODELS.BASE;
 using MODELS.COMMON;
-using MODELS.HETHONG.NHOMQUYEN.Dtos;
-using MODELS.HETHONG.NHOMQUYEN.Requests;
+using MODELS.DANHMUC.THELOAI.Dtos;
+using MODELS.DANHMUC.THELOAI.Requests;
 using Newtonsoft.Json;
 
-namespace FE.Controllers.HETHONG.NHOMQUYEN
+namespace FE.Controllers.DANHMUC.THELOAI
 {
-    public class NhomQuyenController : Controller
+    public class TheLoaiController : Controller
     {
         private readonly IConsumeAPIService _consumeAPI;
 
-        public NhomQuyenController(IConsumeAPIService consumeAPI)
+        public TheLoaiController(IConsumeAPIService consumeAPI)
         {
             _consumeAPI = consumeAPI;
         }
 
         public IActionResult Index()
         {
-            return View("~/Views/HeThong/NhomQuyen/Index.cshtml");
+            return View("~/Views/DanhMuc/TheLoai/Index.cshtml");
         }
 
         public IActionResult GetListPaging(GetListPagingRequest request)
@@ -36,12 +36,12 @@ namespace FE.Controllers.HETHONG.NHOMQUYEN
                 param.RowsPerPage = request.RowsPerPage;
                 param.TextSearch = request.TextSearch == null ? string.Empty : request.TextSearch.Trim();
 
-                ResponseData response = _consumeAPI.ExcuteAPI(URL_API.NHOMQUYEN_GETLISTPAGING, request, HttpAction.Post);
+                ResponseData response = _consumeAPI.ExcuteAPI(URL_API.THELOAI_GETLISTPAGING, request, HttpAction.Post);
                 if (response.Status)
                 {
                     result = JsonConvert.DeserializeObject<GetListPagingResponse>(response.Data.ToString());
-                    result.Data = JsonConvert.DeserializeObject<List<MODELNhomQuyen>>(result.Data.ToString());
-                    return PartialView("~/Views/HeThong/NhomQuyen/PartialViewDanhSach.cshtml", result);
+                    result.Data = JsonConvert.DeserializeObject<List<MODELTheLoai>>(result.Data.ToString());
+                    return PartialView("~/Views/DanhMuc/TheLoai/PartialViewDanhSach.cshtml", result);
                 }
                 else
                 {
@@ -59,16 +59,16 @@ namespace FE.Controllers.HETHONG.NHOMQUYEN
         {
             try
             {
-                NhomQuyenRequest obj = new NhomQuyenRequest();
+                TheLoaiRequest obj = new TheLoaiRequest();
 
-                ResponseData response = _consumeAPI.ExcuteAPI(URL_API.NHOMQUYEN_GETBYPOST, new { Id = Guid.Empty }, HttpAction.Post);
+                ResponseData response = _consumeAPI.ExcuteAPI(URL_API.THELOAI_GETBYPOST, new { Id = Guid.Empty.ToString() }, HttpAction.Post);
 
                 if (response.Status)
                 {
-                    obj = JsonConvert.DeserializeObject<NhomQuyenRequest>(response.Data.ToString());
+                    obj = JsonConvert.DeserializeObject<TheLoaiRequest>(response.Data.ToString());
                 }
 
-                return PartialView("~/Views/HeThong/NhomQuyen/PopupDetail.cshtml", obj);
+                return PartialView("~/Views/DanhMuc/TheLoai/PopupDetail.cshtml", obj);
             }
             catch (Exception ex)
             {
@@ -81,16 +81,16 @@ namespace FE.Controllers.HETHONG.NHOMQUYEN
         {
             try
             {
-                NhomQuyenRequest obj = new NhomQuyenRequest();
+                TheLoaiRequest obj = new TheLoaiRequest();
 
-                ResponseData response = _consumeAPI.ExcuteAPI(URL_API.NHOMQUYEN_GETBYPOST, new { Id = id }, HttpAction.Post);
+                ResponseData response = _consumeAPI.ExcuteAPI(URL_API.THELOAI_GETBYPOST, new { Id = id.ToString() }, HttpAction.Post);
 
                 if (response.Status)
                 {
-                    obj = JsonConvert.DeserializeObject<NhomQuyenRequest>(response.Data.ToString());
+                    obj = JsonConvert.DeserializeObject<TheLoaiRequest>(response.Data.ToString());
                 }
 
-                return PartialView("~/Views/HeThong/NhomQuyen/PartialViewDanhSach.cshtml", obj);
+                return PartialView("~/Views/DanhMuc/TheLoai/PartialViewDanhSach.cshtml", obj);
             }
             catch (Exception ex)
             {
@@ -100,7 +100,7 @@ namespace FE.Controllers.HETHONG.NHOMQUYEN
         }
 
         [HttpPost]
-        public JsonResult Post(NhomQuyenRequest request)
+        public JsonResult Post(TheLoaiRequest request)
         {
             try
             {
@@ -110,11 +110,11 @@ namespace FE.Controllers.HETHONG.NHOMQUYEN
                     ResponseData response;
                     if (request.IsEdit)
                     {
-                        response = _consumeAPI.ExcuteAPI(URL_API.NHOMQUYEN_UPDATE, request, HttpAction.Post);
+                        response = _consumeAPI.ExcuteAPI(URL_API.THELOAI_UPDATE, request, HttpAction.Post);
                     }
                     else
                     {
-                        response = _consumeAPI.ExcuteAPI(URL_API.NHOMQUYEN_CREATE, request, HttpAction.Post);
+                        response = _consumeAPI.ExcuteAPI(URL_API.THELOAI_CREATE, request, HttpAction.Post);
                     }
 
 
@@ -141,7 +141,7 @@ namespace FE.Controllers.HETHONG.NHOMQUYEN
         {
             try
             {
-                ResponseData response = _consumeAPI.ExcuteAPI(URL_API.NHOMQUYEN_DELETE, request, HttpAction.Post);
+                ResponseData response = _consumeAPI.ExcuteAPI(URL_API.THELOAI_DELETE, request, HttpAction.Post);
                 if (!response.Status)
                 {
                     return Json(new { IsSuccess = false, Message = response.Message, Data = "" });
@@ -154,6 +154,5 @@ namespace FE.Controllers.HETHONG.NHOMQUYEN
                 return Json(new { IsSuccess = false, Message = message, Data = "" });
             }
         }
-
     }
 }
