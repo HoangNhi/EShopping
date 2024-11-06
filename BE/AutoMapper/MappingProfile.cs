@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
 using ENTITIES.DbContent;
+using MODELS.DANHMUC.NHANHIEU.Dtos;
+using MODELS.DANHMUC.NHANHIEU.Requests;
 using MODELS.DANHMUC.THELOAI.Dtos;
 using MODELS.DANHMUC.THELOAI.Requests;
 using MODELS.HETHONG.NHOMQUYEN.Dtos;
@@ -33,6 +35,8 @@ namespace BE.AutoMapper
             //DANH MUC
             CreateMap<TheLoai, MODELTheLoai>().ReverseMap();
             CreateMap<TheLoai, TheLoaiRequest>().ReverseMap();
+            CreateMap<NhanHieu, MODELNhanHieu>().ReverseMap();
+            CreateMap<NhanHieu, NhanHieuRequests>().ReverseMap();
         }
     }
 }
