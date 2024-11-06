@@ -36,9 +36,9 @@ namespace BE.Services.DANHMUC.THELOAI
 
                 var parameters = new[]
                 {
-                    new SqlParameter("@iTextSearch", request.TextSearch),
                     new SqlParameter("@iPageIndex", request.PageIndex),
                     new SqlParameter("@iRowsPerPage", request.RowsPerPage),
+                    new SqlParameter("@iTextSearch", request.TextSearch),
                     iTotalRow
                 };
 
