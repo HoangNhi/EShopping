@@ -4,46 +4,45 @@ using MODELS.Base;
 using MODELS.BASE;
 using MODELS.DANHMUC.NHANHIEU.Dtos;
 using MODELS.DANHMUC.NHANHIEU.Requests;
-using MODELS.DANHMUC.THELOAI.Dtos;
-using MODELS.DANHMUC.THELOAI.Requests;
+using MODELS.DANHMUC.SANPHAM.Dtos;
+using MODELS.DANHMUC.SANPHAM.Requests;
 
-namespace BE.Services.DANHMUC.NHANHIEU
+namespace BE.Services.DANHMUC.SANPHAM
 {
-    public class NHANHIEUService : INHANHIEUService
+    public class SANPHAMService : ISANPHAMService
     {
         private readonly EShoppingContext _context;
         private readonly IMapper _mapper;
         private readonly IHttpContextAccessor _contextAccessor;
-        public NHANHIEUService(EShoppingContext context, IMapper mapper, IHttpContextAccessor contextAccessor)
+        public SANPHAMService(EShoppingContext context, IMapper mapper, IHttpContextAccessor contextAccessor)
         {
             _context = context;
             _mapper = mapper;
             _contextAccessor = contextAccessor;
         }
-    
-        public BaseResponse<MODELNhanHieu> Create(NhanHieuRequests request)
+        public BaseResponse<MODELSanPham> Create(SanPhamRequests request)
         {
-            var response = new BaseResponse<MODELNhanHieu>();
+            var response = new BaseResponse<MODELSanPham>();
             try
             {
-                var checkData = _context.NhanHieus.Where(
+                var checkData = _context.SanPhams.Where(
                     x => x.Name == request.Name
                     && x.Status != -1
                 ).ToList();
 
                 if (checkData.Count > 0)
-                    throw new Exception("Nhãn hiệu đã tồn tại");
+                    throw new Exception("Sản phẩm đã tồn tại");
 
-                var add = _mapper.Map<NhanHieu>(request);
+                var add = _mapper.Map<SanPham>(request);
                 add.Id = request.Id == Guid.Empty ? Guid.NewGuid() : request.Id;
                 add.DateCreate = DateTime.Now;
 
                 // Lưu vào Database
-                _context.NhanHieus.Add(add);
+                _context.SanPhams.Add(add);
                 _context.SaveChanges();
 
                 // Trả về dữ liệu
-                response.Data = _mapper.Map<MODELNhanHieu>(add);
+                response.Data = _mapper.Map<MODELSanPham>(add);
             }
             catch (Exception ex)
             {
@@ -60,13 +59,13 @@ namespace BE.Services.DANHMUC.NHANHIEU
             {
                 foreach (var id in request.Ids)
                 {
-                    var delete = _context.NhanHieus.Find(id);
+                    var delete = _context.SanPhams.Find(id);
                     if (delete != null)
                     {
                         delete.Status = -1;
                         delete.DateCreate = DateTime.Now;
 
-                        _context.NhanHieus.Update(delete);
+                        _context.SanPhams.Update(delete);
                     }
                     else
                     {
@@ -85,25 +84,26 @@ namespace BE.Services.DANHMUC.NHANHIEU
             return response;
         }
 
-        public BaseResponse<MODELNhanHieu> GetById(GetByIdRequest request)
+        public BaseResponse<MODELSanPham> GetById(GetByIdRequest request)
         {
-            var res = new BaseResponse<MODELNhanHieu>();
+            var res = new BaseResponse<MODELSanPham>();
             try
             {
-                var item = _context.NhanHieus.Find(request.Id);
+                var item = _context.SanPhams.Find(request.Id);
                 if (item != null)
                 {
-                    var result = _mapper.Map<MODELNhanHieu>(item);
+                    var result = _mapper.Map<MODELSanPham>(item);
                     res.Data = result;
                 }
-                else 
+                else
                 {
                     res.Error = true;
                     res.Message = "Not Found!";
                     res.StatusCode = 404;
                 }
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 res.Error = true;
                 res.Message = ex.Message;
                 res.StatusCode = 500;
@@ -111,13 +111,13 @@ namespace BE.Services.DANHMUC.NHANHIEU
             return res;
         }
 
-        public BaseResponse<NhanHieuRequests> GetByPost(GetByIdRequest request)
+        public BaseResponse<SanPhamRequests> GetByPost(GetByIdRequest request)
         {
-            var response = new BaseResponse<NhanHieuRequests>();
+            var response = new BaseResponse<SanPhamRequests>();
             try
             {
-                var result = new NhanHieuRequests();
-                var data = _context.NhanHieus.Find(request.Id);
+                var result = new SanPhamRequests();
+                var data = _context.SanPhams.Find(request.Id);
                 if (data == null)
                 {
                     result.Id = Guid.NewGuid();
@@ -125,7 +125,7 @@ namespace BE.Services.DANHMUC.NHANHIEU
                 }
                 else
                 {
-                    result = _mapper.Map<NhanHieuRequests>(data);
+                    result = _mapper.Map<SanPhamRequests>(data);
                     result.IsEdit = true;
                 }
                 response.Data = result;
@@ -143,24 +143,24 @@ namespace BE.Services.DANHMUC.NHANHIEU
             var res = new BaseResponse<GetListPagingResponse>();
             try
             {
-                var data = new List<MODELNhanHieu>();
+                var data = new List<MODELSanPham>();
                 if (!string.IsNullOrEmpty(request.TextSearch))
                 {
-                    var result = _context.NhanHieus.Where(x => x.Name == request.TextSearch).Skip((request.PageIndex - 1) * request.RowsPerPage).Take(request.RowsPerPage).ToList();
-                    data = _mapper.Map<List<MODELNhanHieu>>(result);
+                    var result = _context.SanPhams.Where(x => x.Name == request.TextSearch).Skip((request.PageIndex - 1) * request.RowsPerPage).Take(request.RowsPerPage).ToList();
+                    data = _mapper.Map<List<MODELSanPham>>(result);
                 }
                 else
                 {
-                    var result = _context.NhanHieus.Skip((request.PageIndex - 1) * request.RowsPerPage).Take(request.RowsPerPage).ToList();
-                    data = _mapper.Map<List<MODELNhanHieu>>(result);
+                    var result = _context.SanPhams.Skip((request.PageIndex - 1) * request.RowsPerPage).Take(request.RowsPerPage).ToList();
+                    data = _mapper.Map<List<MODELSanPham>>(result);
                 }
                 var page = new GetListPagingResponse();
                 page.PageIndex = request.PageIndex;
-                page.TotalRow = _context.NhanHieus.Count();
+                page.TotalRow = _context.SanPhams.Count();
                 page.Data = data;
                 res.Data = page;
             }
-            catch(Exception ex) 
+            catch (Exception ex)
             {
                 res.Error = true;
                 res.Message = ex.Message;
@@ -169,19 +169,19 @@ namespace BE.Services.DANHMUC.NHANHIEU
             return res;
         }
 
-        public BaseResponse<MODELNhanHieu> Update(NhanHieuRequests request)
+        public BaseResponse<MODELSanPham> Update(SanPhamRequests request)
         {
-            var response = new BaseResponse<MODELNhanHieu>();
+            var response = new BaseResponse<MODELSanPham>();
             try
             {
-                    var add = _mapper.Map<NhanHieu>(request);
-                    add.Id = request.Id == Guid.Empty ? Guid.NewGuid() : request.Id;
-                    add.DateCreate = DateTime.Now;
+                var add = _mapper.Map<SanPham>(request);
+                add.Id = request.Id == Guid.Empty ? Guid.NewGuid() : request.Id;
+                add.DateCreate = DateTime.Now;
 
-                    // Lưu vào Database
-                    _context.NhanHieus.Update(add);
-                    _context.SaveChanges();
-                    response.Data = _mapper.Map<MODELNhanHieu>(add);
+                // Lưu vào Database
+                _context.SanPhams.Update(add);
+                _context.SaveChanges();
+                response.Data = _mapper.Map<MODELSanPham>(add);
             }
             catch (Exception ex)
             {
