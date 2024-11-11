@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
 using ENTITIES.DbContent;
+using MODELS.CHUCNANG.GIOHANG.Dtos;
+using MODELS.CHUCNANG.GIOHANG.Requests;
 using MODELS.DANHMUC.NHANHIEU.Dtos;
 using MODELS.DANHMUC.NHANHIEU.Requests;
 using MODELS.DANHMUC.SANPHAM.Dtos;
@@ -41,6 +43,10 @@ namespace BE.AutoMapper
             CreateMap<NhanHieu, NhanHieuRequests>().ReverseMap();
             CreateMap<SanPham, MODELSanPham>().ReverseMap();
             CreateMap<SanPham, SanPhamRequests>().ReverseMap();
+
+            //CHUC NANG
+            CreateMap<GioHang,MODELGioHang>().ReverseMap();
+            CreateMap<GioHang,GioHangRequests>().ReverseMap();
         }
     }
 }

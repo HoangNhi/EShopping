@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using BE.AutoMapper;
+using BE.Services.CHUCNANG.GIOHANG;
 using BE.Services.DANHMUC.NHANHIEU;
 using BE.Services.DANHMUC.SANPHAM;
 using BE.Services.DANHMUC.THELOAI;
@@ -15,6 +16,8 @@ namespace BE
         {
             StartSetting(services);
 
+            services.AddHttpContextAccessor();
+
             // Register Services
             services.AddTransient<ITAIKHOANService, TAIKHOANService>();
             services.AddTransient<IMAILService, MAILService>();
@@ -24,6 +27,9 @@ namespace BE
             services.AddTransient<ITHELOAIService, THELOAIService>();
             services.AddTransient<INHANHIEUService, NHANHIEUService>();
             services.AddTransient<ISANPHAMService, SANPHAMService>();
+
+            //CHUC NANG
+            services.AddTransient<IGIOHANGService, GIOHANGService>();
         }
 
         public static void StartSetting(IServiceCollection services)

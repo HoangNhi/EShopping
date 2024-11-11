@@ -6,6 +6,8 @@ using MODELS.DANHMUC.NHANHIEU.Dtos;
 using MODELS.DANHMUC.NHANHIEU.Requests;
 using MODELS.DANHMUC.SANPHAM.Dtos;
 using MODELS.DANHMUC.SANPHAM.Requests;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 
 namespace BE.Services.DANHMUC.SANPHAM
 {
@@ -22,6 +24,8 @@ namespace BE.Services.DANHMUC.SANPHAM
         }
         public BaseResponse<MODELSanPham> Create(SanPhamRequests request)
         {
+            var userId = _contextAccessor.HttpContext.User.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Name)?.Value;
+            
             var response = new BaseResponse<MODELSanPham>();
             try
             {
@@ -37,6 +41,13 @@ namespace BE.Services.DANHMUC.SANPHAM
                 add.Id = request.Id == Guid.Empty ? Guid.NewGuid() : request.Id;
                 add.DateCreate = DateTime.Now;
 
+                //Lưu vào nhật kí
+                var log = new NhatKi();
+                log.Name = "Sản phẩm";
+                log.Id = new Guid();
+                log.Event = "Thêm";
+                log.Date = DateOnly.FromDateTime(DateTime.Now);
+                log.UserId = Guid.Parse(userId);
                 // Lưu vào Database
                 _context.SanPhams.Add(add);
                 _context.SaveChanges();
