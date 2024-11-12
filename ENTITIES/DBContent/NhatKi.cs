@@ -13,7 +13,7 @@ public partial class NhatKi
 
     public DateOnly Date { get; set; }
 
-    public int TargetId { get; set; }
+    public Guid TargetId { get; set; }
 
     public Guid UserId { get; set; }
 

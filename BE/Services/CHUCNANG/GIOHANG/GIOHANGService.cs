@@ -5,6 +5,7 @@ using MODELS.BASE;
 using MODELS.CHUCNANG.GIOHANG.Dtos;
 using MODELS.CHUCNANG.GIOHANG.Requests;
 using MODELS.DANHMUC.SANPHAM.Dtos;
+using MODELS.HETHONG.LOG;
 using System.IdentityModel.Tokens.Jwt;
 
 namespace BE.Services.CHUCNANG.GIOHANG
@@ -24,7 +25,7 @@ namespace BE.Services.CHUCNANG.GIOHANG
         public BaseResponse<MODELGioHang> Create(GioHangRequests request)
         {
             var userId = _contextAccessor.HttpContext.User.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Name)?.Value;
-
+            var log = new Log();
             var response = new BaseResponse<MODELGioHang>();
             try
             {
@@ -41,9 +42,14 @@ namespace BE.Services.CHUCNANG.GIOHANG
                         check.Quantity = request.Quantity;
                         _context.GioHangs.Update(check);
                         response.Data = _mapper.Map<MODELGioHang>(check);
+                        log.Name = "Giỏ hàng";
+                        log.Id = Guid.NewGuid();
+                        log.Event = "Cập nhật";
+                        log.Date = DateOnly.FromDateTime(DateTime.Now);
+                        log.UserId = Guid.Parse(userId);
+                        log.TargetId = check.Id;
+                        _context.NhatKis.Add(_mapper.Map<NhatKi>(log));
                     }
-                    _context.SaveChanges();
-
                 }
                 else
                 {
@@ -51,21 +57,18 @@ namespace BE.Services.CHUCNANG.GIOHANG
                     add.Id = request.Id == Guid.Empty ? Guid.NewGuid() : request.Id;
                     add.DateCreated = DateTime.Now;
                     _context.GioHangs.Add(add);
-                    _context.SaveChanges();
                     response.Data = _mapper.Map<MODELGioHang>(add);
+                    //Lưu vào nhật kí
+                    log.Name = "Giỏ hàng";
+                    log.Id = Guid.NewGuid();
+                    log.Event = "Thêm";
+                    log.Date = DateOnly.FromDateTime(DateTime.Now);
+                    log.UserId = Guid.Parse(userId);
+                    log.TargetId = add.Id;
+                    _context.NhatKis.Add(_mapper.Map<NhatKi>(log));
                 }
-
-
-
-                //Lưu vào nhật kí
-                //var log = new NhatKi();
-                //log.Name = "Sản phẩm";
-                //log.Id = new Guid();
-                //log.Event = "Thêm";
-                //log.Date = DateOnly.FromDateTime(DateTime.Now);
-                //log.UserId = Guid.Parse(userId);
-                // Lưu vào Database
-                
+                //Lưu vào Database
+                _context.SaveChanges();
             }
             catch (Exception ex)
             {

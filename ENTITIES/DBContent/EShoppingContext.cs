@@ -59,6 +59,7 @@ public partial class EShoppingContext : DbContext
                 .HasMaxLength(50)
                 .IsUnicode(false);
             entity.Property(e => e.FullName).HasMaxLength(256);
+            entity.Property(e => e.IsGoogle).HasDefaultValue(false);
             entity.Property(e => e.Password).HasMaxLength(500);
             entity.Property(e => e.PasswordSalt).HasMaxLength(100);
             entity.Property(e => e.PhoneNumber)
@@ -290,6 +291,9 @@ public partial class EShoppingContext : DbContext
             entity.Property(e => e.ImageUrl)
                 .HasMaxLength(256)
                 .IsUnicode(false);
+            entity.Property(e => e.IsBestSelling).HasDefaultValue(false);
+            entity.Property(e => e.IsNew).HasDefaultValue(false);
+            entity.Property(e => e.IsSale).HasDefaultValue(false);
             entity.Property(e => e.Price).HasColumnType("money");
             entity.Property(e => e.TheLoaiId)
                 .HasMaxLength(50)

@@ -18,4 +18,6 @@ public partial class GioHang
     public int Quantity { get; set; }
 
     public DateTime DateCreated { get; set; }
+
+    public long TotalPrice { get; set; }
 }

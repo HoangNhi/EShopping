@@ -1,11 +1,13 @@
 ﻿using AutoMapper;
 using ENTITIES.DbContent;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.Blazor;
 using MODELS.Base;
 using MODELS.BASE;
 using MODELS.DANHMUC.NHANHIEU.Dtos;
 using MODELS.DANHMUC.NHANHIEU.Requests;
 using MODELS.DANHMUC.SANPHAM.Dtos;
 using MODELS.DANHMUC.SANPHAM.Requests;
+using MODELS.HETHONG.LOG;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
@@ -25,7 +27,7 @@ namespace BE.Services.DANHMUC.SANPHAM
         public BaseResponse<MODELSanPham> Create(SanPhamRequests request)
         {
             var userId = _contextAccessor.HttpContext.User.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Name)?.Value;
-            
+            var log = new Log();
             var response = new BaseResponse<MODELSanPham>();
             try
             {
@@ -42,12 +44,13 @@ namespace BE.Services.DANHMUC.SANPHAM
                 add.DateCreate = DateTime.Now;
 
                 //Lưu vào nhật kí
-                var log = new NhatKi();
                 log.Name = "Sản phẩm";
-                log.Id = new Guid();
+                log.Id = Guid.NewGuid();
                 log.Event = "Thêm";
                 log.Date = DateOnly.FromDateTime(DateTime.Now);
                 log.UserId = Guid.Parse(userId);
+                log.TargetId = add.Id;
+                _context.NhatKis.Add(_mapper.Map<NhatKi>(log));
                 // Lưu vào Database
                 _context.SanPhams.Add(add);
                 _context.SaveChanges();
@@ -65,7 +68,10 @@ namespace BE.Services.DANHMUC.SANPHAM
 
         public BaseResponse<string> Delete(DeleteListRequest request)
         {
+            var userId = _contextAccessor.HttpContext.User.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Name)?.Value;
+            var log = new Log();
             var response = new BaseResponse<string>();
+            
             try
             {
                 foreach (var id in request.Ids)
@@ -75,8 +81,15 @@ namespace BE.Services.DANHMUC.SANPHAM
                     {
                         delete.Status = -1;
                         delete.DateCreate = DateTime.Now;
-
                         _context.SanPhams.Update(delete);
+                        //Lưu vào nhật kí
+                        log.Name = "Sản phẩm";
+                        log.Id = Guid.NewGuid();
+                        log.Event = "Xoá";
+                        log.Date = DateOnly.FromDateTime(DateTime.Now);
+                        log.UserId = Guid.Parse(userId);
+                        log.TargetId = delete.Id;
+                        _context.NhatKis.Add(_mapper.Map<NhatKi>(log));
                     }
                     else
                     {
@@ -182,14 +195,23 @@ namespace BE.Services.DANHMUC.SANPHAM
 
         public BaseResponse<MODELSanPham> Update(SanPhamRequests request)
         {
+            var userId = _contextAccessor.HttpContext.User.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Name)?.Value;
+            var log = new Log();
             var response = new BaseResponse<MODELSanPham>();
             try
             {
                 var add = _mapper.Map<SanPham>(request);
                 add.Id = request.Id == Guid.Empty ? Guid.NewGuid() : request.Id;
                 add.DateCreate = DateTime.Now;
-
+                //Lưu vào nhật kí
+                log.Name = "Sản phẩm";
+                log.Id = Guid.NewGuid();
+                log.Event = "Cập nhật";
+                log.Date = DateOnly.FromDateTime(DateTime.Now);
+                log.UserId = Guid.Parse(userId);
+                log.TargetId = add.Id;
                 // Lưu vào Database
+                _context.NhatKis.Add(_mapper.Map<NhatKi>(log));
                 _context.SanPhams.Update(add);
                 _context.SaveChanges();
                 response.Data = _mapper.Map<MODELSanPham>(add);
