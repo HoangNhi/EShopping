@@ -25,16 +25,16 @@ namespace BE.Services.HETHONG.LOG
             var res = new BaseResponse<GetListPagingResponse>();
             try
             {
-                var data = new List<Log>();
+                var data = new List<NhatKiRequest>();
                 if (!string.IsNullOrEmpty(request.TextSearch))
                 {
                     var result = _context.NhatKis.OrderBy(hd => hd.Date).Where(x => x.Name == request.TextSearch).Skip((request.PageIndex - 1) * request.RowsPerPage).Take(request.RowsPerPage).ToList();
-                    data = _mapper.Map<List<Log>>(result);
+                    data = _mapper.Map<List<NhatKiRequest>>(result);
                 }
                 else
                 {
                     var result = _context.NhatKis.OrderByDescending(hd => hd.Date).Skip((request.PageIndex - 1) * request.RowsPerPage).Take(request.RowsPerPage).ToList();
-                    data = _mapper.Map<List<Log>>(result);
+                    data = _mapper.Map<List<NhatKiRequest>>(result);
                     
                 }
                 foreach (var item in data)

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace MODELS.HETHONG.LOG
 {
-    public class Log
+    public class NhatKiRequest
     {
         public Guid Id { get; set; }
 
