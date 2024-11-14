@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using BE.AutoMapper;
 using BE.Services.CHUCNANG.GIOHANG;
+using BE.Services.CHUCNANG.HOADON;
 using BE.Services.DANHMUC.NHANHIEU;
 using BE.Services.DANHMUC.SANPHAM;
 using BE.Services.DANHMUC.THELOAI;
@@ -33,6 +34,7 @@ namespace BE
 
             //CHUC NANG
             services.AddTransient<IGIOHANGService, GIOHANGService>();
+            services.AddTransient<IHOADONService, HOADONService>();
         }
 
         public static void StartSetting(IServiceCollection services)

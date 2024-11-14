@@ -27,7 +27,7 @@ namespace BE.Services.DANHMUC.SANPHAM
         public BaseResponse<MODELSanPham> Create(SanPhamRequests request)
         {
             var userId = _contextAccessor.HttpContext.User.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Name)?.Value;
-            var log = new Log();
+            var NhatKiDTO = new NhatKiDTO();
             var response = new BaseResponse<MODELSanPham>();
             try
             {
@@ -40,17 +40,17 @@ namespace BE.Services.DANHMUC.SANPHAM
                     throw new Exception("Sản phẩm đã tồn tại");
 
                 var add = _mapper.Map<SanPham>(request);
-                add.Id = request.Id == Guid.Empty ? Guid.NewGuid() : request.Id;
-                add.DateCreate = DateTime.Now;
+                add.Id = Guid.NewGuid();
+                add.DateCreate = DateTime.UtcNow;
 
                 //Lưu vào nhật kí
-                log.Name = "Sản phẩm";
-                log.Id = Guid.NewGuid();
-                log.Event = "Thêm";
-                log.Date = DateOnly.FromDateTime(DateTime.Now);
-                log.UserId = Guid.Parse(userId);
-                log.TargetId = add.Id;
-                _context.NhatKis.Add(_mapper.Map<NhatKi>(log));
+                NhatKiDTO.Name = "Sản phẩm";
+                NhatKiDTO.Id = Guid.NewGuid();
+                NhatKiDTO.Event = "Thêm";
+                NhatKiDTO.Date = DateTime.Now;
+                NhatKiDTO.UserId = Guid.Parse(userId);
+                NhatKiDTO.TargetId = add.Id;
+                _context.NhatKis.Add(_mapper.Map<NhatKi>(NhatKiDTO));
                 // Lưu vào Database
                 _context.SanPhams.Add(add);
                 _context.SaveChanges();
@@ -69,7 +69,7 @@ namespace BE.Services.DANHMUC.SANPHAM
         public BaseResponse<string> Delete(DeleteListRequest request)
         {
             var userId = _contextAccessor.HttpContext.User.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Name)?.Value;
-            var log = new Log();
+            var NhatKiDTO = new NhatKiDTO();
             var response = new BaseResponse<string>();
             
             try
@@ -83,13 +83,13 @@ namespace BE.Services.DANHMUC.SANPHAM
                         delete.DateCreate = DateTime.Now;
                         _context.SanPhams.Update(delete);
                         //Lưu vào nhật kí
-                        log.Name = "Sản phẩm";
-                        log.Id = Guid.NewGuid();
-                        log.Event = "Xoá";
-                        log.Date = DateOnly.FromDateTime(DateTime.Now);
-                        log.UserId = Guid.Parse(userId);
-                        log.TargetId = delete.Id;
-                        _context.NhatKis.Add(_mapper.Map<NhatKi>(log));
+                        NhatKiDTO.Name = "Sản phẩm";
+                        NhatKiDTO.Id = Guid.NewGuid();
+                        NhatKiDTO.Event = "Xoá";
+                        NhatKiDTO.Date = DateTime.Now;
+                        NhatKiDTO.UserId = Guid.Parse(userId);
+                        NhatKiDTO.TargetId = delete.Id;
+                        _context.NhatKis.Add(_mapper.Map<NhatKi>(NhatKiDTO));
                     }
                     else
                     {
@@ -162,6 +162,51 @@ namespace BE.Services.DANHMUC.SANPHAM
             return response;
         }
 
+        public BaseResponse<GetListPagingResponse> GetCustom(int PageIndex, int RowPerPage, string? TheLoaiId, Guid? NhanHieuId, bool? IsNew, bool? IsBestSelling, bool? IsSale)
+        {
+            var res = new BaseResponse<GetListPagingResponse>();
+            try
+            {
+                var data = new List<MODELSanPham>();
+                var query = _context.SanPhams.AsQueryable();
+                if(!string.IsNullOrEmpty(TheLoaiId))
+                {
+                    query = query.Where(i => i.TheLoaiId == TheLoaiId);
+                }
+                if(NhanHieuId != null)
+                {
+                    query = query.Where(i => i.NhanHieuId == NhanHieuId);
+                }
+                if (IsNew == true) 
+                {
+                    query = query.Where(i => i.IsNew == IsNew);
+                }
+                if(IsBestSelling == true)
+                {
+                    query = query.Where(i => i.IsBestSelling == IsBestSelling);
+                }
+                if(IsSale == true)
+                {
+                    query = query.Where(i => i.IsSale == IsSale);
+                }
+                var result = query.Skip((PageIndex -  1) * RowPerPage).Take(RowPerPage).ToList();
+                data = _mapper.Map<List<MODELSanPham>>(result);
+                var page = new GetListPagingResponse();
+                page.PageIndex = PageIndex;
+                page.TotalRow = _context.SanPhams.Count();
+                page.Data = data;
+                res.Data = page;
+            }
+            catch (Exception ex) 
+            {
+
+                res.Error = true;
+                res.Message = ex.Message;
+                res.StatusCode = 500;
+            }
+            return res;
+        }
+
         public BaseResponse<GetListPagingResponse> GetListPaging(GetListPagingRequest request)
         {
             var res = new BaseResponse<GetListPagingResponse>();
@@ -170,12 +215,12 @@ namespace BE.Services.DANHMUC.SANPHAM
                 var data = new List<MODELSanPham>();
                 if (!string.IsNullOrEmpty(request.TextSearch))
                 {
-                    var result = _context.SanPhams.Where(x => x.Name == request.TextSearch).Skip((request.PageIndex - 1) * request.RowsPerPage).Take(request.RowsPerPage).ToList();
+                    var result = _context.SanPhams.Where(x => x.Name == request.TextSearch && x.Status != -1).Skip((request.PageIndex - 1) * request.RowsPerPage).Take(request.RowsPerPage).ToList();
                     data = _mapper.Map<List<MODELSanPham>>(result);
                 }
                 else
                 {
-                    var result = _context.SanPhams.Skip((request.PageIndex - 1) * request.RowsPerPage).Take(request.RowsPerPage).ToList();
+                    var result = _context.SanPhams.Where(x => x.Status != -1).Skip((request.PageIndex - 1) * request.RowsPerPage).Take(request.RowsPerPage).ToList();
                     data = _mapper.Map<List<MODELSanPham>>(result);
                 }
                 var page = new GetListPagingResponse();
@@ -196,22 +241,21 @@ namespace BE.Services.DANHMUC.SANPHAM
         public BaseResponse<MODELSanPham> Update(SanPhamRequests request)
         {
             var userId = _contextAccessor.HttpContext.User.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Name)?.Value;
-            var log = new Log();
+            var NhatKiDTO = new NhatKiDTO();
             var response = new BaseResponse<MODELSanPham>();
             try
             {
                 var add = _mapper.Map<SanPham>(request);
-                add.Id = request.Id == Guid.Empty ? Guid.NewGuid() : request.Id;
                 add.DateCreate = DateTime.Now;
                 //Lưu vào nhật kí
-                log.Name = "Sản phẩm";
-                log.Id = Guid.NewGuid();
-                log.Event = "Cập nhật";
-                log.Date = DateOnly.FromDateTime(DateTime.Now);
-                log.UserId = Guid.Parse(userId);
-                log.TargetId = add.Id;
+                NhatKiDTO.Name = "Sản phẩm";
+                NhatKiDTO.Id = Guid.NewGuid();
+                NhatKiDTO.Event = "Cập nhật";
+                NhatKiDTO.Date = DateTime.Now;
+                NhatKiDTO.UserId = Guid.Parse(userId);
+                NhatKiDTO.TargetId = add.Id;
                 // Lưu vào Database
-                _context.NhatKis.Add(_mapper.Map<NhatKi>(log));
+                _context.NhatKis.Add(_mapper.Map<NhatKi>(NhatKiDTO));
                 _context.SanPhams.Update(add);
                 _context.SaveChanges();
                 response.Data = _mapper.Map<MODELSanPham>(add);

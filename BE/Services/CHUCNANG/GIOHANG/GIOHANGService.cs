@@ -25,7 +25,7 @@ namespace BE.Services.CHUCNANG.GIOHANG
         public BaseResponse<MODELGioHang> Create(GioHangRequests request)
         {
             var userId = _contextAccessor.HttpContext.User.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Name)?.Value;
-            var log = new Log();
+            var log = new NhatKiDTO();
             var response = new BaseResponse<MODELGioHang>();
             try
             {
@@ -45,7 +45,7 @@ namespace BE.Services.CHUCNANG.GIOHANG
                         log.Name = "Giỏ hàng";
                         log.Id = Guid.NewGuid();
                         log.Event = "Cập nhật";
-                        log.Date = DateOnly.FromDateTime(DateTime.Now);
+                        log.Date = DateTime.Now;
                         log.UserId = Guid.Parse(userId);
                         log.TargetId = check.Id;
                         _context.NhatKis.Add(_mapper.Map<NhatKi>(log));
@@ -62,7 +62,7 @@ namespace BE.Services.CHUCNANG.GIOHANG
                     log.Name = "Giỏ hàng";
                     log.Id = Guid.NewGuid();
                     log.Event = "Thêm";
-                    log.Date = DateOnly.FromDateTime(DateTime.Now);
+                    log.Date = DateTime.Now;
                     log.UserId = Guid.Parse(userId);
                     log.TargetId = add.Id;
                     _context.NhatKis.Add(_mapper.Map<NhatKi>(log));
@@ -80,6 +80,8 @@ namespace BE.Services.CHUCNANG.GIOHANG
 
         public BaseResponse<string> Delete(DeleteListRequest request)
         {
+            var userId = _contextAccessor.HttpContext.User.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Name)?.Value;
+            var log = new NhatKiDTO();
             var response = new BaseResponse<string>();
             try
             {
@@ -89,6 +91,13 @@ namespace BE.Services.CHUCNANG.GIOHANG
                     if (delete != null)
                     {
                         _context.GioHangs.Remove(delete);
+                        log.Name = "Giỏ hàng";
+                        log.Id = Guid.NewGuid();
+                        log.Event = "Cập nhật";
+                        log.Date = DateTime.Now;
+                        log.UserId = Guid.Parse(userId);
+                        log.TargetId = delete.Id;
+                        _context.NhatKis.Add(_mapper.Map<NhatKi>(log));
                     }
                     else
                     {

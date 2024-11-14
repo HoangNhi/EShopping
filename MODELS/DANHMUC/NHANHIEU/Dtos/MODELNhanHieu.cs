@@ -14,7 +14,7 @@ namespace MODELS.DANHMUC.NHANHIEU.Dtos
 
         public string? ImageUrl { get; set; }
 
-        public DateTime DateCreate { get; set; }
+        public DateTime DateCreate { get; set; } 
 
         public int Status { get; set; }
     }

@@ -202,6 +202,7 @@ public partial class EShoppingContext : DbContext
             entity.ToTable("NhatKi");
 
             entity.Property(e => e.Id).ValueGeneratedNever();
+            entity.Property(e => e.Date).HasColumnType("datetime");
             entity.Property(e => e.Event).HasMaxLength(50);
             entity.Property(e => e.Name).HasMaxLength(100);
 

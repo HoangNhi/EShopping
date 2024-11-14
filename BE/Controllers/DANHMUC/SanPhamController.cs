@@ -42,6 +42,30 @@ namespace BE.Controllers.DANHMUC
                 return Ok(new ApiResponse(false, 500, ex.Message));
             }
         }
+        [HttpPost]
+        public IActionResult GetCustom(int PageIndex, int RowPerPage, string? TheLoaiId, Guid? NhanHieuId, bool? IsNew, bool? IsBestSelling, bool? IsSale)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    throw new Exception(MODELS.COMMON.CommonFunc.GetModelStateAPI(ModelState));
+                }
+                var result = _service.GetCustom( PageIndex, RowPerPage, TheLoaiId, NhanHieuId, IsNew, IsBestSelling, IsSale);
+                if (result.Error)
+                {
+                    throw new Exception(result.Message);
+                }
+                else
+                {
+                    return Ok(new ApiOkResponse(result.Data));
+                }
+            }
+            catch (Exception ex)
+            {
+                return Ok(new ApiResponse(false, 500, ex.Message));
+            }
+        }
 
         [HttpPost]
         public IActionResult GetById(GetByIdRequest request)

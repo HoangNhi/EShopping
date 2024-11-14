@@ -42,7 +42,8 @@ namespace BE.AutoMapper
             CreateMap<PHANQUYEN_NHOMQUYEN, NhomQuyenRequest>().ReverseMap();
 
             //LOG
-            CreateMap<NhatKi, Log>().ReverseMap();
+            CreateMap<NhatKi,Log>().ReverseMap();
+            CreateMap<NhatKi,NhatKiDTO>().ReverseMap();
 
             //DANH MUC
             CreateMap<TheLoai, MODELTheLoai>().ReverseMap();
