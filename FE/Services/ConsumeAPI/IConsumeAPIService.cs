@@ -7,5 +7,7 @@ namespace FE.Services.ConsumeAPI
     {
         ResponseData ExcuteAPI(string action, object? model, HttpAction method);
         ResponseData ExcuteAPIWithoutToken(string action, object? model, HttpAction method);
+        ResponseData PostFormDataAPI(string action, System.Net.Http.MultipartFormDataContent content);
+        string GetBEUrl();
     }
 }

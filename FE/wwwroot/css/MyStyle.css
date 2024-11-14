@@ -314,3 +314,14 @@ p {
         background-color: hsl(5, 85%, 50%);
     }
 }
+
+.blockUI.blockMsg.blockElement,
+.blockUI.blockMsg.blockPage {
+    border: 0 !important;
+    background-color: unset !important;
+}
+
+.loader-demo-box {
+    border: 0 !important;
+    justify-content: center;
+}

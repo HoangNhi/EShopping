@@ -8,6 +8,7 @@ using MODELS.COMMON;
 using MODELS.DANHMUC.THELOAI.Dtos;
 using MODELS.DANHMUC.THELOAI.Requests;
 using Newtonsoft.Json;
+using System.Net.Http.Headers;
 
 namespace FE.Controllers.DANHMUC.THELOAI
 {
@@ -61,13 +62,14 @@ namespace FE.Controllers.DANHMUC.THELOAI
             {
                 TheLoaiRequest obj = new TheLoaiRequest();
 
-                ResponseData response = _consumeAPI.ExcuteAPI(URL_API.THELOAI_GETBYPOST, new { Id = Guid.Empty.ToString() }, HttpAction.Post);
+                ResponseData response = _consumeAPI.ExcuteAPI(URL_API.THELOAI_GETBYPOST, new { Id = Guid.Empty }, HttpAction.Post);
 
                 if (response.Status)
                 {
                     obj = JsonConvert.DeserializeObject<TheLoaiRequest>(response.Data.ToString());
                 }
 
+                ViewBag.BeUrl = _consumeAPI.GetBEUrl();
                 return PartialView("~/Views/DanhMuc/TheLoai/PopupDetail.cshtml", obj);
             }
             catch (Exception ex)
@@ -90,7 +92,8 @@ namespace FE.Controllers.DANHMUC.THELOAI
                     obj = JsonConvert.DeserializeObject<TheLoaiRequest>(response.Data.ToString());
                 }
 
-                return PartialView("~/Views/DanhMuc/TheLoai/PartialViewDanhSach.cshtml", obj);
+                ViewBag.BeUrl = _consumeAPI.GetBEUrl();
+                return PartialView("~/Views/DanhMuc/TheLoai/PopupDetail.cshtml", obj);
             }
             catch (Exception ex)
             {

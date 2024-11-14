@@ -1,11 +1,13 @@
 ﻿using AutoMapper;
 using BE.Helper;
 using ENTITIES.DbContent;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Data.SqlClient;
 using MODELS.Base;
 using MODELS.BASE;
 using MODELS.DANHMUC.THELOAI.Dtos;
 using MODELS.DANHMUC.THELOAI.Requests;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace BE.Services.DANHMUC.THELOAI
 {
@@ -14,12 +16,14 @@ namespace BE.Services.DANHMUC.THELOAI
         private readonly EShoppingContext _context;
         private readonly IMapper _mapper;
         private readonly IHttpContextAccessor _contextAccessor;
+        private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public THELOAIService(EShoppingContext context, IMapper mapper, IHttpContextAccessor contextAccessor)
+        public THELOAIService(EShoppingContext context, IMapper mapper, IHttpContextAccessor contextAccessor, IWebHostEnvironment webHostEnvironment)
         {
             _context = context;
             _mapper = mapper;
             _contextAccessor = contextAccessor;
+            _webHostEnvironment = webHostEnvironment;
         }
 
         public BaseResponse<GetListPagingResponse> GetListPaging(GetListPagingRequest request)
@@ -84,7 +88,7 @@ namespace BE.Services.DANHMUC.THELOAI
             try
             {
                 var result = new TheLoaiRequest();
-                var data = _context.TheLoais.Find(request.Id);
+                var data = _context.TheLoais.Find(request.Id.ToString());
                 if (data == null)
                 {
                     result.Id = Guid.NewGuid().ToString();
@@ -115,10 +119,14 @@ namespace BE.Services.DANHMUC.THELOAI
                 ).ToList();
 
                 if (checkData.Count > 0)
-                    throw new Exception("Tên nhóm quyền đã tồn tại");
+                    throw new Exception("Tên thể loại đã tồn tại");
 
                 var add = _mapper.Map<TheLoai>(request);
                 add.Id = request.Id == Guid.Empty.ToString() ? Guid.NewGuid().ToString() : request.Id;
+
+                string _pathAnhBia = UploadAnhBia(request.Id, add.ImageUrl);
+                add.ImageUrl = _pathAnhBia == "" ? add.ImageUrl : _pathAnhBia;
+
                 add.DateCreate = DateTime.Now;
 
                 // Lưu vào Database
@@ -147,15 +155,17 @@ namespace BE.Services.DANHMUC.THELOAI
                 ).ToList();
 
                 if (checkData.Count > 0)
-                    throw new Exception("Tên nhóm quyền đã tồn tại");
+                    throw new Exception("Tên thể loại đã tồn tại");
 
                 var update = _mapper.Map<TheLoai>(request);
                 if (update != null)
                 {
+                    string _pathAnhBia = UploadAnhBia(request.Id, update.ImageUrl);
+                    update.ImageUrl = _pathAnhBia == "" ? update.ImageUrl : _pathAnhBia;
                     update.DateCreate = DateTime.Now;
 
                     // Lưu vào Database
-                    _context.TheLoais.Add(update);
+                    _context.TheLoais.Update(update);
                     _context.SaveChanges();
                 }
                 else
@@ -180,13 +190,13 @@ namespace BE.Services.DANHMUC.THELOAI
             {
                 foreach (var id in request.Ids)
                 {
-                    var delete = _context.TheLoais.Find(id);
+                    var delete = _context.TheLoais.Find(id.ToString());
                     if (delete != null)
                     {
                         delete.Status = -1;
                         delete.DateCreate = DateTime.Now;
 
-                        _context.TheLoais.Add(delete);
+                        _context.TheLoais.Update(delete);
                     }
                     else
                     {
@@ -203,6 +213,51 @@ namespace BE.Services.DANHMUC.THELOAI
                 response.Message = ex.Message;
             }
             return response;
+        }
+
+        // Update 
+        private string UploadAnhBia(string folderUpload, string oldImage)
+        {
+            string path = "";
+            string folderUploadPath = Path.Combine(_webHostEnvironment.WebRootPath, "Files\\Temp\\UploadFile\\" + folderUpload);
+            if (Directory.Exists(folderUploadPath))
+            {
+                string[] arrFiles = Directory.GetFiles(folderUploadPath);
+                string[] imageExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif", ".bmp", ".tiff", ".svg" };
+                List<string> imgFiles = new List<string>();
+                foreach (var file in arrFiles)
+                {
+                    string fileExtension = Path.GetExtension(file);
+
+                    if (imageExtensions.Contains(fileExtension.ToLower()))
+                    {
+                        imgFiles.Add(file);
+                    }
+                }
+                if (imgFiles.Count() > 0) //có đính kèm
+                {
+                    FileInfo info = new FileInfo(imgFiles[0]);
+                    string fileName = Guid.NewGuid().ToString() + info.Extension;
+                    string avataPath = Path.Combine(_webHostEnvironment.WebRootPath, "Files\\TheLoai");
+                    //Kiểm tra nếu thư mục chưa tồn tại thì tạo mới.
+                    if (!Directory.Exists(avataPath))
+                    {
+                        Directory.CreateDirectory(avataPath);
+                    }
+
+                    //Xóa ảnh cũ nếu tồn tại
+                    if (File.Exists(_webHostEnvironment.WebRootPath + "\\" + oldImage))
+                    {
+                        File.Delete(_webHostEnvironment.WebRootPath + "\\" + oldImage);
+                    }
+
+                    //Copy ảnh mới
+                    File.Move(info.FullName, avataPath + "\\" + fileName, true);
+                    path = "Files\\TheLoai\\" + fileName;
+                }
+            }
+
+            return path;
         }
     }
 }

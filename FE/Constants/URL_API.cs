@@ -2,6 +2,9 @@
 {
     public class URL_API
     {
+        // Base
+        public const string UPLOADFILE = "/UploadFile/Post";
+
         // TAIKHOAN
         public const string TAIKHOAN_LOGIN = "/TaiKhoan/Login";
         public const string TAIKHOAN_REGISTER = "/TaiKhoan/Register";

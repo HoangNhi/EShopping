@@ -1,4 +1,5 @@
-﻿using MODELS.Base;
+﻿using Microsoft.AspNetCore.Http;
+using MODELS.Base;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,6 +18,6 @@ namespace MODELS.DANHMUC.THELOAI.Requests
 
         public DateTime DateCreate { get; set; }
 
-        public int Status { get; set; }
+        public int Status { get; set; } = 1;
     }
 }

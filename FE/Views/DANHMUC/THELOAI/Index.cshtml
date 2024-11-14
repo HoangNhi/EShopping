@@ -75,7 +75,7 @@
     </section>
 </div>
 
-<div class="modal fade" id="modal-default" aria-hidden="true" data-backdrop="static">
+<div class="modal fade" id="modal-default" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg" id='modelContainer'>
     </div>
 </div>
@@ -105,7 +105,8 @@
     }
 
     function refreshGrid() {
-        GetListPaging(index);
+        GetListPaging(0);
+        SelectdRow = []
     }
 
     function SelectRow(Id) {
@@ -126,5 +127,58 @@
             $('#modelContainer').html(data);
             $('#modal-default').modal('show');
         });
+    }
+
+    function suaThongTin() {
+        if (SelectdRow.length == 0) {
+            ShowThongBaoThatBai("Vui lòng chọn dữ liệu để cập nhật");
+            return;
+        }
+
+        if (SelectdRow.length > 1) {
+            ShowThongBaoThatBai("Vui lòng chọn chỉ chọn 1 dữ liệu để cập nhật")
+            return;
+        }
+
+        var url = '@Url.Action("ShowUpdatePopup", "TheLoai")?id=' + SelectdRow[0];
+
+        $.get(url, function (data) {
+            $('#modelContainer').html(data);
+            $('#modal-default').modal('show');
+        });
+    }
+
+    function xoaThongTin() {
+        if (SelectdRow.length == 0) {
+            ShowThongBaoThatBai("Vui lòng chọn dữ liệu để xóa");
+            return;
+        }
+
+        var xoaThongTin = async function () {
+            showLoading(true);
+            await $.ajax({
+                url: '@Url.Action("Delete", "TheLoai")',
+                type: 'POST',
+                dataType: 'json',
+                data: {
+                    Ids: SelectdRow
+                },
+                success: function (data) {
+                    if (data.IsSuccess) {
+                        ShowThongBaoThanhCong(deleteSuccess);
+                        refreshGrid();
+                    }
+                    else {
+                        ShowThongBaoThatBai(data.Message);
+                    }
+                },
+                error: function (request, status, err) {
+                    ShowThongBaoThatBai(errorMessage);
+                }
+            });
+            showLoading(false);
+        }
+
+        confirmDialogYesNo(deleteContent, deleteTitle, xoaThongTin)
     }
 </script>
