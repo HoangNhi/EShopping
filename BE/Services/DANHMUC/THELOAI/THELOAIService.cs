@@ -7,6 +7,9 @@ using MODELS.Base;
 using MODELS.BASE;
 using MODELS.DANHMUC.THELOAI.Dtos;
 using MODELS.DANHMUC.THELOAI.Requests;
+using MODELS.HETHONG.LOG;
+using System;
+using System.IdentityModel.Tokens.Jwt;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace BE.Services.DANHMUC.THELOAI
@@ -110,6 +113,8 @@ namespace BE.Services.DANHMUC.THELOAI
         }
         public BaseResponse<MODELTheLoai> Create(TheLoaiRequest request)
         {
+            var userId = _contextAccessor.HttpContext.User.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Name)?.Value;
+            var log = new NhatKiDTO();
             var response = new BaseResponse<MODELTheLoai>();
             try
             {
@@ -131,6 +136,14 @@ namespace BE.Services.DANHMUC.THELOAI
 
                 // Lưu vào Database
                 _context.TheLoais.Add(add);
+                //Lưu vào nhật kí
+                log.Name = "Thể loại";
+                log.Id = Guid.NewGuid();
+                log.Event = "Thêm";
+                log.Date = DateTime.Now;
+                log.UserId = Guid.Parse(userId);
+                log.TargetId = Guid.Parse(add.Id);
+                _context.NhatKis.Add(_mapper.Map<NhatKi>(log));
                 _context.SaveChanges();
 
                 // Trả về dữ liệu
@@ -145,6 +158,8 @@ namespace BE.Services.DANHMUC.THELOAI
         }
         public BaseResponse<MODELTheLoai> Update(TheLoaiRequest request)
         {
+            var userId = _contextAccessor.HttpContext.User.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Name)?.Value;
+            var log = new NhatKiDTO();
             var response = new BaseResponse<MODELTheLoai>();
             try
             {
@@ -165,6 +180,14 @@ namespace BE.Services.DANHMUC.THELOAI
                     update.DateCreate = DateTime.Now;
 
                     // Lưu vào Database
+                    //Lưu vào nhật kí
+                    log.Name = "Nhãn hiệu";
+                    log.Id = Guid.NewGuid();
+                    log.Event = "Thêm";
+                    log.Date = DateTime.Now;
+                    log.UserId = Guid.Parse(userId);
+                    log.TargetId = Guid.Parse(update.Id);
+                    _context.NhatKis.Add(_mapper.Map<NhatKi>(log));
                     _context.TheLoais.Update(update);
                     _context.SaveChanges();
                 }
@@ -185,6 +208,8 @@ namespace BE.Services.DANHMUC.THELOAI
         }
         public BaseResponse<string> Delete(DeleteListRequest request)
         {
+            var userId = _contextAccessor.HttpContext.User.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Name)?.Value;
+            var log = new NhatKiDTO();
             var response = new BaseResponse<string>();
             try
             {
@@ -196,6 +221,14 @@ namespace BE.Services.DANHMUC.THELOAI
                         delete.Status = -1;
                         delete.DateCreate = DateTime.Now;
 
+                        //Lưu vào nhật kí
+                        log.Name = "Nhãn hiệu";
+                        log.Id = Guid.NewGuid();
+                        log.Event = "Thêm";
+                        log.Date = DateTime.Now;
+                        log.UserId = Guid.Parse(userId);
+                        log.TargetId = Guid.Parse(delete.Id);
+                        _context.NhatKis.Add(_mapper.Map<NhatKi>(log));
                         _context.TheLoais.Update(delete);
                     }
                     else

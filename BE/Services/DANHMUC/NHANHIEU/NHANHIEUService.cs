@@ -1,11 +1,14 @@
 ﻿using AutoMapper;
 using ENTITIES.DbContent;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.Blazor;
 using MODELS.Base;
 using MODELS.BASE;
 using MODELS.DANHMUC.NHANHIEU.Dtos;
 using MODELS.DANHMUC.NHANHIEU.Requests;
 using MODELS.DANHMUC.THELOAI.Dtos;
 using MODELS.DANHMUC.THELOAI.Requests;
+using MODELS.HETHONG.LOG;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace BE.Services.DANHMUC.NHANHIEU
 {
@@ -23,6 +26,8 @@ namespace BE.Services.DANHMUC.NHANHIEU
     
         public BaseResponse<MODELNhanHieu> Create(NhanHieuRequests request)
         {
+            var userId = _contextAccessor.HttpContext.User.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Name)?.Value;
+            var log = new NhatKiDTO();
             var response = new BaseResponse<MODELNhanHieu>();
             try
             {
@@ -35,11 +40,18 @@ namespace BE.Services.DANHMUC.NHANHIEU
                     throw new Exception("Nhãn hiệu đã tồn tại");
 
                 var add = _mapper.Map<NhanHieu>(request);
-                add.Id = request.Id == Guid.Empty ? Guid.NewGuid() : request.Id;
-                add.DateCreate = DateTime.Now;
-
-                // Lưu vào Database
+                add.Id = Guid.NewGuid();
+                add.DateCreate = DateTime.UtcNow;
                 _context.NhanHieus.Add(add);
+                //Lưu vào nhật kí
+                log.Name = "Nhãn hiệu";
+                log.Id = Guid.NewGuid();
+                log.Event = "Thêm";
+                log.Date = DateTime.Now;
+                log.UserId = Guid.Parse(userId);
+                log.TargetId = add.Id;
+                _context.NhatKis.Add(_mapper.Map<NhatKi>(log));
+                //Lưu vào Database
                 _context.SaveChanges();
 
                 // Trả về dữ liệu
@@ -55,6 +67,8 @@ namespace BE.Services.DANHMUC.NHANHIEU
 
         public BaseResponse<string> Delete(DeleteListRequest request)
         {
+            var userId = _contextAccessor.HttpContext.User.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Name)?.Value;
+            var log = new Log();
             var response = new BaseResponse<string>();
             try
             {
@@ -65,7 +79,14 @@ namespace BE.Services.DANHMUC.NHANHIEU
                     {
                         delete.Status = -1;
                         delete.DateCreate = DateTime.Now;
-
+                        //Lưu vào nhật kí
+                        log.Name = "Nhãn hiệu";
+                        log.Id = Guid.NewGuid();
+                        log.Event = "Xoá";
+                        log.Date = DateTime.Now;
+                        log.UserId = Guid.Parse(userId);
+                        log.TargetId = delete.Id;
+                        _context.NhatKis.Add(_mapper.Map<NhatKi>(log));
                         _context.NhanHieus.Update(delete);
                     }
                     else
@@ -146,12 +167,12 @@ namespace BE.Services.DANHMUC.NHANHIEU
                 var data = new List<MODELNhanHieu>();
                 if (!string.IsNullOrEmpty(request.TextSearch))
                 {
-                    var result = _context.NhanHieus.Where(x => x.Name == request.TextSearch).Skip((request.PageIndex - 1) * request.RowsPerPage).Take(request.RowsPerPage).ToList();
+                    var result = _context.NhanHieus.Where(x => x.Name == request.TextSearch && x.Status != -1).Skip((request.PageIndex - 1) * request.RowsPerPage).Take(request.RowsPerPage).ToList();
                     data = _mapper.Map<List<MODELNhanHieu>>(result);
                 }
                 else
                 {
-                    var result = _context.NhanHieus.Skip((request.PageIndex - 1) * request.RowsPerPage).Take(request.RowsPerPage).ToList();
+                    var result = _context.NhanHieus.Where(x => x.Status != -1).Skip((request.PageIndex - 1) * request.RowsPerPage).Take(request.RowsPerPage).ToList();
                     data = _mapper.Map<List<MODELNhanHieu>>(result);
                 }
                 var page = new GetListPagingResponse();
@@ -171,38 +192,34 @@ namespace BE.Services.DANHMUC.NHANHIEU
 
         public BaseResponse<MODELNhanHieu> Update(NhanHieuRequests request)
         {
+            var userId = _contextAccessor.HttpContext.User.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Name)?.Value;
+            var log = new Log();
             var response = new BaseResponse<MODELNhanHieu>();
             try
             {
-                var checkData = _context.NhanHieus.Where(
-                    x => x.Name == request.Name
-                    && x.Status != -1
-                ).ToList();
-
-                if (checkData.Count <= 0)
-                {
-                    response.Error = true;
-                    response.Message = "Nhãn hiệu không tồn tại";
-                }
-                else
-                {
                     var add = _mapper.Map<NhanHieu>(request);
                     add.Id = request.Id == Guid.Empty ? Guid.NewGuid() : request.Id;
                     add.DateCreate = DateTime.Now;
-
-                    // Lưu vào Database
-                    _context.NhanHieus.Update(add);
+                //Lưu vào nhật kí
+                log.Name = "Nhãn hiệu";
+                log.Id = Guid.NewGuid();
+                log.Event = "Cập nhật";
+                log.Date = DateTime.UtcNow;
+                log.UserId = Guid.Parse(userId);
+                log.TargetId = add.Id;
+                _context.NhatKis.Add(_mapper.Map<NhatKi>(log));
+                // Lưu vào Database
+                _context.NhanHieus.Update(add);
                     _context.SaveChanges();
                     response.Data = _mapper.Map<MODELNhanHieu>(add);
-
-                }
-                // Trả về dữ liệu
             }
             catch (Exception ex)
             {
                 response.Error = true;
                 response.Message = ex.Message;
             }
+            // Trả về dữ liệu
+
             return response;
         }
     }

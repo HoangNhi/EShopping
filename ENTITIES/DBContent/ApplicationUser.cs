@@ -25,6 +25,8 @@ public partial class ApplicationUser
 
     public bool Vertify { get; set; }
 
+    public bool? IsGoogle { get; set; }
+
     public DateTime DateCreate { get; set; }
 
     public bool Status { get; set; }
