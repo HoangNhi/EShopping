@@ -3,10 +3,17 @@ using ENTITIES.DbContent;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.Blazor;
 using MODELS.Base;
 using MODELS.BASE;
+using MODELS.DANHMUC.ANHSAN_HAM.Dtos;
+using MODELS.DANHMUC.BINHLUAN.Dtos;
+using MODELS.DANHMUC.CAUHINHSANPHAM.Dtos;
 using MODELS.DANHMUC.NHANHIEU.Dtos;
 using MODELS.DANHMUC.NHANHIEU.Requests;
+using MODELS.DANHMUC.NHOMPHANLOAI1.Dtos;
+using MODELS.DANHMUC.NHOMPHANLOAI2.Dtos;
 using MODELS.DANHMUC.SANPHAM.Dtos;
 using MODELS.DANHMUC.SANPHAM.Requests;
+using MODELS.DANHMUC.THELOAI.Dtos;
+using MODELS.DANHMUC.TRALOIBINHLUAN.Dtos;
 using MODELS.HETHONG.LOG;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -144,7 +151,7 @@ namespace BE.Services.DANHMUC.SANPHAM
                 var data = _context.SanPhams.Find(request.Id);
                 if (data == null)
                 {
-                    result.Id = Guid.NewGuid();
+                    result.SanPhamId = Guid.NewGuid();
                     result.IsEdit = false;
                 }
                 else
@@ -228,6 +235,104 @@ namespace BE.Services.DANHMUC.SANPHAM
                 page.TotalRow = _context.SanPhams.Count();
                 page.Data = data;
                 res.Data = page;
+            }
+            catch (Exception ex)
+            {
+                res.Error = true;
+                res.Message = ex.Message;
+                res.StatusCode = 500;
+            }
+            return res;
+        }
+
+        public BaseResponse<SanPhamResponse> GetProduct(GetByIdRequest request)
+        {
+            var res = new BaseResponse<SanPhamResponse>();
+            var result = new SanPhamResponse();
+            try
+            {
+                var item = _context.SanPhams.Find(request.Id);
+                if (item != null)
+                {
+                    result = _mapper.Map<SanPhamResponse>(item);
+                    result.anhSanPham = _mapper.Map<List<MODELSanPhamAnh>>(_context.SanPham_Anhs.Where(x => x.SanPhamId == item.Id).ToList());
+                    result.theLoai = _mapper.Map<MODELTheLoai>(_context.TheLoais.FirstOrDefault(x => x.Id == item.TheLoaiId));
+                    result.nhanHieu = _mapper.Map<MODELNhanHieu>(_context.NhanHieus.FirstOrDefault(x => x.Id == item.NhanHieuId));
+                    result.cauHinhSanPham = _mapper.Map<List<MODELCauHinhSanPham>>(_context.CauHinhSanPhams.Where(x => x.SanPhamId == item.Id).ToList());
+                    result.nhomPhanLoai = _mapper.Map<List<NhomPhanLoai>>(_context.NhomPhanLoai1s.Where(x => x.SanPhamId == item.Id).ToList());
+                    foreach(var i in result.nhomPhanLoai)
+                    {
+                        i.NhomPhanLoai2 = _mapper.Map<List<MODELNhomPhanLoai2>>(_context.NhomPhanLoai2s.Where(x => x.NhomPhanLoai1Id == i.Id).ToList());
+
+                    }
+                    result.BinhLuan = _mapper.Map<List<BinhLuanResponse>>(_context.BinhLuans.Where(x => x.SanPhamId == item.Id)).ToList();
+                    foreach (var i in result.BinhLuan)
+                    {
+                        i.TraLoiBinhLuan = _mapper.Map<List<MODELTraLoiBinhLuan>>(_context.TraLoiBinhLuans.Where(x => x.BinhLuanId == i.Id).ToList());
+
+                    }
+
+                    res.Data = result;
+                }
+                else
+                {
+                    res.Error = true;
+                    res.Message = "Not Found!";
+                    res.StatusCode = 404;
+                }
+            }
+            catch (Exception ex) 
+            {
+                res.Error = true;
+                res.Message = ex.Message;
+                res.StatusCode=500;
+            }
+            return res;
+        }
+
+        public BaseResponse<SanPhamResponse> PostProduct(SanPhamRequestAll request)
+        {
+            var res = new BaseResponse<SanPhamResponse>();
+            var result = new SanPhamResponse();
+            try
+            {
+                var item = _mapper.Map<SanPham>(request);
+                item.Id = Guid.NewGuid();
+                item.DateCreate = DateTime.Now;
+                _context.SanPhams.Add(item);
+                result = _mapper.Map<SanPhamResponse>(request);
+                result.theLoai = _mapper.Map<MODELTheLoai>(_context.TheLoais.Find(request.TheLoaiId));
+                result.nhanHieu = _mapper.Map<MODELNhanHieu>(_context.NhanHieus.Find(request.NhanHieuId));
+                foreach(var i in request.anhSanPham)
+                {
+                    var anh = _mapper.Map<SanPham_Anh>(i);
+                    anh.Id = Guid.NewGuid();
+                    anh.DateCreate = DateTime.Now;
+                    _context.SanPham_Anhs.Add(anh);
+                }   
+                foreach(var c in request.cauHinhSanPham)
+                {
+                    var cauhinh = _mapper.Map<CauHinhSanPham>(c);
+                    cauhinh.Id = Guid.NewGuid();
+                    cauhinh.SanPhamId = item.Id;
+                }
+                foreach(var i in request.nhomPhanLoai)
+                {
+                    var npl  = _mapper.Map<NhomPhanLoai1>(i);
+                    npl.Id = Guid.NewGuid();
+                    npl.SanPhamId = item.Id;
+                    _context.NhomPhanLoai1s.Add(npl);
+                    foreach(var n in npl.NhomPhanLoai2s)
+                    {
+                        var npl2 = _mapper.Map<NhomPhanLoai2>(n);
+                        npl2.Id = Guid.NewGuid();
+                        npl2.NhomPhanLoai1Id = npl.Id;
+                        _context.NhomPhanLoai2s.Add(npl2);
+                    }
+                }
+                result.Id = item.Id;
+                res.Data = result;
+                _context.SaveChanges();
             }
             catch (Exception ex)
             {

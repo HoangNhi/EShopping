@@ -16,5 +16,7 @@ namespace BE.Services.DANHMUC.SANPHAM
         BaseResponse<MODELSanPham> Update(SanPhamRequests request);
         BaseResponse<string> Delete(DeleteListRequest request);
         BaseResponse<GetListPagingResponse> GetCustom(int PageIndex, int RowPerPage, string? TheLoaiId, Guid? NhanHieuId, bool? IsNew, bool? IsBestSelling, bool? IsSale);
+        BaseResponse<SanPhamResponse> GetProduct(GetByIdRequest request);
+        BaseResponse<SanPhamResponse> PostProduct(SanPhamRequestAll request);
     }
 }

@@ -1,4 +1,12 @@
-﻿using System;
+﻿using MODELS.DANHMUC.ANHSAN_HAM.Dtos;
+using MODELS.DANHMUC.BINHLUAN.Dtos;
+using MODELS.DANHMUC.CAUHINHSANPHAM.Dtos;
+using MODELS.DANHMUC.NHANHIEU.Dtos;
+using MODELS.DANHMUC.NHOMPHANLOAI1.Dtos;
+using MODELS.DANHMUC.NHOMPHANLOAI2.Dtos;
+using MODELS.DANHMUC.THELOAI.Dtos;
+using MODELS.DANHMUC.TRALOIBINHLUAN.Dtos;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace MODELS.DANHMUC.SANPHAM.Dtos
 {
-    public class MODELSanPham
+    public class SanPhamResponse
     {
         public Guid Id { get; set; }
 
@@ -35,5 +43,21 @@ namespace MODELS.DANHMUC.SANPHAM.Dtos
         public int? Sold { get; set; }
 
         public int Status { get; set; }
+
+        public List<MODELSanPhamAnh>? anhSanPham { get; set; } = null;
+
+        public MODELTheLoai? theLoai { get; set; } = null;
+
+        public MODELNhanHieu? nhanHieu { get; set; } = null;
+
+        public List<MODELCauHinhSanPham>? cauHinhSanPham { get; set; } = null;
+
+        public List<NhomPhanLoai>? nhomPhanLoai { get; set; } = null;
+
+        public List<BinhLuanResponse>? BinhLuan { get; set; } = null;
+
+        
+
+
     }
 }
