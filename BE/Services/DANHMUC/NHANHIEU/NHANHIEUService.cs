@@ -68,7 +68,7 @@ namespace BE.Services.DANHMUC.NHANHIEU
         public BaseResponse<string> Delete(DeleteListRequest request)
         {
             var userId = _contextAccessor.HttpContext.User.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Name)?.Value;
-            var log = new Log();
+            var log = new NhatKiRequest();
             var response = new BaseResponse<string>();
             try
             {
@@ -193,7 +193,7 @@ namespace BE.Services.DANHMUC.NHANHIEU
         public BaseResponse<MODELNhanHieu> Update(NhanHieuRequests request)
         {
             var userId = _contextAccessor.HttpContext.User.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Name)?.Value;
-            var log = new Log();
+            var log = new NhatKiRequest();
             var response = new BaseResponse<MODELNhanHieu>();
             try
             {

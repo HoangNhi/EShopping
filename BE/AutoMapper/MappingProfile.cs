@@ -42,7 +42,7 @@ namespace BE.AutoMapper
             CreateMap<PHANQUYEN_NHOMQUYEN, NhomQuyenRequest>().ReverseMap();
 
             //LOG
-            CreateMap<NhatKi,Log>().ReverseMap();
+            CreateMap<NhatKi,NhatKiRequest>().ReverseMap();
             CreateMap<NhatKi,NhatKiDTO>().ReverseMap();
 
             //DANH MUC
