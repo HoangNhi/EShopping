@@ -292,6 +292,8 @@ namespace BE.Services.DANHMUC.SANPHAM
 
         public BaseResponse<SanPhamResponse> PostProduct(SanPhamRequestAll request)
         {
+            var userId = _contextAccessor.HttpContext.User.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Name)?.Value;
+            var NhatKiDTO = new NhatKiDTO();
             var res = new BaseResponse<SanPhamResponse>();
             var result = new SanPhamResponse();
             try
@@ -332,6 +334,13 @@ namespace BE.Services.DANHMUC.SANPHAM
                 }
                 result.Id = item.Id;
                 res.Data = result;
+                NhatKiDTO.Name = "Sản phẩm";
+                NhatKiDTO.Id = Guid.NewGuid();
+                NhatKiDTO.Event = "Thêm";
+                NhatKiDTO.Date = DateTime.Now;
+                NhatKiDTO.UserId = Guid.Parse(userId);
+                NhatKiDTO.TargetId = item.Id;
+                _context.NhatKis.Add(_mapper.Map<NhatKi>(NhatKiDTO));
                 _context.SaveChanges();
             }
             catch (Exception ex)
