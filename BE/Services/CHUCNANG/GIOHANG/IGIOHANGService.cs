@@ -10,7 +10,7 @@ namespace BE.Services.CHUCNANG.GIOHANG
     public interface IGIOHANGService
     {
         BaseResponse<GetListPagingResponse> GetListPaging(GetListPagingRequest request);
-        BaseResponse<MODELGioHang> GetById(GetByIdRequest request);
+        BaseResponse<List<MODELGioHang>> GetById(GetByIdRequest request);
         BaseResponse<GioHangRequests> GetByPost(GetByIdRequest request);
         BaseResponse<MODELGioHang> Create(GioHangRequests request);
         BaseResponse<MODELGioHang> Update(GioHangRequests request);

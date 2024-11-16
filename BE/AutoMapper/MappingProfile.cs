@@ -87,6 +87,7 @@ namespace BE.AutoMapper
             CreateMap<GioHang,GioHangRequests>().ReverseMap();
             CreateMap<HoaDon, MODELHoaDon>().ReverseMap();
             CreateMap<HoaDon,HoaDonRequests>().ReverseMap();
+            CreateMap<HoaDon,HoaDonResponse>().ReverseMap();
             CreateMap<ChiTietDonHang,MODELChiTietDonHang>().ReverseMap();
             CreateMap<ChiTietDonHang,ChiTietDonHangRequests>().ReverseMap();
         }

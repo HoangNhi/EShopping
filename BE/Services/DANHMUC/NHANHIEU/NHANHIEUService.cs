@@ -227,7 +227,7 @@ namespace BE.Services.DANHMUC.NHANHIEU
                 log.Name = "Nhãn hiệu";
                 log.Id = Guid.NewGuid();
                 log.Event = "Cập nhật";
-                log.Date = DateTime.UtcNow;
+                log.Date = DateTime.Now;
                 log.UserId = Guid.Parse(userId);
                 log.TargetId = update.Id;
                 var addNhatKi = _mapper.Map<NhatKi>(log);

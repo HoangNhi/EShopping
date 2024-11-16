@@ -8,6 +8,7 @@ using MODELS.CHUCNANG.HOADON.Requests;
 using MODELS.DANHMUC.SANPHAM.Dtos;
 using System.IdentityModel.Tokens.Jwt;
 using MODELS.HETHONG.LOG;
+using MODELS.CHUCNANG.CHITIETDONHANG.Dtos;
 
 namespace BE.Services.CHUCNANG.HOADON
 {
@@ -105,15 +106,15 @@ namespace BE.Services.CHUCNANG.HOADON
             return response;
         }
 
-        public BaseResponse<MODELHoaDon> GetById(GetByIdRequest request)
+        public BaseResponse<List<MODELHoaDon>> GetById(GetByIdRequest request)
         {
-            var res = new BaseResponse<MODELHoaDon>();
+            var res = new BaseResponse<List<MODELHoaDon>>();
             try
             {
-                var item = _context.HoaDons.Find(request.Id);
+                var item = _context.HoaDons.Where(x => x.UserId == request.Id);
                 if (item != null)
                 {
-                    var result = _mapper.Map<MODELHoaDon>(item);
+                    var result = _mapper.Map<List<MODELHoaDon>>(item);
                     res.Data = result;
                 }
                 else
@@ -132,9 +133,36 @@ namespace BE.Services.CHUCNANG.HOADON
             return res;
         }
 
-        public BaseResponse<HoaDonRequests> GetByPost(GetByIdRequest request)
+        public BaseResponse<HoaDonResponse> GetByPost(GetByIdRequest request)
         {
-            throw new NotImplementedException();
+            var res = new BaseResponse<HoaDonResponse>();
+            try
+            {
+                var item = _context.HoaDons.Find(request.Id);
+                if (item != null)
+                {
+                    var result = _mapper.Map<HoaDonResponse>(item);
+                    var cthd = _context.ChiTietDonHangs.Where(x => x.HoaDonId == result.Id).ToList();
+                    if (cthd != null)
+                    {
+                        result.chiTietHoaDon = _mapper.Map<List<MODELChiTietDonHang>>(cthd);
+                    }
+                    res.Data = result;
+                }
+                else
+                {
+                    res.Error = true;
+                    res.Message = "Not Found!";
+                    res.StatusCode = 404;
+                }
+            }
+            catch (Exception ex)
+            {
+                res.Error = true;
+                res.Message = ex.Message;
+                res.StatusCode = 500;
+            }
+            return res;
         }
 
         public BaseResponse<GetListPagingResponse> GetListPaging(GetListPagingRequest request)

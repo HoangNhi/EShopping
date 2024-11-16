@@ -5,6 +5,7 @@ using MODELS.BASE;
 using MODELS.CHUCNANG.GIOHANG.Dtos;
 using MODELS.CHUCNANG.GIOHANG.Requests;
 using MODELS.DANHMUC.SANPHAM.Dtos;
+using MODELS.DANHMUC.THELOAI.Dtos;
 using MODELS.HETHONG.LOG;
 using System.IdentityModel.Tokens.Jwt;
 
@@ -116,9 +117,27 @@ namespace BE.Services.CHUCNANG.GIOHANG
             return response;
         }
 
-        public BaseResponse<MODELGioHang> GetById(GetByIdRequest request)
+        public BaseResponse<List<MODELGioHang>> GetById(GetByIdRequest request)
         {
-            throw new NotImplementedException();
+            var response = new BaseResponse<List<MODELGioHang>>();
+            try
+            {
+                var result = new List<MODELGioHang>();
+                var data = _context.GioHangs.Where(x => x.UserId == request.Id).ToList();
+                if (data == null)
+                    throw new Exception("Không tìm thấy thông tin");
+                else
+                {
+                    result = _mapper.Map<List<MODELGioHang>>(data);
+                }
+                response.Data = result;
+            }
+            catch (Exception ex)
+            {
+                response.Error = true;
+                response.Message = ex.Message;
+            }
+            return response;
         }
 
         public BaseResponse<GioHangRequests> GetByPost(GetByIdRequest request)
