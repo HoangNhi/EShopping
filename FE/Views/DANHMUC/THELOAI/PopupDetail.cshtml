@@ -1,4 +1,5 @@
 ﻿@model MODELS.DANHMUC.THELOAI.Requests.TheLoaiRequest
+@using Newtonsoft.Json;
 
 <style>
     .profile-pic {
@@ -64,8 +65,8 @@
         })
 
         // Load ảnh upload
-        $("#formFile").change(function () {
-            readURL(this);
+        $("#formFile").change(function (event) {
+            readURL(event);
         });
 
     });
@@ -107,8 +108,19 @@
         $('#modal-default').modal('hide');
     }
 
-    function readURL(input) {
+    function readURL(event) {
+        var input = $("#formFile")[0]
         if (input.files && input.files[0]) {
+            var ext = getFileExtension(input.files[0].name)
+            var allowedExtensions = @Html.Raw(JsonConvert.SerializeObject(MODELS.COMMON.CommonConst._fileHinhAnhValid));
+            debugger;
+            if (!allowedExtensions.includes(ext)) {
+                event.preventDefault()
+                ShowThongBaoThatBai("Hình ảnh không hợp lệ")
+                $("#formFile").val('')
+                return;
+            }
+
             var reader = new FileReader();
             reader.onload = function (e) {
                 $('#img_UpLoad').attr('src', e.target.result);
@@ -117,10 +129,13 @@
         }
     }
 
+    function getFileExtension(fname) {
+        return fname.slice((fname.lastIndexOf(".") - 1 >>> 0) + 2);
+    }
+
     function uploadAnhBia() {
         //UPLOAD FILE
         var files = $("#formFile")[0].files;
-
         if (files.length > 0) {
             if (window.FormData !== undefined) {
                 var data = new FormData();
