@@ -17,6 +17,6 @@ namespace MODELS.DANHMUC.NHANHIEU.Requests
 
         public DateTime DateCreate { get; set; }
 
-        public int Status { get; set; }
+        public int Status { get; set; } = 1;
     }
 }

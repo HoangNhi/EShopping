@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using ENTITIES.DbContent;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.Blazor;
 using MODELS.Base;
 using MODELS.BASE;
@@ -17,13 +18,15 @@ namespace BE.Services.DANHMUC.NHANHIEU
         private readonly EShoppingContext _context;
         private readonly IMapper _mapper;
         private readonly IHttpContextAccessor _contextAccessor;
-        public NHANHIEUService(EShoppingContext context, IMapper mapper, IHttpContextAccessor contextAccessor)
+        private readonly IWebHostEnvironment _webHostEnvironment;
+        public NHANHIEUService(EShoppingContext context, IMapper mapper, IHttpContextAccessor contextAccessor, IWebHostEnvironment webHostEnvironment)
         {
             _context = context;
             _mapper = mapper;
             _contextAccessor = contextAccessor;
+            _webHostEnvironment = webHostEnvironment;
         }
-    
+
         public BaseResponse<MODELNhanHieu> Create(NhanHieuRequests request)
         {
             var userId = _contextAccessor.HttpContext.User.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Name)?.Value;
@@ -40,9 +43,13 @@ namespace BE.Services.DANHMUC.NHANHIEU
                     throw new Exception("Nhãn hiệu đã tồn tại");
 
                 var add = _mapper.Map<NhanHieu>(request);
+                string _pathAnhBia = UploadAnhBia(request.Id.ToString(), add.ImageUrl);
+                add.ImageUrl = _pathAnhBia == "" ? add.ImageUrl : _pathAnhBia;
+
                 add.Id = Guid.NewGuid();
-                add.DateCreate = DateTime.UtcNow;
+                add.DateCreate = DateTime.Now;
                 _context.NhanHieus.Add(add);
+                
                 //Lưu vào nhật kí
                 log.Name = "Nhãn hiệu";
                 log.Id = Guid.NewGuid();
@@ -86,7 +93,9 @@ namespace BE.Services.DANHMUC.NHANHIEU
                         log.Date = DateTime.Now;
                         log.UserId = Guid.Parse(userId);
                         log.TargetId = delete.Id;
-                        _context.NhatKis.Add(_mapper.Map<NhatKi>(log));
+                        var nhatky = _mapper.Map<NhatKi>(log);
+                        nhatky.User = null;
+                        _context.NhatKis.Add(nhatky);
                         _context.NhanHieus.Update(delete);
                     }
                     else
@@ -120,7 +129,7 @@ namespace BE.Services.DANHMUC.NHANHIEU
                 else 
                 {
                     res.Error = true;
-                    res.Message = "Not Found!";
+                    res.Message = "Không tìm thấy thông tin";
                     res.StatusCode = 404;
                 }
             }
@@ -165,19 +174,22 @@ namespace BE.Services.DANHMUC.NHANHIEU
             try
             {
                 var data = new List<MODELNhanHieu>();
-                if (!string.IsNullOrEmpty(request.TextSearch))
+                int totalData = 0;
+                if (!string.IsNullOrEmpty(request.TextSearch) && !string.IsNullOrWhiteSpace(request.TextSearch))
                 {
-                    var result = _context.NhanHieus.Where(x => x.Name == request.TextSearch && x.Status != -1).Skip((request.PageIndex - 1) * request.RowsPerPage).Take(request.RowsPerPage).ToList();
+                    var result = _context.NhanHieus.Where(x => x.Name.ToLower().Contains(request.TextSearch.Trim().ToLower()) && x.Status != -1).OrderByDescending(x => x.DateCreate).Skip((request.PageIndex - 1) * request.RowsPerPage).Take(request.RowsPerPage).ToList();
                     data = _mapper.Map<List<MODELNhanHieu>>(result);
+                    totalData = _context.NhanHieus.Where(x => x.Name.ToLower().Contains(request.TextSearch.Trim().ToLower()) && x.Status != -1).Count();
                 }
                 else
                 {
-                    var result = _context.NhanHieus.Where(x => x.Status != -1).Skip((request.PageIndex - 1) * request.RowsPerPage).Take(request.RowsPerPage).ToList();
+                    var result = _context.NhanHieus.Where(x => x.Status != -1).OrderByDescending(x => x.DateCreate).Skip((request.PageIndex - 1) * request.RowsPerPage).Take(request.RowsPerPage).ToList();
                     data = _mapper.Map<List<MODELNhanHieu>>(result);
+                    totalData = _context.NhanHieus.Where(x => x.Status != -1).Count();
                 }
                 var page = new GetListPagingResponse();
                 page.PageIndex = request.PageIndex;
-                page.TotalRow = _context.NhanHieus.Count();
+                page.TotalRow = totalData;
                 page.Data = data;
                 res.Data = page;
             }
@@ -197,21 +209,34 @@ namespace BE.Services.DANHMUC.NHANHIEU
             var response = new BaseResponse<MODELNhanHieu>();
             try
             {
-                    var add = _mapper.Map<NhanHieu>(request);
-                    add.Id = request.Id == Guid.Empty ? Guid.NewGuid() : request.Id;
-                    add.DateCreate = DateTime.Now;
+                var checkData = _context.NhanHieus.Where(
+                    x => x.Name == request.Name
+                    && x.Status != -1
+                    && x.Id != request.Id
+                ).ToList();
+
+                if (checkData.Count > 0)
+                    throw new Exception("Tên nhãn hiệu đã tồn tại");
+
+                var update = _mapper.Map<NhanHieu>(request);
+                update.DateCreate = DateTime.Now;
+                string _pathAnhBia = UploadAnhBia(request.Id.ToString(), update.ImageUrl);
+                update.ImageUrl = _pathAnhBia == "" ? update.ImageUrl : _pathAnhBia;
+
                 //Lưu vào nhật kí
                 log.Name = "Nhãn hiệu";
                 log.Id = Guid.NewGuid();
                 log.Event = "Cập nhật";
                 log.Date = DateTime.UtcNow;
                 log.UserId = Guid.Parse(userId);
-                log.TargetId = add.Id;
-                _context.NhatKis.Add(_mapper.Map<NhatKi>(log));
+                log.TargetId = update.Id;
+                var addNhatKi = _mapper.Map<NhatKi>(log);
+                addNhatKi.User = null;
+                _context.NhatKis.Add(addNhatKi);
                 // Lưu vào Database
-                _context.NhanHieus.Update(add);
-                    _context.SaveChanges();
-                    response.Data = _mapper.Map<MODELNhanHieu>(add);
+                _context.NhanHieus.Update(update);
+                _context.SaveChanges();
+                response.Data = _mapper.Map<MODELNhanHieu>(update);
             }
             catch (Exception ex)
             {
@@ -221,6 +246,51 @@ namespace BE.Services.DANHMUC.NHANHIEU
             // Trả về dữ liệu
 
             return response;
+        }
+
+        // Update 
+        private string UploadAnhBia(string folderUpload, string oldImage)
+        {
+            string path = "";
+            string folderUploadPath = Path.Combine(_webHostEnvironment.WebRootPath, "Files\\Temp\\UploadFile\\" + folderUpload);
+            if (Directory.Exists(folderUploadPath))
+            {
+                string[] arrFiles = Directory.GetFiles(folderUploadPath);
+                string[] imageExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif", ".bmp", ".tiff", ".svg" };
+                List<string> imgFiles = new List<string>();
+                foreach (var file in arrFiles)
+                {
+                    string fileExtension = Path.GetExtension(file);
+
+                    if (imageExtensions.Contains(fileExtension.ToLower()))
+                    {
+                        imgFiles.Add(file);
+                    }
+                }
+                if (imgFiles.Count() > 0) //có đính kèm
+                {
+                    FileInfo info = new FileInfo(imgFiles[0]);
+                    string fileName = Guid.NewGuid().ToString() + info.Extension;
+                    string avataPath = Path.Combine(_webHostEnvironment.WebRootPath, "Files\\NhanHieu");
+                    //Kiểm tra nếu thư mục chưa tồn tại thì tạo mới.
+                    if (!Directory.Exists(avataPath))
+                    {
+                        Directory.CreateDirectory(avataPath);
+                    }
+
+                    //Xóa ảnh cũ nếu tồn tại
+                    if (File.Exists(_webHostEnvironment.WebRootPath + "\\" + oldImage))
+                    {
+                        File.Delete(_webHostEnvironment.WebRootPath + "\\" + oldImage);
+                    }
+
+                    //Copy ảnh mới
+                    File.Move(info.FullName, avataPath + "\\" + fileName, true);
+                    path = "Files\\NhanHieu\\" + fileName;
+                }
+            }
+
+            return path;
         }
     }
 }

@@ -94,7 +94,7 @@ public partial class EShoppingContext : DbContext
 
             entity.Property(e => e.Id).ValueGeneratedNever();
             entity.Property(e => e.Detail)
-                .HasMaxLength(80)
+                .HasMaxLength(255)
                 .IsUnicode(false);
             entity.Property(e => e.Name).HasMaxLength(80);
 

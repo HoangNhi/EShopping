@@ -11,7 +11,7 @@
     <nav style="--bs-breadcrumb-divider: url(&#34;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z' fill='%236c757d'/%3E%3C/svg%3E&#34;);" aria-label="breadcrumb">
         <ol class="breadcrumb" style="padding: 0">
             <li class="breadcrumb-item"></li>
-            <li class="breadcrumb-item active" aria-current="page">Thể loại</li>
+            <li class="breadcrumb-item active" aria-current="page">Nhãn hiệu</li>
         </ol>
     </nav>
 </div>
@@ -20,7 +20,7 @@
     <div class="row">
         <div class="col-md-9" style="margin-top:auto">
             <h4 class="card-title card-title-grid">
-                Danh sách Thể loại
+                Danh sách Nhãn hiệu
             </h4>
         </div>
         <div class="col-md-3"></div>
@@ -86,7 +86,7 @@
 </div>
 
 <script>
-    var index = 0;
+    var index = 1;
     var SelectdRow = []
 
     $(document).ready(function () {
@@ -96,7 +96,7 @@
     function GetListPaging(pageIndex) {
         index = pageIndex;
         $.ajax({
-            url: '@Url.Action("GetListPaging", "TheLoai")',
+            url: '@Url.Action("GetListPaging", "NhanHieu")',
             data: {
                 PageIndex: index,
                 RowsPerPage: 10,
@@ -110,7 +110,7 @@
     }
 
     function refreshGrid() {
-        GetListPaging(0);
+        GetListPaging(1);
         SelectdRow = []
     }
 
@@ -126,7 +126,7 @@
     }
 
     function themThongTin() {
-        var url = '@Url.Action("ShowInsertPopup", "TheLoai")';
+        var url = '@Url.Action("ShowInsertPopup", "NhanHieu")';
 
         $.get(url, function (data) {
             $('#modelContainer').html(data);
@@ -145,7 +145,7 @@
             return;
         }
 
-        var url = '@Url.Action("ShowUpdatePopup", "TheLoai")?id=' + SelectdRow[0];
+        var url = '@Url.Action("ShowUpdatePopup", "NhanHieu")?id=' + SelectdRow[0];
 
         $.get(url, function (data) {
             $('#modelContainer').html(data);
@@ -162,7 +162,7 @@
         var xoaThongTin = async function () {
             showLoading(true);
             await $.ajax({
-                url: '@Url.Action("Delete", "TheLoai")',
+                url: '@Url.Action("Delete", "NhanHieu")',
                 type: 'POST',
                 dataType: 'json',
                 data: {

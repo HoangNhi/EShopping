@@ -1,4 +1,4 @@
-﻿@model MODELS.DANHMUC.THELOAI.Requests.TheLoaiRequest
+﻿@model MODELS.DANHMUC.NHANHIEU.Requests.NhanHieuRequests
 @using Newtonsoft.Json;
 
 <style>
@@ -50,16 +50,16 @@
 
 <script>
     $(document).ready(function () {
-        $("#frmTheLoai").submit(async function (event) {
+        $("#frmNhanHieu").submit(async function (event) {
             event.preventDefault();
-            if ($("#frmTheLoai").valid()) {
+            if ($("#frmNhanHieu").valid()) {
                 luuThongTin();
             }
         });
 
         $("#btnLuuTiep").click(function (event) {
             event.preventDefault();
-            if ($("#frmTheLoai").valid()) { //Nhập hợp lệ
+            if ($("#frmNhanHieu").valid()) { //Nhập hợp lệ
                 luuThongTin(true);
             }
         })
@@ -75,9 +75,9 @@
         showLoadingElement(true, 'modalLoading')
         uploadAnhBia();
         $.ajax({
-            url: "@Url.Action("Post", "TheLoai")",
+            url: "@Url.Action("Post", "NhanHieu")",
             type: "POST",
-            data: $("#frmTheLoai").serialize(),
+            data: $("#frmNhanHieu").serialize(),
             success: function (response) {
                 showLoadingElement(false, 'modalLoading')
                 if (response.IsSuccess) {
@@ -164,7 +164,7 @@
 </script>
 
 <div class="card modal-content" id="modalLoading" style="">
-    @using (Html.BeginForm(null, null, FormMethod.Post, new { id = "frmTheLoai" }))
+    @using (Html.BeginForm(null, null, FormMethod.Post, new { id = "frmNhanHieu" }))
     {
         @Html.HiddenFor(model => model.Id)
         @Html.HiddenFor(model => model.IsEdit)
@@ -173,11 +173,11 @@
             <div class="modal-title">
                 @if (Model.IsEdit == true)
                 {
-                    <p class="fw-bold m-0">Cập nhật Thể loại</p>
+                    <p class="fw-bold m-0">Cập nhật Nhãn hiệu</p>
                 }
                 else
                 {
-                    <p class="fw-bold m-0">Thêm mới Thể loại</p>
+                    <p class="fw-bold m-0">Thêm mới Nhãn hiệu</p>
                 }
             </div>
             <button type="button" onclick="closePopup()" class="btn p-0">
@@ -228,13 +228,11 @@
                     </div>
                 </div>
             </div>
-        </div>
-
-        <div class="card-footer d-flex justify-content-end">
-            <button type="submit" class="btn btn-primary ms-2">
+        </div><div class="card-footer d-flex justify-content-end">
+            <button type="submit"  class="btn btn-primary ms-2">
                 Lưu
             </button>
-            @if (Model.IsEdit == false)
+            @if (Model.IsEdit == false) 
             {
                 <button id="btnLuuTiep" type="button" class="btn btn-primary ms-2">
                     Lưu và thêm
