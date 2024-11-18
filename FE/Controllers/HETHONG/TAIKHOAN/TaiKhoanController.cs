@@ -221,6 +221,7 @@ namespace FE.Controllers.HETHONG.TAIKHOAN
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
                 .AddJsonFile($"appsettings.{environment}.json", optional: true, reloadOnChange: true)
                 .Build();
+            Console.WriteLine("BEUrl: " + configuration.GetSection("BEUrl").Value);
             return configuration.GetSection("BEUrl").Value;
         }
         private ResponseData ExecuteAPIResponse(Task<HttpResponseMessage> responseTask)
