@@ -21,11 +21,17 @@ public partial class SanPham
 
     public DateTime DateCreate { get; set; }
 
+    public bool? IsNew { get; set; }
+
+    public bool? IsBestSelling { get; set; }
+
+    public bool? IsSale { get; set; }
+
     public int? Quantity { get; set; }
 
     public int? Sold { get; set; }
 
-    public bool Status { get; set; }
+    public int Status { get; set; }
 
     public virtual ICollection<BinhLuan> BinhLuans { get; set; } = new List<BinhLuan>();
 

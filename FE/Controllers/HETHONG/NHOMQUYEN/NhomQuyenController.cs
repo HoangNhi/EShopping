@@ -1,6 +1,6 @@
 ﻿using FE.Constants;
-using FE.Helpers;
 using FE.MODELS;
+using FE.Services.ConsumeAPI;
 using Microsoft.AspNetCore.Mvc;
 using MODELS.Base;
 using MODELS.BASE;
@@ -11,8 +11,15 @@ using Newtonsoft.Json;
 
 namespace FE.Controllers.HETHONG.NHOMQUYEN
 {
-    public class NhomQuyenController : BaseController<NhomQuyenController>
+    public class NhomQuyenController : Controller
     {
+        private readonly IConsumeAPIService _consumeAPI;
+
+        public NhomQuyenController(IConsumeAPIService consumeAPI)
+        {
+            _consumeAPI = consumeAPI;
+        }
+
         public IActionResult Index()
         {
             return View("~/Views/HeThong/NhomQuyen/Index.cshtml");
@@ -29,12 +36,12 @@ namespace FE.Controllers.HETHONG.NHOMQUYEN
                 param.RowsPerPage = request.RowsPerPage;
                 param.TextSearch = request.TextSearch == null ? string.Empty : request.TextSearch.Trim();
 
-                ResponseData response = this.ExcuteAPI(URL_API.NHOMQUYEN_GETLISTPAGING, request, HttpAction.Post);
+                ResponseData response = _consumeAPI.ExcuteAPI(URL_API.NHOMQUYEN_GETLISTPAGING, request, HttpAction.Post);
                 if (response.Status)
                 {
                     result = JsonConvert.DeserializeObject<GetListPagingResponse>(response.Data.ToString());
                     result.Data = JsonConvert.DeserializeObject<List<MODELNhomQuyen>>(result.Data.ToString());
-                    return PartialView("~/Views/HeThong/NhomQuyen/PartialViewDanhSach.cshtml" , result);
+                    return PartialView("~/Views/HeThong/NhomQuyen/PartialViewDanhSach.cshtml", result);
                 }
                 else
                 {
@@ -54,7 +61,7 @@ namespace FE.Controllers.HETHONG.NHOMQUYEN
             {
                 NhomQuyenRequest obj = new NhomQuyenRequest();
 
-                ResponseData response = this.ExcuteAPI(URL_API.NHOMQUYEN_GETBYPOST, new { Id = Guid.Empty }, HttpAction.Post);
+                ResponseData response = _consumeAPI.ExcuteAPI(URL_API.NHOMQUYEN_GETBYPOST, new { Id = Guid.Empty }, HttpAction.Post);
 
                 if (response.Status)
                 {
@@ -76,7 +83,7 @@ namespace FE.Controllers.HETHONG.NHOMQUYEN
             {
                 NhomQuyenRequest obj = new NhomQuyenRequest();
 
-                ResponseData response = this.ExcuteAPI(URL_API.NHOMQUYEN_GETBYPOST, new { Id = id }, HttpAction.Post);
+                ResponseData response = _consumeAPI.ExcuteAPI(URL_API.NHOMQUYEN_GETBYPOST, new { Id = id }, HttpAction.Post);
 
                 if (response.Status)
                 {
@@ -103,17 +110,17 @@ namespace FE.Controllers.HETHONG.NHOMQUYEN
                     ResponseData response;
                     if (request.IsEdit)
                     {
-                        response = this.ExcuteAPI(URL_API.NHOMQUYEN_UPDATE, request, HttpAction.Post);
+                        response = _consumeAPI.ExcuteAPI(URL_API.NHOMQUYEN_UPDATE, request, HttpAction.Post);
                     }
                     else
                     {
-                        response = this.ExcuteAPI(URL_API.NHOMQUYEN_CREATE, request, HttpAction.Post);
+                        response = _consumeAPI.ExcuteAPI(URL_API.NHOMQUYEN_CREATE, request, HttpAction.Post);
                     }
 
 
                     if (!response.Status)
                     {
-                        return Json(new { IsSuccess = false, Message = response.Message, Data = ""});
+                        return Json(new { IsSuccess = false, Message = response.Message, Data = "" });
                     }
                 }
                 else
@@ -128,13 +135,13 @@ namespace FE.Controllers.HETHONG.NHOMQUYEN
                 return Json(new { IsSuccess = false, Message = message, Data = "" });
             }
         }
-        
+
         [HttpPost]
         public JsonResult Delete(DeleteListRequest request)
         {
             try
             {
-                ResponseData response = this.ExcuteAPI(URL_API.NHOMQUYEN_DELETE, request, HttpAction.Post);
+                ResponseData response = _consumeAPI.ExcuteAPI(URL_API.NHOMQUYEN_DELETE, request, HttpAction.Post);
                 if (!response.Status)
                 {
                     return Json(new { IsSuccess = false, Message = response.Message, Data = "" });

@@ -110,6 +110,7 @@ function showLoadingElement(value, id) {
         $('#' + id).block({
             message:
                 '<div class="loader-demo-box">' +
+                '<img style="width: 120px;" src="/image/DungChung/Loading.gif" />' +
                 '<div class="bar-loader">' +
                 '<span></span>' +
                 '<span></span>' +
@@ -124,5 +125,50 @@ function showLoadingElement(value, id) {
     }
 }
 
+function confirmDialogYesNo(content, title, method) {
+    var html = '<div class="card modal-content" id="modalLoading" style="">' + 
+                    '<form>' +
+                        '<div class="card-header d-flex justify-content-between align-items-center">' +
+                            '<div class="modal-title">' +
+                                '<p class="fw-bold m-0">' + title + '</p>' +
+                            '</div>' +
+                            '<button type="button" onclick="closeDialogYesNo()" class="btn p-0">' +
+                                '<i class="fa-solid fa-xmark"></i>' +
+                            '</button>' +
+                        '</div>' +
+                        '<div class="modal-body d-flex flex-column justify-content-evenly">'+
+                            '<h3 class="text-danger mb-0">' + content + '</h3>' +
+                        '</div>' +
+
+                        '<div class="card-footer d-flex justify-content-end">'+
+                            '<button id="btnConfirmYes" type="button" class="btn btn-success ms-2">'+
+                                'Có'+
+                            '</button>'+
+                            '<button id="btnConfirmNo" type="button" class="btn btn-danger ms-2">'+
+                                'Không'+
+                            '</button>'+
+                        '</div>'+
+                    '</form>'+
+                '</div >';
+    $('#confirmDialogYesNoContainer').html(html);
+    $('#confirmDialogYesNoDefault').modal('show');
+
+    $('#btnConfirmYes').on('click', function () {
+        method();  // Gọi hàm `method`
+        closeDialogYesNo()
+    });
+
+    $('#btnConfirmNo').on('click', function () {
+        closeDialogYesNo()
+    });
+}
+
+function closeDialogYesNo() {
+    $('#confirmDialogYesNoDefault').modal('hide');
+}
+
 const updateSuccess = "Cập nhật dữ liệu thành công"
 const addSuccess = "Thêm dữ liệu thành công"
+const deleteTitle = "Thông báo xác nhận"
+const deleteContent = "Bạn có muốn xóa thông tin này không ?"
+const deleteSuccess = "Xóa dữ liệu thành công"
