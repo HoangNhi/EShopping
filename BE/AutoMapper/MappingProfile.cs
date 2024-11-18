@@ -76,11 +76,7 @@ namespace BE.AutoMapper
             CreateMap<NhomPhanLoai1, NhomPhanLoai1Requests>().ReverseMap();
             CreateMap<NhomPhanLoai2, MODELNhomPhanLoai2>().ReverseMap();
             CreateMap<NhomPhanLoai2, NhomPhanLoai2Request>().ReverseMap();
-            CreateMap<BinhLuan,BinhLuanResponse>().ReverseMap();
-            CreateMap<BinhLuan,MODELBinhLuan>().ReverseMap();
-            CreateMap<BinhLuan,BinhLuanRequests>().ReverseMap();
-            CreateMap<TraLoiBinhLuan, MODELTraLoiBinhLuan>().ReverseMap();
-            CreateMap<TraLoiBinhLuan, TraLoiBinhLuanRequests>().ReverseMap();
+            
 
             //CHUC NANG
             CreateMap<GioHang,MODELGioHang>().ReverseMap();
@@ -90,6 +86,11 @@ namespace BE.AutoMapper
             CreateMap<HoaDon,HoaDonResponse>().ReverseMap();
             CreateMap<ChiTietDonHang,MODELChiTietDonHang>().ReverseMap();
             CreateMap<ChiTietDonHang,ChiTietDonHangRequests>().ReverseMap();
+            CreateMap<BinhLuan, BinhLuanResponse>().ReverseMap();
+            CreateMap<BinhLuan, MODELBinhLuan>().ReverseMap();
+            CreateMap<BinhLuan, BinhLuanRequests>().ReverseMap();
+            CreateMap<TraLoiBinhLuan, MODELTraLoiBinhLuan>().ReverseMap();
+            CreateMap<TraLoiBinhLuan, TraLoiBinhLuanRequests>().ReverseMap();
         }
     }
 }

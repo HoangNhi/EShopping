@@ -48,7 +48,7 @@ namespace BE.Services.DANHMUC.SANPHAM
 
                 var add = _mapper.Map<SanPham>(request);
                 add.Id = Guid.NewGuid();
-                add.DateCreate = DateTime.UtcNow;
+                add.DateCreate = DateTime.Now;
 
                 //Lưu vào nhật kí
                 NhatKiDTO.Name = "Sản phẩm";
@@ -317,6 +317,7 @@ namespace BE.Services.DANHMUC.SANPHAM
                     var cauhinh = _mapper.Map<CauHinhSanPham>(c);
                     cauhinh.Id = Guid.NewGuid();
                     cauhinh.SanPhamId = item.Id;
+                    _context.CauHinhSanPhams.Add(cauhinh);
                 }
                 foreach(var i in request.nhomPhanLoai)
                 {
@@ -337,6 +338,61 @@ namespace BE.Services.DANHMUC.SANPHAM
                 NhatKiDTO.Name = "Sản phẩm";
                 NhatKiDTO.Id = Guid.NewGuid();
                 NhatKiDTO.Event = "Thêm";
+                NhatKiDTO.Date = DateTime.Now;
+                NhatKiDTO.UserId = Guid.Parse(userId);
+                NhatKiDTO.TargetId = item.Id;
+                _context.NhatKis.Add(_mapper.Map<NhatKi>(NhatKiDTO));
+                _context.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                res.Error = true;
+                res.Message = ex.Message;
+                res.StatusCode = 500;
+            }
+            return res;
+        }
+
+        public BaseResponse<SanPhamResponse> PutProduct(SanPhamRequestAll request)
+        {
+            var userId = _contextAccessor.HttpContext.User.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Name)?.Value;
+            var NhatKiDTO = new NhatKiDTO();
+            var res = new BaseResponse<SanPhamResponse>();
+            var result = new SanPhamResponse();
+            try
+            {
+                var item = _mapper.Map<SanPham>(request);
+                item.DateCreate = DateTime.Now;
+                _context.SanPhams.Update(item);
+                result = _mapper.Map<SanPhamResponse>(request);
+                result.theLoai = _mapper.Map<MODELTheLoai>(_context.TheLoais.Find(request.TheLoaiId));
+                result.nhanHieu = _mapper.Map<MODELNhanHieu>(_context.NhanHieus.Find(request.NhanHieuId));
+                foreach (var i in request.anhSanPham)
+                {
+                    var anh = _mapper.Map<SanPham_Anh>(i);
+                    anh.DateCreate = DateTime.Now;
+                    _context.SanPham_Anhs.Update(anh);
+                }
+                foreach (var c in request.cauHinhSanPham)
+                {
+                    var cauhinh = _mapper.Map<CauHinhSanPham>(c);
+                    _context.CauHinhSanPhams.Update(cauhinh);
+                }
+                foreach (var i in request.nhomPhanLoai)
+                {
+                    var npl = _mapper.Map<NhomPhanLoai1>(i);
+                    _context.NhomPhanLoai1s.Update(npl);
+                    foreach (var n in npl.NhomPhanLoai2s)
+                    {
+                        var npl2 = _mapper.Map<NhomPhanLoai2>(n);
+                        _context.NhomPhanLoai2s.Update(npl2);
+                    }
+                }
+                result.Id = item.Id;
+                res.Data = result;
+                NhatKiDTO.Name = "Sản phẩm";
+                NhatKiDTO.Id = Guid.NewGuid();
+                NhatKiDTO.Event = "Cập nhật";
                 NhatKiDTO.Date = DateTime.Now;
                 NhatKiDTO.UserId = Guid.Parse(userId);
                 NhatKiDTO.TargetId = item.Id;

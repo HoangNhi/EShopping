@@ -35,12 +35,12 @@ namespace BE.Services.CHUCNANG.GIOHANG
                     &&
                     x.SanPhamId == request.SanPhamId
                 ).ToList();
-
+                //Kiểm tra nếu đã có sản phẩm đó trong giỏ hàng của người dùng
                 if (checkData.Count > 0)
                 {
                     foreach (var check in checkData) 
                     {
-                        check.Quantity = request.Quantity;
+                        check.Quantity += request.Quantity; //Tăng số lượng
                         _context.GioHangs.Update(check);
                         response.Data = _mapper.Map<MODELGioHang>(check);
                         log.Name = "Giỏ hàng";
@@ -52,10 +52,10 @@ namespace BE.Services.CHUCNANG.GIOHANG
                         _context.NhatKis.Add(_mapper.Map<NhatKi>(log));
                     }
                 }
-                else
+                else //Tạo mới
                 {
                     var add = _mapper.Map<GioHang>(request);
-                    add.Id = request.Id == Guid.Empty ? Guid.NewGuid() : request.Id;
+                    add.Id = Guid.NewGuid();
                     add.DateCreated = DateTime.Now;
                     _context.GioHangs.Add(add);
                     response.Data = _mapper.Map<MODELGioHang>(add);

@@ -1,21 +1,21 @@
 ﻿using BE.Helper;
-using BE.Services.CHUCNANG.HOADON;
+using BE.Services.CHUCNANG.BINHLUAN;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MODELS.Base;
 using MODELS.BASE;
 using MODELS.CHUCNANG.HOADON.Requests;
-using MODELS.DANHMUC.SANPHAM.Requests;
+using MODELS.DANHMUC.BINHLUAN.Request;
 
 namespace BE.Controllers.CHUCNANG
 {
     [Route("[controller]/[action]")]
     [ApiController]
-    public class HoaDonController : ControllerBase
+    public class BinhLuanController : ControllerBase
     {
-        private readonly IHOADONService _service;
+        private readonly IBINHLUANService _service;
 
-        public HoaDonController(IHOADONService service) 
+        public BinhLuanController(IBINHLUANService service) 
         {
             _service = service;
         }
@@ -71,7 +71,7 @@ namespace BE.Controllers.CHUCNANG
         }
 
         [HttpPost]
-        public IActionResult Create(HoaDonRequests request)
+        public IActionResult Create(BinhLuanRequests request)
         {
             try
             {
@@ -95,8 +95,9 @@ namespace BE.Controllers.CHUCNANG
                 return Ok(new ApiResponse(false, 500, ex.Message));
             }
         }
+
         [HttpPost]
-        public IActionResult GetByPost(GetByIdRequest request)
+        public IActionResult Update(BinhLuanRequests request)
         {
             try
             {
@@ -104,7 +105,7 @@ namespace BE.Controllers.CHUCNANG
                 {
                     throw new Exception(MODELS.COMMON.CommonFunc.GetModelStateAPI(ModelState));
                 }
-                var result = _service.GetByPost(request);
+                var result = _service.Update(request);
                 if (result.Error)
                 {
                     throw new Exception(result.Message);
@@ -120,8 +121,9 @@ namespace BE.Controllers.CHUCNANG
                 return Ok(new ApiResponse(false, 500, ex.Message));
             }
         }
+
         [HttpPost]
-        public IActionResult Update(HoaDonRequests request)
+        public IActionResult IsAllow(Guid UserId, Guid SanPhamID)
         {
             try
             {
@@ -129,7 +131,7 @@ namespace BE.Controllers.CHUCNANG
                 {
                     throw new Exception(MODELS.COMMON.CommonFunc.GetModelStateAPI(ModelState));
                 }
-                var result = _service.Update(request);
+                var result = _service.IsAllow(UserId, SanPhamID);
                 if (result.Error)
                 {
                     throw new Exception(result.Message);

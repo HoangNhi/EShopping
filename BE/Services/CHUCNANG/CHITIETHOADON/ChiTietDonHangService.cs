@@ -22,7 +22,41 @@ namespace BE.Services.CHUCNANG.CHITIETHOADON
         }
         public BaseResponse<string> Delete(DeleteListRequest request)
         {
-            throw new NotImplementedException();
+            var userId = _contextAccessor.HttpContext.User.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Name)?.Value;
+            var log = new NhatKiDTO();
+            var response = new BaseResponse<string>();
+            try
+            {
+                foreach (var id in request.Ids)
+                {
+                    var delete = _context.ChiTietDonHangs.Find(id);
+                    if (delete != null)
+                    {
+                        delete.Status = false;
+                        _context.ChiTietDonHangs.Update(delete);
+                        log.Name = "Chi tiết đơn hàng";
+                        log.Id = Guid.NewGuid();
+                        log.Event = "Xoá";
+                        log.Date = DateTime.Now;
+                        log.UserId = Guid.Parse(userId);
+                        log.TargetId = delete.Id;
+                        _context.NhatKis.Add(_mapper.Map<NhatKi>(log));
+                    }
+                    else
+                    {
+                        throw new Exception("Không tìm thấy dữ liệu");
+                    }
+                }
+
+                _context.SaveChanges();
+                response.Data = String.Join(",", request);
+            }
+            catch (Exception ex)
+            {
+                response.Error = true;
+                response.Message = ex.Message;
+            }
+            return response;
         }
 
         public BaseResponse<List<MODELChiTietDonHang>> GetById(GetByIdRequest request)
@@ -30,7 +64,7 @@ namespace BE.Services.CHUCNANG.CHITIETHOADON
             var res = new BaseResponse<List<MODELChiTietDonHang>>();
             try
             {
-                var item = _context.ChiTietDonHangs.Where(x => x.HoaDonId == request.Id);
+                var item = _context.ChiTietDonHangs.Where(x => x.HoaDonId == request.Id && x.Status != false);
                 if (item != null)
                 {
                     var result = _mapper.Map<List<MODELChiTietDonHang>>(item);

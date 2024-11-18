@@ -1,49 +1,23 @@
 ﻿using BE.Helper;
-using BE.Services.CHUCNANG.HOADON;
+using BE.Services.CHUCNANG.CHITIETHOADON;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MODELS.Base;
-using MODELS.BASE;
+using MODELS.CHUCNANG.CHITIETDONHANG.Requests;
 using MODELS.CHUCNANG.HOADON.Requests;
-using MODELS.DANHMUC.SANPHAM.Requests;
 
 namespace BE.Controllers.CHUCNANG
 {
     [Route("[controller]/[action]")]
     [ApiController]
-    public class HoaDonController : ControllerBase
+    public class ChiTietDonHangController : ControllerBase
     {
-        private readonly IHOADONService _service;
+        private readonly ICHITIETDONHANGService _service;
 
-        public HoaDonController(IHOADONService service) 
+        public ChiTietDonHangController(ICHITIETDONHANGService service)
         {
             _service = service;
         }
-        [HttpPost]
-        public IActionResult GetListPaging(GetListPagingRequest request)
-        {
-            try
-            {
-                if (!ModelState.IsValid)
-                {
-                    throw new Exception(MODELS.COMMON.CommonFunc.GetModelStateAPI(ModelState));
-                }
-                var result = _service.GetListPaging(request);
-                if (result.Error)
-                {
-                    throw new Exception(result.Message);
-                }
-                else
-                {
-                    return Ok(new ApiOkResponse(result.Data));
-                }
-            }
-            catch (Exception ex)
-            {
-                return Ok(new ApiResponse(false, 500, ex.Message));
-            }
-        }
-
         [HttpPost]
         public IActionResult GetById(GetByIdRequest request)
         {
@@ -69,59 +43,8 @@ namespace BE.Controllers.CHUCNANG
                 return Ok(new ApiResponse(false, 500, ex.Message));
             }
         }
-
         [HttpPost]
-        public IActionResult Create(HoaDonRequests request)
-        {
-            try
-            {
-                if (!ModelState.IsValid)
-                {
-                    throw new Exception(MODELS.COMMON.CommonFunc.GetModelStateAPI(ModelState));
-                }
-                var result = _service.Create(request);
-                if (result.Error)
-                {
-                    throw new Exception(result.Message);
-                }
-                else
-                {
-                    return Ok(new ApiOkResponse(result.Data));
-                }
-            }
-            catch (Exception ex)
-            {
-                //SysLog             
-                return Ok(new ApiResponse(false, 500, ex.Message));
-            }
-        }
-        [HttpPost]
-        public IActionResult GetByPost(GetByIdRequest request)
-        {
-            try
-            {
-                if (!ModelState.IsValid)
-                {
-                    throw new Exception(MODELS.COMMON.CommonFunc.GetModelStateAPI(ModelState));
-                }
-                var result = _service.GetByPost(request);
-                if (result.Error)
-                {
-                    throw new Exception(result.Message);
-                }
-                else
-                {
-                    return Ok(new ApiOkResponse(result.Data));
-                }
-            }
-            catch (Exception ex)
-            {
-                //SysLog             
-                return Ok(new ApiResponse(false, 500, ex.Message));
-            }
-        }
-        [HttpPost]
-        public IActionResult Update(HoaDonRequests request)
+        public IActionResult Update(ChiTietDonHangRequests request)
         {
             try
             {
@@ -145,6 +68,32 @@ namespace BE.Controllers.CHUCNANG
                 return Ok(new ApiResponse(false, 500, ex.Message));
             }
         }
+        
 
+        [HttpPost]
+        public IActionResult Delete(DeleteListRequest request)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    throw new Exception(MODELS.COMMON.CommonFunc.GetModelStateAPI(ModelState));
+                }
+                var result = _service.Delete(request);
+                if (result.Error)
+                {
+                    throw new Exception(result.Message);
+                }
+                else
+                {
+                    return Ok(new ApiOkResponse(result.Data));
+                }
+            }
+            catch (Exception ex)
+            {
+                //SysLog             
+                return Ok(new ApiResponse(false, 500, ex.Message));
+            }
+        }
     }
 }

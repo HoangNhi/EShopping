@@ -3,58 +3,51 @@ using ENTITIES.DbContent;
 using Microsoft.EntityFrameworkCore;
 using MODELS.Base;
 using MODELS.BASE;
-using MODELS.CHUCNANG.HOADON.Dtos;
-using MODELS.CHUCNANG.HOADON.Requests;
+using MODELS.DANHMUC.BINHLUAN.Dtos;
+using MODELS.DANHMUC.BINHLUAN.Request;
 using MODELS.DANHMUC.SANPHAM.Dtos;
-using System.IdentityModel.Tokens.Jwt;
 using MODELS.HETHONG.LOG;
-using MODELS.CHUCNANG.CHITIETDONHANG.Dtos;
+using System.IdentityModel.Tokens.Jwt;
 
-namespace BE.Services.CHUCNANG.HOADON
+namespace BE.Services.CHUCNANG.BINHLUAN
 {
-    public class HOADONService : IHOADONService
+    public class BINHLUANService : IBINHLUANService
     {
         private readonly EShoppingContext _context;
         private readonly IMapper _mapper;
         private readonly IHttpContextAccessor _contextAccessor;
-        public HOADONService(EShoppingContext context, IMapper mapper, IHttpContextAccessor contextAccessor)
+        public BINHLUANService(EShoppingContext context, IMapper mapper, IHttpContextAccessor contextAccessor)
         {
             _context = context;
             _mapper = mapper;
             _contextAccessor = contextAccessor;
         }
-        public BaseResponse<MODELHoaDon> Create(HoaDonRequests request)
+        public BaseResponse<MODELBinhLuan> Create(BinhLuanRequests request)
         {
             var userId = _contextAccessor.HttpContext.User.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Name)?.Value;
             var NhatKiDTO = new NhatKiDTO();
-            var response = new BaseResponse<MODELHoaDon>();
+            var response = new BaseResponse<MODELBinhLuan>();
             try
             {
-                var add = _mapper.Map<HoaDon>(request);
-                add.Id = Guid.NewGuid();
-                add.DateCreate = DateTime.UtcNow;
-                foreach (var item in request.ChiTietDonHangRequests) 
-                {
-                    var i = _mapper.Map<ChiTietDonHang>(item);
-                    i.Id = Guid.NewGuid();
-                    i.HoaDonId = add.Id;
-                    i.DateCreated = DateTime.UtcNow;
-                    _context.ChiTietDonHangs.Add(i);
-                }
+
+                var add = _mapper.Map<BinhLuan>(request);
+                add.Id = _context.BinhLuans.Max(x => x.Id) + 1;
+                add.DateCreate = DateTime.Now;
+
                 //Lưu vào nhật kí
-                NhatKiDTO.Name = "Hoá đơn";
+                NhatKiDTO.Name = "Bình luận";
                 NhatKiDTO.Id = Guid.NewGuid();
-                NhatKiDTO.Event = "Tạo";
+                NhatKiDTO.Event = "Thêm";
                 NhatKiDTO.Date = DateTime.Now;
                 NhatKiDTO.UserId = Guid.Parse(userId);
-                NhatKiDTO.TargetId = add.Id;
+                NhatKiDTO.TargetId = Guid.Parse(add.Id.ToString());
                 _context.NhatKis.Add(_mapper.Map<NhatKi>(NhatKiDTO));
                 // Lưu vào Database
-                _context.HoaDons.Add(add);
+                _context.BinhLuans.Add(add);
                 _context.SaveChanges();
 
                 // Trả về dữ liệu
-                response.Data = _mapper.Map<MODELHoaDon>(add);
+                response.Data = _mapper.Map<MODELBinhLuan>(add);
             }
             catch (Exception ex)
             {
@@ -74,19 +67,17 @@ namespace BE.Services.CHUCNANG.HOADON
             {
                 foreach (var id in request.Ids)
                 {
-                    var delete = _context.HoaDons.Find(id);
+                    var delete = _context.BinhLuans.Find(id);
                     if (delete != null)
                     {
-                        delete.Status = -1;
-                        delete.DateCreate = DateTime.Now;
-                        _context.HoaDons.Update(delete);
+                        _context.BinhLuans.Remove(delete);
                         //Lưu vào nhật kí
-                        NhatKiDTO.Name = "Sản phẩm";
+                        NhatKiDTO.Name = "Bình luận";
                         NhatKiDTO.Id = Guid.NewGuid();
                         NhatKiDTO.Event = "Xoá";
                         NhatKiDTO.Date = DateTime.Now;
                         NhatKiDTO.UserId = Guid.Parse(userId);
-                        NhatKiDTO.TargetId = delete.Id;
+                        NhatKiDTO.UserId = Guid.Parse(delete.Id.ToString());
                         _context.NhatKis.Add(_mapper.Map<NhatKi>(NhatKiDTO));
                     }
                     else
@@ -106,15 +97,15 @@ namespace BE.Services.CHUCNANG.HOADON
             return response;
         }
 
-        public BaseResponse<List<MODELHoaDon>> GetById(GetByIdRequest request)
+        public BaseResponse<BinhLuanResponse> GetById(GetByIdRequest request)
         {
-            var res = new BaseResponse<List<MODELHoaDon>>();
+            var res = new BaseResponse<BinhLuanResponse>();
             try
             {
-                var item = _context.HoaDons.Where(x => x.UserId == request.Id);
+                var item = _context.BinhLuans.Find(request.Id);
                 if (item != null)
                 {
-                    var result = _mapper.Map<List<MODELHoaDon>>(item);
+                    var result = _mapper.Map<BinhLuanResponse>(item);
                     res.Data = result;
                 }
                 else
@@ -133,24 +124,29 @@ namespace BE.Services.CHUCNANG.HOADON
             return res;
         }
 
-        public BaseResponse<HoaDonResponse> GetByPost(GetByIdRequest request)
+        public BaseResponse<bool> IsAllow(Guid UserId, Guid SanPhamId)
         {
-            var res = new BaseResponse<HoaDonResponse>();
+            var res = new BaseResponse<bool>();
             try
             {
-                var item = _context.HoaDons.Find(request.Id);
-                if (item != null)
+                var item = from h in _context.HoaDons join 
+                           c in _context.ChiTietDonHangs
+                           on h.Id equals c.HoaDonId
+                           where h.UserId == UserId && c.SanPhamId == SanPhamId
+                           select new
+                           {
+                               UserId = h.UserId,
+                               HoaDonId = h.Id,
+                               SanPhamId = c.SanPhamId,
+                           }
+                           ;
+                if (item.Any())
                 {
-                    var result = _mapper.Map<HoaDonResponse>(item);
-                    var cthd = _context.ChiTietDonHangs.Where(x => x.HoaDonId == result.Id).ToList();
-                    if (cthd != null)
-                    {
-                        result.chiTietHoaDon = _mapper.Map<List<MODELChiTietDonHang>>(cthd);
-                    }
-                    res.Data = result;
+                    res.Data = true;
                 }
                 else
                 {
+                    res.Data = false;
                     res.Error = true;
                     res.Message = "Not Found!";
                     res.StatusCode = 404;
@@ -170,13 +166,24 @@ namespace BE.Services.CHUCNANG.HOADON
             var res = new BaseResponse<GetListPagingResponse>();
             try
             {
-                var data = new List<MODELHoaDon>();
-                var result = _context.HoaDons.OrderByDescending(hd => hd.DateCreate).Skip((request.PageIndex - 1) * request.RowsPerPage).Take(request.RowsPerPage).ToList();
-                data = _mapper.Map<List<MODELHoaDon>>(result);
-                
+                var data = new List<MODELBinhLuan>();
+                if (!string.IsNullOrEmpty(request.TextSearch)) //Tìm theo tên sản phẩm
+                {
+                    var product = _context.SanPhams.FirstOrDefault(x => x.Name == request.TextSearch);
+                    if (product != null)
+                    { 
+                        var result = _context.BinhLuans.Where(x => x.SanPhamId == product.Id).Skip((request.PageIndex - 1) * request.RowsPerPage).Take(request.RowsPerPage).ToList();
+                        data = _mapper.Map<List<MODELBinhLuan>>(result);
+                    }
+                }
+                else
+                {
+                    var result = _context.BinhLuans.Skip((request.PageIndex - 1) * request.RowsPerPage).Take(request.RowsPerPage).ToList();
+                    data = _mapper.Map<List<MODELBinhLuan>>(result);
+                }
                 var page = new GetListPagingResponse();
                 page.PageIndex = request.PageIndex;
-                page.TotalRow = _context.HoaDons.Count();
+                page.TotalRow = _context.BinhLuans.Count();
                 page.Data = data;
                 res.Data = page;
             }
@@ -189,27 +196,27 @@ namespace BE.Services.CHUCNANG.HOADON
             return res;
         }
 
-        public BaseResponse<MODELHoaDon> Update(HoaDonRequests request)
+        public BaseResponse<MODELBinhLuan> Update(BinhLuanRequests request)
         {
             var userId = _contextAccessor.HttpContext.User.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Name)?.Value;
             var NhatKiDTO = new NhatKiDTO();
-            var response = new BaseResponse<MODELHoaDon>();
+            var response = new BaseResponse<MODELBinhLuan>();
             try
             {
-                var add = _mapper.Map<HoaDon>(request);
+                var add = _mapper.Map<BinhLuan>(request);
                 add.DateCreate = DateTime.Now;
                 //Lưu vào nhật kí
-                NhatKiDTO.Name = "Sản phẩm";
+                NhatKiDTO.Name = "Bình luận";
                 NhatKiDTO.Id = Guid.NewGuid();
                 NhatKiDTO.Event = "Cập nhật";
                 NhatKiDTO.Date = DateTime.Now;
                 NhatKiDTO.UserId = Guid.Parse(userId);
-                NhatKiDTO.TargetId = add.Id;
+                NhatKiDTO.UserId = Guid.Parse(userId);
                 // Lưu vào Database
                 _context.NhatKis.Add(_mapper.Map<NhatKi>(NhatKiDTO));
-                _context.HoaDons.Update(add);
+                _context.BinhLuans.Update(add);
                 _context.SaveChanges();
-                response.Data = _mapper.Map<MODELHoaDon>(add);
+                response.Data = _mapper.Map<MODELBinhLuan>(add);
             }
             catch (Exception ex)
             {

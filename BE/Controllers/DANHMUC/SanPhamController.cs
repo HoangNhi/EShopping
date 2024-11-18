@@ -172,6 +172,31 @@ namespace BE.Controllers.DANHMUC
         }
 
         [HttpPost]
+        public IActionResult UpdateProduct(SanPhamRequestAll request)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    throw new Exception(MODELS.COMMON.CommonFunc.GetModelStateAPI(ModelState));
+                }
+                var result = _service.PutProduct(request);
+                if (result.Error)
+                {
+                    throw new Exception(result.Message);
+                }
+                else
+                {
+                    return Ok(new ApiOkResponse(result.Data));
+                }
+            }
+            catch (Exception ex)
+            {
+                //SysLog             
+                return Ok(new ApiResponse(false, 500, ex.Message));
+            }
+        }
+        [HttpPost]
         public IActionResult Update(SanPhamRequests request)
         {
             try
