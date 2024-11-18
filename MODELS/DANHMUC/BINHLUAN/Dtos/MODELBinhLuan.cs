@@ -12,7 +12,7 @@ namespace MODELS.DANHMUC.BINHLUAN.Dtos
 
         public Guid SanPhamId { get; set; }
 
-        public int UserId { get; set; }
+        public Guid UserId { get; set; }
 
         public double Rate { get; set; }
 
