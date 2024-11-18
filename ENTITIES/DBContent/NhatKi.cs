@@ -11,9 +11,9 @@ public partial class NhatKi
 
     public string Event { get; set; } = null!;
 
-    public DateOnly Date { get; set; }
+    public DateTime? Date { get; set; }
 
-    public int TargetId { get; set; }
+    public Guid TargetId { get; set; }
 
     public Guid UserId { get; set; }
 

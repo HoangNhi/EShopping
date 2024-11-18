@@ -111,6 +111,31 @@ namespace FE.Services.ConsumeAPI
             }
             return response;
         }
+        public ResponseData PostFormDataAPI(string action, System.Net.Http.MultipartFormDataContent content)
+        {
+            ResponseData response = new ResponseData();
+            try
+            {
+                using (var client = new HttpClient())
+                {
+                    client.BaseAddress = new Uri(GetBEUrl());
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _httpContextAccessor.HttpContext.User.Claims.Where(x => x.Type == "Token").FirstOrDefault().Value.ToString());
+
+                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("multipart/form-data"));
+                    client.DefaultRequestHeaders.Accept.Clear();
+                    var responseTask = client.PostAsync(action, content);
+                    responseTask.Wait();
+                    response = ExecuteAPIResponse(responseTask);
+                }
+            }
+            catch (Exception ex)
+            {
+                response.Status = false;
+                response.Message = "Lỗi hệ thống: " + ex.Message;
+            }
+
+            return response;
+        }
         public string GetBEUrl()
         {
             return _configuration["BEUrl"].ToString();

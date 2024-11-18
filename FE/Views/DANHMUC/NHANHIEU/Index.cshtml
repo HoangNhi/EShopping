@@ -1,0 +1,189 @@
+﻿@{
+    Layout = "~/Views/Shared/Admin/_Layout.cshtml";
+}
+
+<div class="page-header" style="justify-content: flex-start!important;">
+    <h3 class="page-title">
+        <span class="page-title-icon bg-gradient-primary text-white me-2">
+            <i class="mdi mdi-home"></i>
+        </span> Danh mục
+    </h3>
+    <nav style="--bs-breadcrumb-divider: url(&#34;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z' fill='%236c757d'/%3E%3C/svg%3E&#34;);" aria-label="breadcrumb">
+        <ol class="breadcrumb" style="padding: 0">
+            <li class="breadcrumb-item"></li>
+            <li class="breadcrumb-item active" aria-current="page">Nhãn hiệu</li>
+        </ol>
+    </nav>
+</div>
+
+<div class="page-content pageContentCustom">
+    <div class="row">
+        <div class="col-md-9" style="margin-top:auto">
+            <h4 class="card-title card-title-grid">
+                Danh sách Nhãn hiệu
+            </h4>
+        </div>
+        <div class="col-md-3"></div>
+    </div>
+
+    <div class="accordion" id="LocDanhSach" style="padding-bottom: .5rem">
+        <div class="accordion-item">
+            <h2 class="accordion-header">
+                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                    Lọc danh sách
+                </button>
+            </h2>
+            <div id="collapseOne" class="accordion-collapse collapse show" data-bs-parent="#LocDanhSach">
+                <div class="accordion-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="input-group">
+                                <input id="TextSearch" 
+                                       type="text" 
+                                       class="form-control" 
+                                       placeholder="Tìm kiếm" 
+                                       aria-label="Recipient's username" 
+                                       aria-describedby="button-addon2">
+                                <button class="btn btn-outline-primary" type="button" id="button-addon2"  onclick="refreshGrid()">
+                                    <i class="fas fa-search"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <section class="content">
+        <div class="box">
+            <div class="box-body">
+                <table class="table table-striped table-bordered" style="border: 2px solid #000">
+                    <thead>
+                        <tr>
+                            <th class="fw-bold" scope="col">
+                                <button class="btn btn-success btn-sm" onclick="themThongTin()"><i class="fa fa-plus"></i>&nbsp; Thêm</button>
+                                <button class="btn btn-success btn-sm" onclick="suaThongTin()"><i class="fa fa-wrench"></i>&nbsp; Cập nhật</button>
+                                <button class="btn btn-danger btn-sm" onclick="xoaThongTin()"><i class="fa fa-trash"></i>&nbsp; Xóa</button>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td colspan="1" id="mainTable" class="p-0">
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+</div>
+
+<div class="modal fade" id="modal-default" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" id='modelContainer'>
+    </div>
+</div>
+
+<script>
+    var index = 1;
+    var SelectdRow = []
+
+    $(document).ready(function () {
+        GetListPaging(index);
+    });
+
+    function GetListPaging(pageIndex) {
+        index = pageIndex;
+        $.ajax({
+            url: '@Url.Action("GetListPaging", "NhanHieu")',
+            data: {
+                PageIndex: index,
+                RowsPerPage: 10,
+                TextSearch: $("#TextSearch").val()
+            },
+            type: 'GET',
+            success: function (res) {
+                $("#mainTable").html(res);
+            }
+        })
+    }
+
+    function refreshGrid() {
+        GetListPaging(1);
+        SelectdRow = []
+    }
+
+    function SelectRow(Id) {
+        const indexRow = SelectdRow.indexOf(Id);
+        if (indexRow > -1) {
+            SelectdRow.splice(indexRow, 1);
+            $("tr#" + Id).removeClass("table-active");
+        } else {
+            SelectdRow.push(Id);
+            $("tr#" + Id).addClass("table-active");
+        }
+    }
+
+    function themThongTin() {
+        var url = '@Url.Action("ShowInsertPopup", "NhanHieu")';
+
+        $.get(url, function (data) {
+            $('#modelContainer').html(data);
+            $('#modal-default').modal('show');
+        });
+    }
+
+    function suaThongTin() {
+        if (SelectdRow.length == 0) {
+            ShowThongBaoThatBai("Vui lòng chọn dữ liệu để cập nhật");
+            return;
+        }
+
+        if (SelectdRow.length > 1) {
+            ShowThongBaoThatBai("Vui lòng chọn chỉ chọn 1 dữ liệu để cập nhật")
+            return;
+        }
+
+        var url = '@Url.Action("ShowUpdatePopup", "NhanHieu")?id=' + SelectdRow[0];
+
+        $.get(url, function (data) {
+            $('#modelContainer').html(data);
+            $('#modal-default').modal('show');
+        });
+    }
+
+    function xoaThongTin() {
+        if (SelectdRow.length == 0) {
+            ShowThongBaoThatBai("Vui lòng chọn dữ liệu để xóa");
+            return;
+        }
+
+        var xoaThongTin = async function () {
+            showLoading(true);
+            await $.ajax({
+                url: '@Url.Action("Delete", "NhanHieu")',
+                type: 'POST',
+                dataType: 'json',
+                data: {
+                    Ids: SelectdRow
+                },
+                success: function (data) {
+                    if (data.IsSuccess) {
+                        ShowThongBaoThanhCong(deleteSuccess);
+                        refreshGrid();
+                    }
+                    else {
+                        ShowThongBaoThatBai(data.Message);
+                    }
+                },
+                error: function (request, status, err) {
+                    ShowThongBaoThatBai(errorMessage);
+                }
+            });
+            showLoading(false);
+        }
+
+        confirmDialogYesNo(deleteContent, deleteTitle, xoaThongTin)
+    }
+</script>

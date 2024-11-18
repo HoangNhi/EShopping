@@ -1,9 +1,12 @@
 ﻿@using MODELS.DANHMUC.THELOAI.Dtos;
 @using MODELS.BASE;
+@using Newtonsoft.Json;
 @model GetListPagingResponse
 @{
     int i = 1;
     int k = Model.TotalRow % 10 == 0 ? 0 : 1;
+    var array = ((List<MODELTheLoai>)Model.Data).Select(x => x.Id).ToArray();
+    var jsonArray = JsonConvert.SerializeObject(array);
 }
 
 <table class="table table-hover" style="margin: 0; background-color: white;">
@@ -12,14 +15,13 @@
             <th width="10" style="justify-items: center">
                 <div class="d-flex align-items-center" style="width: 15px; height: 15px">
                     <label class="containerCheckbox">
-                        <input type="checkbox">
+                        <input id="checkAll" type="checkbox" onclick="SelectAllCheck()">
                         <span class="checkmark rounded"></span>
                     </label>
                 </div>
             </th>
             <th class="fw-bold text-center" width="10" scope="col">STT</th>
             <th class="fw-bold" width="120" scope="col">Tên gọi</th>
-            <th class="fw-bold" width="120" scope="col">Icon</th>
             <th class="fw-bold text-center" width="120" scope="col">Ngày cập nhật</th>
             <th class="fw-bold text-center" width="120" scope="col">Trạng thái</th>
         </tr>
@@ -27,9 +29,9 @@
     <tbody class="table-group-divider">
         @foreach (var item in (List<MODELTheLoai>)Model.Data)
         {
-            <tr id="@item.Id">
-                <th style="justify-items: center">
-                    <div class="d-flex align-items-center" style="width: 15px; height: 15px">
+            <tr id="@item.Id" class="rowTable">
+                <th style="justify-items: center;">
+                    <div class="d-flex align-items-center" style="width: 15px; height: 15px;">
                         <label class="containerCheckbox">
                             <input type="checkbox" onclick="SelectRow('@item.Id')">
                             <span class="checkmark rounded"></span>
@@ -53,10 +55,10 @@
             i++;
         }
         <tr>
-            <td colspan="6" class="">
+            <td colspan="5" class="">
                 <nav aria-label="Page navigation example">
-                    <ul class="pagination justify-content-center m-0">
-                        <li class="page-item">
+                    <ul id="pagination_TheLoai" class="pagination justify-content-center m-0">
+                        @*<li class="page-item">
                             <a class="page-link" href="#">
                                 <i class="fa-solid fa-chevron-left"></i>
                             </a>
@@ -71,11 +73,45 @@
                             <a class="page-link" href="#">
                                 <i class="fa-solid fa-chevron-right"></i>
                             </a>
-                        </li>
+                        </li>*@
                     </ul>
                 </nav>
             </td>
         </tr>
     </tbody>
 </table>
+
+<script>
+    $('#pagination_TheLoai').twbsPagination({
+    totalPages: @(Model.TotalRow % 10 == 0 ? Model.TotalRow / 10 : (Model.TotalRow / 10) + 1),
+    visiblePages: 5,
+    initiateStartPageClick: false,
+    hideOnlyOnePage: true,
+    startPage: @(Model.PageIndex + 1),
+    first: '<<',
+    prev: '<',
+    next: '>',
+    last: '>>',
+    onPageClick: function (event, page) {
+        GetListPaging(page - 1)
+    }
+    });
+
+    function SelectAllCheck() {
+        if ($("#checkAll").is(":checked")) {
+            SelectdRow = @Html.Raw(jsonArray);
+            SelectdRow.forEach(function (item, index) {
+                $("tr#" + item + " .containerCheckbox input").prop("checked", true);
+                $("tr#" + item).addClass("table-active");
+            });
+        } else {
+            SelectdRow = []
+            var temp = @Html.Raw(jsonArray);
+            temp.forEach(function (item, index) {
+                $("tr#" + item + " .containerCheckbox input").prop("checked", false);
+                $("tr#" + item).removeClass("table-active");
+            });
+        }
+    }
+</script>
 

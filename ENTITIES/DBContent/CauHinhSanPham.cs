@@ -11,7 +11,7 @@ public partial class CauHinhSanPham
 
     public string Name { get; set; } = null!;
 
-    public string Detail { get; set; } = null!;
+    public string? Detail { get; set; }
 
     public virtual SanPham SanPham { get; set; } = null!;
 }

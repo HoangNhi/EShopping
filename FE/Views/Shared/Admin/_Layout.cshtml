@@ -31,8 +31,8 @@
 
 
     <link rel="stylesheet" href="~/css/MyStyle.css" />
-
-
+    @* Phân trang *@
+    <script src="./Admin/assets/js/jquery.twbsPagination.min.js" type="text/javascript"></script>
 </head>
 <body>
     <div class="container-scroller">
@@ -62,6 +62,9 @@
 
     @* Thông báo - alert *@
     <div id="ThongBao-container" class="toast-container"></div>
+    <div class="modal fade" id="confirmDialogYesNoDefault" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div id='confirmDialogYesNoContainer' class="modal-dialog modal-dialog-centered"></div>
+    </div>
 
     <!-- container-scroller -->
     <!-- plugins:js -->
