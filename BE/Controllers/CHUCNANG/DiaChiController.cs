@@ -1,47 +1,22 @@
 ﻿using BE.Helper;
-using BE.Services.CHUCNANG.HOADON;
+using BE.Services.CHUCNANG.DIACHI;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MODELS.Base;
-using MODELS.BASE;
+using MODELS.CHUCNANG.DIACHI.Request;
 using MODELS.CHUCNANG.HOADON.Requests;
-using MODELS.DANHMUC.SANPHAM.Requests;
 
 namespace BE.Controllers.CHUCNANG
 {
     [Route("[controller]/[action]")]
     [ApiController]
-    public class HoaDonController : ControllerBase
+    public class DiaChiController : ControllerBase
     {
-        private readonly IHOADONService _service;
+        private readonly IDIACHIService _service;
 
-        public HoaDonController(IHOADONService service)
+        public DiaChiController(IDIACHIService service)
         {
             _service = service;
-        }
-        [HttpPost]
-        public IActionResult GetListPaging(GetListPagingRequest request)
-        {
-            try
-            {
-                if (!ModelState.IsValid)
-                {
-                    throw new Exception(MODELS.COMMON.CommonFunc.GetModelStateAPI(ModelState));
-                }
-                var result = _service.GetListPaging(request);
-                if (result.Error)
-                {
-                    throw new Exception(result.Message);
-                }
-                else
-                {
-                    return Ok(new ApiOkResponse(result.Data));
-                }
-            }
-            catch (Exception ex)
-            {
-                return Ok(new ApiResponse(false, 500, ex.Message));
-            }
         }
 
         [HttpPost]
@@ -71,7 +46,7 @@ namespace BE.Controllers.CHUCNANG
         }
 
         [HttpPost]
-        public IActionResult Create(HoaDonRequests request)
+        public IActionResult Create(DiaChiRequests request)
         {
             try
             {
@@ -95,33 +70,9 @@ namespace BE.Controllers.CHUCNANG
                 return Ok(new ApiResponse(false, 500, ex.Message));
             }
         }
+
         [HttpPost]
-        public IActionResult GetByPost(GetByIdRequest request)
-        {
-            try
-            {
-                if (!ModelState.IsValid)
-                {
-                    throw new Exception(MODELS.COMMON.CommonFunc.GetModelStateAPI(ModelState));
-                }
-                var result = _service.GetByPost(request);
-                if (result.Error)
-                {
-                    throw new Exception(result.Message);
-                }
-                else
-                {
-                    return Ok(new ApiOkResponse(result.Data));
-                }
-            }
-            catch (Exception ex)
-            {
-                //SysLog             
-                return Ok(new ApiResponse(false, 500, ex.Message));
-            }
-        }
-        [HttpPost]
-        public IActionResult Update(HoaDonRequests request)
+        public IActionResult Update(DiaChiRequests request)
         {
             try
             {
@@ -147,7 +98,33 @@ namespace BE.Controllers.CHUCNANG
         }
 
         [HttpPost]
-        public IActionResult Delete(DeleteListRequest request)
+        public IActionResult IsDefault(GetByIdRequest request)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    throw new Exception(MODELS.COMMON.CommonFunc.GetModelStateAPI(ModelState));
+                }
+                var result = _service.IsDefault(request);
+                if (result.Error)
+                {
+                    throw new Exception(result.Message);
+                }
+                else
+                {
+                    return Ok(new ApiOkResponse(result.Data));
+                }
+            }
+            catch (Exception ex)
+            {
+                //SysLog             
+                return Ok(new ApiResponse(false, 500, ex.Message));
+            }
+        }
+
+        [HttpPost]
+        public IActionResult Delete(Guid request)
         {
             try
             {
@@ -170,7 +147,6 @@ namespace BE.Controllers.CHUCNANG
                 //SysLog             
                 return Ok(new ApiResponse(false, 500, ex.Message));
             }
-
         }
     }
 }

@@ -38,7 +38,7 @@ namespace BE.Services.HETHONG.TAIKHOAN
             try
             {
                 var data = new MODELTaiKhoan();
-                var taiKhoan = _context.ApplicationUsers.FirstOrDefault(x => x.Username == request.Username);
+                var taiKhoan = _context.ApplicationUsers.FirstOrDefault(x => x.Username == request.Username && x.IsGoogle == false);
                 if (taiKhoan == null)
                 {
                     throw new Exception("Tên đăng nhập hoặc mật khẩu không đúng");
@@ -84,7 +84,7 @@ namespace BE.Services.HETHONG.TAIKHOAN
             var response = new BaseResponse<MODELTaiKhoan>();
             try
             {
-                var checkUsername = _context.ApplicationUsers.FirstOrDefault(x => x.Username == request.Username);
+                var checkUsername = _context.ApplicationUsers.FirstOrDefault(x => x.Username == request.Username && x.IsGoogle == false);
                 if (checkUsername != null)
                 {
                     throw new Exception("Email đã tồn tại");
@@ -100,6 +100,7 @@ namespace BE.Services.HETHONG.TAIKHOAN
                 add.RoleId = Guid.Parse("CB0A5375-10FD-4CD9-A659-00490896D6A7");
                 add.DateCreate = DateTime.Now;
                 add.Status = true;
+                add.IsGoogle = false;
 
                 _context.ApplicationUsers.Add(add);
                 _context.SaveChanges();
@@ -167,6 +168,70 @@ namespace BE.Services.HETHONG.TAIKHOAN
                 }
                 user.Vertify = true;
                 _context.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                response.Error = true;
+                response.Message = ex.Message;
+            }
+            return response;
+        }
+
+        public async Task<BaseResponse<MODELTaiKhoan>> GoogleRegister(GoogleRegisterRequest request)
+        {
+            var response = new BaseResponse<MODELTaiKhoan>();
+            try
+            {
+                var checkUsername = _context.ApplicationUsers.FirstOrDefault(x => x.Email == request.Email && x.IsGoogle == true);
+                if (checkUsername != null)
+                {
+                    // Nếu tài khoản đã tồn tại thì bỏ qua đăng ký và trả về tài khoản đó
+                    var data = _mapper.Map<MODELTaiKhoan>(checkUsername);
+
+                    // Lấy role và phân quyền
+                    var roles = await _context.Roles.FindAsync(data.RoleId);
+                    data.Role = _mapper.Map<MODELRole>(roles);
+                    var phanQuens = _context.PhanQuyens.Where(x => x.RoleId == data.RoleId).ToList();
+                    data.ListPhanQuyen = _mapper.Map<List<MODELPhanQuyen>>(phanQuens);
+
+                    // Tạo token và gán vào dữ liệu trả về
+                    var token = Encrypt_Decrypt.GenerateJwtToken(data, _config);
+                    data.Token = token;
+
+                    response.Data = data;
+                }
+                else {
+                    var add = _mapper.Map<ApplicationUser>(request);
+                    var salt = Encrypt_Decrypt.GenerateSalt();
+                    add.PasswordSalt = salt;
+                    add.Password = Encrypt_Decrypt.EncodePassword(request.Password, salt);
+
+                    add.Id = Guid.NewGuid();
+                    // Vai trò mặc định là User
+                    add.RoleId = Guid.Parse("CB0A5375-10FD-4CD9-A659-00490896D6A7");
+                    add.DateCreate = DateTime.Now;
+                    add.Status = true;
+                    add.IsGoogle = true;
+                    add.Vertify = true;
+
+                    _context.ApplicationUsers.Add(add);
+                    _context.SaveChanges();
+
+                    //Trả về Token của tài khoản mới đăng ký
+                    var newUser = _mapper.Map<MODELTaiKhoan>(add);
+
+                    var roles = await _context.Roles.FindAsync(newUser.RoleId);
+                    newUser.Role = _mapper.Map<MODELRole>(roles);
+                    var phanQuens = _context.PhanQuyens.Where(x => x.RoleId == newUser.RoleId).ToList();
+                    newUser.ListPhanQuyen = _mapper.Map<List<MODELPhanQuyen>>(phanQuens);
+
+                    var token = Encrypt_Decrypt.GenerateJwtToken(newUser, _config);
+                    newUser.Token = token;
+
+                    response.Data = newUser;
+                }
+               
+
             }
             catch (Exception ex)
             {

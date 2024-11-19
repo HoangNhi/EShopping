@@ -151,7 +151,7 @@ namespace BE.Services.DANHMUC.SANPHAM
                 var data = _context.SanPhams.Find(request.Id);
                 if (data == null)
                 {
-                    result.SanPhamId = Guid.NewGuid();
+                    result.Id = Guid.NewGuid();
                     result.IsEdit = false;
                 }
                 else

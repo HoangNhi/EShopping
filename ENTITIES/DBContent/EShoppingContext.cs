@@ -350,7 +350,6 @@ public partial class EShoppingContext : DbContext
 
             entity.HasOne(d => d.BinhLuan).WithMany(p => p.TraLoiBinhLuans)
                 .HasForeignKey(d => d.BinhLuanId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_TraLoiBinhLuan_BinhLuan");
         });
 

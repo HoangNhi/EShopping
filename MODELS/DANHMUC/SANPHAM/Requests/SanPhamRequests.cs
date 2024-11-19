@@ -9,7 +9,7 @@ namespace MODELS.DANHMUC.SANPHAM.Requests
 {
     public class SanPhamRequests : BaseRequest
     {
-        public Guid SanPhamId { get; set; }
+        public Guid Id { get; set; }
 
         public string Name { get; set; } = null!;
 
