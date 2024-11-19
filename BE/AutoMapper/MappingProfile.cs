@@ -2,6 +2,8 @@
 using ENTITIES.DbContent;
 using MODELS.CHUCNANG.CHITIETDONHANG.Dtos;
 using MODELS.CHUCNANG.CHITIETDONHANG.Requests;
+using MODELS.CHUCNANG.DIACHI.Dtos;
+using MODELS.CHUCNANG.DIACHI.Request;
 using MODELS.CHUCNANG.GIOHANG.Dtos;
 using MODELS.CHUCNANG.GIOHANG.Requests;
 using MODELS.CHUCNANG.HOADON.Dtos;
@@ -41,6 +43,7 @@ namespace BE.AutoMapper
             // TAIKHOAN
             CreateMap<ApplicationUser, MODELTaiKhoan>().ReverseMap();
             CreateMap<ApplicationUser, PostRegisterRequest>().ReverseMap();
+            CreateMap<ApplicationUser, GoogleRegisterRequest>().ReverseMap();
 
             // Role
             CreateMap<Role, MODELRole>().ReverseMap();
@@ -91,6 +94,8 @@ namespace BE.AutoMapper
             CreateMap<BinhLuan, BinhLuanRequests>().ReverseMap();
             CreateMap<TraLoiBinhLuan, MODELTraLoiBinhLuan>().ReverseMap();
             CreateMap<TraLoiBinhLuan, TraLoiBinhLuanRequests>().ReverseMap();
+            CreateMap<DiaChi, MODELDiaChi>().ReverseMap();
+            CreateMap<DiaChi, DiaChiRequests>().ReverseMap();
         }
     }
 }
