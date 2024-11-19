@@ -71,9 +71,9 @@
 
     });
 
-    function luuThongTin(isThemTiep = false) {
+    async function luuThongTin(isThemTiep = false) {
         showLoadingElement(true, 'modalLoading')
-        uploadAnhBia();
+        await uploadAnhBia();
         $.ajax({
             url: "@Url.Action("Post", "TheLoai")",
             type: "POST",
