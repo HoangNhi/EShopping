@@ -19,6 +19,8 @@ public partial class DiaChi
 
     public DateOnly DateCreate { get; set; }
 
+    public bool? Status { get; set; }
+
     public virtual ICollection<HoaDon> HoaDons { get; set; } = new List<HoaDon>();
 
     public virtual ApplicationUser User { get; set; } = null!;

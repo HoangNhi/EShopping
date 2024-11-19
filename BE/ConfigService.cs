@@ -2,6 +2,7 @@
 using BE.AutoMapper;
 using BE.Services.CHUCNANG.BINHLUAN;
 using BE.Services.CHUCNANG.CHITIETHOADON;
+using BE.Services.CHUCNANG.DIACHI;
 using BE.Services.CHUCNANG.GIOHANG;
 using BE.Services.CHUCNANG.HOADON;
 using BE.Services.DANHMUC.CAUHINHSANPHAM;
@@ -41,6 +42,7 @@ namespace BE
             services.AddTransient<IHOADONService, HOADONService>();
             services.AddTransient<ICHITIETDONHANGService, ChiTietDonHangService>();
             services.AddTransient<IBINHLUANService, BINHLUANService>();
+            services.AddTransient<IDIACHIService,DIACHIService>();
         }
 
         public static void StartSetting(IServiceCollection services)
