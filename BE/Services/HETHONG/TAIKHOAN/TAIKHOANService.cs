@@ -4,11 +4,13 @@ using BE.Services.HETHONG.MAIL;
 using ENTITIES.DbContent;
 using MimeKit;
 using MODELS.Base;
+using MODELS.HETHONG.LOG;
 using MODELS.HETHONG.MAIL.Requests;
 using MODELS.HETHONG.PHANQUYEN.Dtos;
 using MODELS.HETHONG.ROLE.Dtos;
 using MODELS.HETHONG.TAIKHOAN.Dtos;
 using MODELS.HETHONG.TAIKHOAN.Requests;
+using System.IdentityModel.Tokens.Jwt;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace BE.Services.HETHONG.TAIKHOAN
@@ -81,6 +83,7 @@ namespace BE.Services.HETHONG.TAIKHOAN
 
         public async Task<BaseResponse<MODELTaiKhoan>> Register(PostRegisterRequest request)
         {
+            var NhatKiDTO = new NhatKiDTO();
             var response = new BaseResponse<MODELTaiKhoan>();
             try
             {
@@ -103,6 +106,16 @@ namespace BE.Services.HETHONG.TAIKHOAN
                 add.IsGoogle = false;
 
                 _context.ApplicationUsers.Add(add);
+
+                //Thêm vào nhật ký
+                NhatKiDTO.Name = "Sản phẩm";
+                NhatKiDTO.Id = Guid.NewGuid();
+                NhatKiDTO.Event = "Cập nhật";
+                NhatKiDTO.Date = DateTime.Now;
+                NhatKiDTO.UserId = add.Id;
+                NhatKiDTO.TargetId = add.Id;
+                _context.NhatKis.Add(_mapper.Map<NhatKi>(NhatKiDTO));
+
                 _context.SaveChanges();
 
                 // Gửi email xác thực
@@ -233,6 +246,45 @@ namespace BE.Services.HETHONG.TAIKHOAN
                
 
             }
+            catch (Exception ex)
+            {
+                response.Error = true;
+                response.Message = ex.Message;
+            }
+            return response;
+        }
+
+        public async Task<BaseResponse<MODELTaiKhoan>> ChangePassword(ChangePasswordRequest request)
+        {
+            var userId = _httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Name)?.Value;
+            var NhatKiDTO = new NhatKiDTO();
+            var response = new BaseResponse<MODELTaiKhoan>();
+            try
+            {
+                
+                var taiKhoan = _context.ApplicationUsers.FirstOrDefault(x => x.Id == Guid.Parse(userId) && x.IsGoogle == false);
+                if (taiKhoan == null)
+                {
+                    throw new Exception("Tên đăng nhập hoặc mật khẩu không đúng");
+                }
+                else
+                {
+                    // Kiểm tra mật khẩu
+                    var pass = Encrypt_Decrypt.EncodePassword(request.Password, taiKhoan.PasswordSalt);
+                    if (!pass.Equals(taiKhoan.Password))
+                    {
+                        throw new Exception("Mật khẩu không đúng");
+                    }
+                    else
+                    {
+                        taiKhoan.Password = request.NewPassWord;
+                        _context.ApplicationUsers.Update(taiKhoan);
+                        _context.SaveChanges();
+                        response.Data = _mapper.Map<MODELTaiKhoan>(taiKhoan);
+                    }
+                }
+            }
+
             catch (Exception ex)
             {
                 response.Error = true;

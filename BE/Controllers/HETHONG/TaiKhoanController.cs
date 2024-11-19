@@ -89,6 +89,30 @@ namespace BE.Controllers.HETHONG.TAIKHOAN
             }
         }
 
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<IActionResult> ChangePassword(ChangePasswordRequest request)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    return Ok(new ApiResponse(false, StatusCodes.Status400BadRequest, CommonFunc.GetModelStateAPI(ModelState)));
+                }
+                var result = await _service.ChangePassword(request);
+                if (result.Error)
+                {
+                    throw new Exception(result.Message);
+                }
+
+                return Ok(new ApiOkResponse(result.Data));
+            }
+            catch (Exception ex)
+            {
+                return Ok(new ApiResponse(false, StatusCodes.Status500InternalServerError, ex.Message));
+            }
+        }
+
         [HttpGet]
         [AllowAnonymous]
         public async Task<IActionResult> ConfirmEmail(string request)

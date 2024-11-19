@@ -105,10 +105,17 @@ namespace BE.Services.CHUCNANG.DIACHI
             var response = new BaseResponse<MODELDiaChi>();
             try
             {
+                //Xoá địa chỉ mặc định cũ
+                var diachicu = _context.DiaChis.FirstOrDefault(x => x.IsDefault == true);
+                if(diachicu != null)
+                {
+                    diachicu.IsDefault = false;
+                    _context.DiaChis.Update(diachicu);
+                }    
                 var diachi = _context.DiaChis.Find(request.Id);
                 if(diachi != null)
                 {
-                    //Đặt làm mặc định
+                    //Đặt làm địa chỉ mặc định mới
                     diachi.IsDefault = true;
                     var user = _context.ApplicationUsers.Find(diachi.UserId);
                     user.Address = diachi.Address;

@@ -9,6 +9,7 @@ using MODELS.DANHMUC.SANPHAM.Dtos;
 using System.IdentityModel.Tokens.Jwt;
 using MODELS.HETHONG.LOG;
 using MODELS.CHUCNANG.CHITIETDONHANG.Dtos;
+using MODELS.HETHONG.TAIKHOAN.Dtos;
 
 namespace BE.Services.CHUCNANG.HOADON
 {
@@ -142,6 +143,7 @@ namespace BE.Services.CHUCNANG.HOADON
                 if (item != null)
                 {
                     var result = _mapper.Map<HoaDonResponse>(item);
+                    result.User = _mapper.Map<MODELTaiKhoan>(_context.ApplicationUsers.Find(result.UserId));
                     var cthd = _context.ChiTietDonHangs.Where(x => x.HoaDonId == result.Id).ToList();
                     if (cthd != null)
                     {
