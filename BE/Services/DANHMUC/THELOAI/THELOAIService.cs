@@ -252,7 +252,7 @@ namespace BE.Services.DANHMUC.THELOAI
         private string UploadAnhBia(string folderUpload, string oldImage)
         {
             string path = "";
-            string folderUploadPath = Path.Combine(_webHostEnvironment.WebRootPath, "Files\\Temp\\UploadFile\\" + folderUpload);
+            string folderUploadPath = Path.Combine(_webHostEnvironment.WebRootPath, "Files/Temp/UploadFile/" + folderUpload);
             if (Directory.Exists(folderUploadPath))
             {
                 string[] arrFiles = Directory.GetFiles(folderUploadPath);
@@ -271,7 +271,7 @@ namespace BE.Services.DANHMUC.THELOAI
                 {
                     FileInfo info = new FileInfo(imgFiles[0]);
                     string fileName = Guid.NewGuid().ToString() + info.Extension;
-                    string avataPath = Path.Combine(_webHostEnvironment.WebRootPath, "Files\\TheLoai");
+                    string avataPath = Path.Combine(_webHostEnvironment.WebRootPath, "Files/TheLoai");
                     //Kiểm tra nếu thư mục chưa tồn tại thì tạo mới.
                     if (!Directory.Exists(avataPath))
                     {
@@ -279,14 +279,14 @@ namespace BE.Services.DANHMUC.THELOAI
                     }
 
                     //Xóa ảnh cũ nếu tồn tại
-                    if (File.Exists(_webHostEnvironment.WebRootPath + "\\" + oldImage))
+                    if (File.Exists(_webHostEnvironment.WebRootPath + "/" + oldImage))
                     {
-                        File.Delete(_webHostEnvironment.WebRootPath + "\\" + oldImage);
+                        File.Delete(_webHostEnvironment.WebRootPath + "/" + oldImage);
                     }
 
                     //Copy ảnh mới
-                    File.Move(info.FullName, avataPath + "\\" + fileName, true);
-                    path = "Files\\TheLoai\\" + fileName;
+                    File.Move(info.FullName, avataPath + "/" + fileName, true);
+                    path = "Files/TheLoai/" + fileName;
                 }
             }
 

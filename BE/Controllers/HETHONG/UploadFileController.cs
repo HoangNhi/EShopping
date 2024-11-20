@@ -1,4 +1,5 @@
 ﻿using BE.Helper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
@@ -40,7 +41,7 @@ namespace BE.Controllers.HETHONG
                 return Ok(new ApiResponse(true, 200, null));
             }
 
-            catch (ArgumentException ex)
+            catch (Exception ex)
             {
                 return Ok(new ApiResponse(false, StatusCodes.Status500InternalServerError, ex.Message));
             }
