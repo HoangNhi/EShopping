@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MODELS.HETHONG.TAIKHOAN.Requests;
 using MODELS.COMMON;
+using MODELS.BASE;
+using MODELS.Base;
 
 namespace BE.Controllers.HETHONG.TAIKHOAN
 {
@@ -15,6 +17,54 @@ namespace BE.Controllers.HETHONG.TAIKHOAN
         public TaiKhoanController(ITAIKHOANService service)
         {
             _service = service;
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<IActionResult> getListPaging(GetListPagingRequest request)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    return Ok(new ApiResponse(false, StatusCodes.Status400BadRequest, CommonFunc.GetModelStateAPI(ModelState)));
+                }
+                var result = await _service.GetListPaging(request);
+                if (result.Error)
+                {
+                    throw new Exception(result.Message);
+                }
+
+                return Ok(new ApiOkResponse(result.Data));
+            }
+            catch (Exception ex)
+            {
+                return Ok(new ApiResponse(false, StatusCodes.Status500InternalServerError, ex.Message));
+            }
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetById(GetByIdRequest request)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    return Ok(new ApiResponse(false, StatusCodes.Status400BadRequest, CommonFunc.GetModelStateAPI(ModelState)));
+                }
+                var result = await _service.GetById(request);
+                if (result.Error)
+                {
+                    throw new Exception(result.Message);
+                }
+
+                return Ok(new ApiOkResponse(result.Data));
+            }
+            catch (Exception ex)
+            {
+                return Ok(new ApiResponse(false, StatusCodes.Status500InternalServerError, ex.Message));
+            }
         }
 
         [HttpPost]

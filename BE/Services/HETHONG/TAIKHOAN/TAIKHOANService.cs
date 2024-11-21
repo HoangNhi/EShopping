@@ -2,8 +2,11 @@
 using BE.Helper;
 using BE.Services.HETHONG.MAIL;
 using ENTITIES.DbContent;
+using Microsoft.EntityFrameworkCore;
 using MimeKit;
 using MODELS.Base;
+using MODELS.BASE;
+using MODELS.CHUCNANG.HOADON.Dtos;
 using MODELS.HETHONG.LOG;
 using MODELS.HETHONG.MAIL.Requests;
 using MODELS.HETHONG.PHANQUYEN.Dtos;
@@ -290,6 +293,64 @@ namespace BE.Services.HETHONG.TAIKHOAN
                 response.Message = ex.Message;
             }
             return response;
+        }
+
+        public async Task<BaseResponse<GetListPagingResponse>> GetListPaging(GetListPagingRequest request)
+        {
+            var res = new BaseResponse<GetListPagingResponse>();
+            try
+            {
+                var data = new List<MODELTaiKhoan>();
+                if (!string.IsNullOrEmpty(request.TextSearch))
+                {
+                    var result = await _context.ApplicationUsers.Where(x => x.FullName == request.TextSearch).OrderByDescending(hd => hd.DateCreate).Skip((request.PageIndex - 1) * request.RowsPerPage).Take(request.RowsPerPage).ToListAsync();
+                    data = _mapper.Map<List<MODELTaiKhoan>>(result);
+                }
+                else
+                {
+                    var result = await _context.ApplicationUsers.OrderByDescending(hd => hd.DateCreate).Skip((request.PageIndex - 1) * request.RowsPerPage).Take(request.RowsPerPage).ToListAsync();
+                    data = _mapper.Map<List<MODELTaiKhoan>>(result);
+                }
+                var page = new GetListPagingResponse();
+                page.PageIndex = request.PageIndex;
+                page.TotalRow =  _context.ApplicationUsers.Count();
+                page.Data = data;
+                res.Data = page;
+            }
+            catch (Exception ex)
+            {
+                res.Error = true;
+                res.Message = ex.Message;
+                res.StatusCode = 500;
+            }
+            return res;
+        }
+
+        public async Task<BaseResponse<MODELTaiKhoan>> GetById(GetByIdRequest request)
+        {
+            var res = new BaseResponse<MODELTaiKhoan>();
+            try
+            {
+                var item = _context.ApplicationUsers.Find(request.Id);
+                if (item != null)
+                {
+                    var result = _mapper.Map<MODELTaiKhoan>(item);
+                    res.Data = result;
+                }
+                else
+                {
+                    res.Error = true;
+                    res.Message = "Not Found!";
+                    res.StatusCode = 404;
+                }
+            }
+            catch (Exception ex)
+            {
+                res.Error = true;
+                res.Message = ex.Message;
+                res.StatusCode = 500;
+            }
+            return res;
         }
     }
 }

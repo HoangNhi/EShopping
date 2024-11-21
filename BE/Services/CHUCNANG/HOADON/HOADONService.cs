@@ -10,6 +10,7 @@ using System.IdentityModel.Tokens.Jwt;
 using MODELS.HETHONG.LOG;
 using MODELS.CHUCNANG.CHITIETDONHANG.Dtos;
 using MODELS.HETHONG.TAIKHOAN.Dtos;
+using MODELS.CHUCNANG.DIACHI.Dtos;
 
 namespace BE.Services.CHUCNANG.HOADON
 {
@@ -34,6 +35,13 @@ namespace BE.Services.CHUCNANG.HOADON
                 var add = _mapper.Map<HoaDon>(request);
                 add.Id = Guid.NewGuid();
                 add.DateCreate = DateTime.UtcNow;
+                var user = _context.ApplicationUsers.Find(add.UserId);
+                var diachi = _context.DiaChis.FirstOrDefault(x => x.UserId == user.Id && x.IsDefault == true);
+                if(diachi != null)
+                add.DiaChiId = diachi.Id;
+                add.PhoneNumber = diachi.PhoneNumber;
+                _context.HoaDons.Add(add);
+
                 foreach (var item in request.ChiTietDonHangRequests) 
                 {
                     var i = _mapper.Map<ChiTietDonHang>(item);
@@ -47,15 +55,18 @@ namespace BE.Services.CHUCNANG.HOADON
                 NhatKiDTO.Id = Guid.NewGuid();
                 NhatKiDTO.Event = "Tạo";
                 NhatKiDTO.Date = DateTime.Now;
-                NhatKiDTO.UserId = Guid.Parse(userId);
+                NhatKiDTO.UserId = add.UserId;
                 NhatKiDTO.TargetId = add.Id;
                 _context.NhatKis.Add(_mapper.Map<NhatKi>(NhatKiDTO));
                 // Lưu vào Database
-                _context.HoaDons.Add(add);
                 _context.SaveChanges();
 
                 // Trả về dữ liệu
-                response.Data = _mapper.Map<MODELHoaDon>(add);
+                var result = _mapper.Map<MODELHoaDon>(add);
+                result.User = _mapper.Map<MODELTaiKhoan>(user);
+                if(diachi != null)
+                result.diaChi = _mapper.Map<MODELDiaChi>(diachi);
+                response.Data = result;
             }
             catch (Exception ex)
             {
@@ -175,6 +186,11 @@ namespace BE.Services.CHUCNANG.HOADON
                 var data = new List<MODELHoaDon>();
                 var result = _context.HoaDons.OrderByDescending(hd => hd.DateCreate).Skip((request.PageIndex - 1) * request.RowsPerPage).Take(request.RowsPerPage).ToList();
                 data = _mapper.Map<List<MODELHoaDon>>(result);
+                foreach (var item in data) 
+                {
+                    item.User = _mapper.Map<MODELTaiKhoan>(_context.ApplicationUsers.FirstOrDefault(x => x.Id == item.UserId));
+                    item.diaChi = _mapper.Map<MODELDiaChi>(_context.DiaChis.FirstOrDefault(x => x.Id == item.DiaChiId));
+                }
                 
                 var page = new GetListPagingResponse();
                 page.PageIndex = request.PageIndex;
