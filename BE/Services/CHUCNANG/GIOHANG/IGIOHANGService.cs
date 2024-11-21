@@ -11,7 +11,7 @@ namespace BE.Services.CHUCNANG.GIOHANG
     {
         BaseResponse<GetListPagingResponse> GetListPaging(GetListPagingRequest request);
         BaseResponse<List<MODELGioHang>> GetById(GetByIdRequest request);
-        BaseResponse<GioHangRequests> GetByPost(GetByIdRequest request);
+        BaseResponse<List<MODELGioHang>> GetByPost(List<GetByIdRequest> request);
         BaseResponse<MODELGioHang> Create(GioHangRequests request);
         BaseResponse<MODELGioHang> Update(GioHangRequests request);
         BaseResponse<string> Delete(DeleteListRequest request);

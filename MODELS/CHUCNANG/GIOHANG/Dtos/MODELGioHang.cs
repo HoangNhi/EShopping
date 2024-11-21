@@ -1,4 +1,7 @@
-﻿using System;
+﻿using MODELS.DANHMUC.NHOMPHANLOAI1.Dtos;
+using MODELS.DANHMUC.NHOMPHANLOAI2.Dtos;
+using MODELS.DANHMUC.SANPHAM.Dtos;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,6 +23,13 @@ namespace MODELS.CHUCNANG.GIOHANG.Dtos
 
         public int Quantity { get; set; }
         public DateTime DateCreated { get; set; }
+
+        public MODELSanPham? sanPham { get; set; } = null;
+
+        public MODELNhomPhanLoai1? nhomPhanLoai1 { get; set; } = null;
+
+        public MODELNhomPhanLoai2? nhomPhanLoai2 { get; set; } = null;
+
 
     }
 }

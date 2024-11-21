@@ -169,37 +169,37 @@ namespace BE.Services.DANHMUC.SANPHAM
             return response;
         }
 
-        public BaseResponse<GetListPagingResponse> GetCustom(int PageIndex, int RowPerPage, string? TheLoaiId, Guid? NhanHieuId, bool? IsNew, bool? IsBestSelling, bool? IsSale)
+        public BaseResponse<GetListPagingResponse> GetCustom(SanPhamCustomRequest request)
         {
             var res = new BaseResponse<GetListPagingResponse>();
             try
             {
                 var data = new List<MODELSanPham>();
                 var query = _context.SanPhams.AsQueryable();
-                if(!string.IsNullOrEmpty(TheLoaiId))
+                if(!string.IsNullOrEmpty(request.TheLoaiId))
                 {
-                    query = query.Where(i => i.TheLoaiId == TheLoaiId);
+                    query = query.Where(i => i.TheLoaiId == request.TheLoaiId);
                 }
-                if(NhanHieuId != null)
+                if(request.NhanHieuId != null)
                 {
-                    query = query.Where(i => i.NhanHieuId == NhanHieuId);
+                    query = query.Where(i => i.NhanHieuId == request.NhanHieuId);
                 }
-                if (IsNew == true) 
+                if (request.IsNew == true) 
                 {
-                    query = query.Where(i => i.IsNew == IsNew);
+                    query = query.Where(i => i.IsNew == request.IsNew);
                 }
-                if(IsBestSelling == true)
+                if(request.IsBestSelling == true)
                 {
-                    query = query.Where(i => i.IsBestSelling == IsBestSelling);
+                    query = query.Where(i => i.IsBestSelling == request.IsBestSelling);
                 }
-                if(IsSale == true)
+                if(request.IsSale == true)
                 {
-                    query = query.Where(i => i.IsSale == IsSale);
+                    query = query.Where(i => i.IsSale == request.IsSale);
                 }
-                var result = query.Skip((PageIndex -  1) * RowPerPage).Take(RowPerPage).ToList();
+                var result = query.Skip((request.PageIndex -  1) * request.RowsPerPage).Take(request.RowsPerPage).ToList();
                 data = _mapper.Map<List<MODELSanPham>>(result);
                 var page = new GetListPagingResponse();
-                page.PageIndex = PageIndex;
+                page.PageIndex = request.PageIndex;
                 page.TotalRow = _context.SanPhams.Count();
                 page.Data = data;
                 res.Data = page;
