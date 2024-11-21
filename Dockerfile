@@ -11,22 +11,22 @@ EXPOSE 8081
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["BE/BE.csproj", "BE/"]
-COPY ["ENTITIES/ENTITIES.csproj", "ENTITIES/"]
+COPY ["FE/FE.csproj", "FE/"]
 COPY ["MODELS/MODELS.csproj", "MODELS/"]
-RUN dotnet restore "./BE/BE.csproj"
+RUN dotnet restore "./FE/FE.csproj"
 COPY . .
-WORKDIR "/src/BE"
-RUN dotnet build "./BE.csproj" -c $BUILD_CONFIGURATION -o /app/build
+WORKDIR "/src/FE"
+RUN dotnet build "./FE.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 # This stage is used to publish the service project to be copied to the final stage
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./BE.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "./FE.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
 # This stage is used in production or when running from VS in regular mode (Default when not using the Debug configuration)
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-CMD ASPNETCORE_URLS=http://*:$PORT dotnet BE.dll
-#ENTRYPOINT ["dotnet", "BE.dll"]
+
+#ENTRYPOINT ["dotnet", "FE.dll"]
+CMD ASPNETCORE_URLS=http://*:$PORT dotnet FE.dll
