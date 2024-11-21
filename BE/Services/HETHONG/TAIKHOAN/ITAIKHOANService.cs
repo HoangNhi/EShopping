@@ -14,5 +14,6 @@ namespace BE.Services.HETHONG.TAIKHOAN
         Task<BaseResponse<MODELTaiKhoan>> GoogleRegister(GoogleRegisterRequest request);
         Task<BaseResponse<MODELTaiKhoan>> ConfirmEmail(string UserIdEncode);
         Task<BaseResponse<MODELTaiKhoan>> ChangePassword(ChangePasswordRequest request);
+        Task<BaseResponse<string>> Delete(GetByIdRequest request);
     }
 }

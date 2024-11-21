@@ -43,7 +43,7 @@ namespace BE.Services.HETHONG.TAIKHOAN
             try
             {
                 var data = new MODELTaiKhoan();
-                var taiKhoan = _context.ApplicationUsers.FirstOrDefault(x => x.Username == request.Username && x.IsGoogle == false);
+                var taiKhoan = _context.ApplicationUsers.FirstOrDefault(x => x.Username == request.Username && x.IsGoogle == false && x.Status == true);
                 if (taiKhoan == null)
                 {
                     throw new Exception("Tên đăng nhập hoặc mật khẩu không đúng");
@@ -343,6 +343,26 @@ namespace BE.Services.HETHONG.TAIKHOAN
                     res.Message = "Not Found!";
                     res.StatusCode = 404;
                 }
+            }
+            catch (Exception ex)
+            {
+                res.Error = true;
+                res.Message = ex.Message;
+                res.StatusCode = 500;
+            }
+            return res;
+        }
+
+        public async Task<BaseResponse<string>> Delete(GetByIdRequest request)
+        {
+            var res = new BaseResponse<string>();
+            try
+            {
+                var item = await _context.ApplicationUsers.FindAsync(request.Id);
+                item.Status = false;
+                _context.ApplicationUsers.Update(item);
+                _context.SaveChanges();
+                res.Data = "Đã xoá" + item.FullName;
             }
             catch (Exception ex)
             {
