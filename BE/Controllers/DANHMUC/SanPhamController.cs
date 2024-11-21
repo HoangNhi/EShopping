@@ -43,7 +43,7 @@ namespace BE.Controllers.DANHMUC
             }
         }
         [HttpPost]
-        public IActionResult GetCustom(int PageIndex, int RowPerPage, string? TheLoaiId, Guid? NhanHieuId, bool? IsNew, bool? IsBestSelling, bool? IsSale)
+        public IActionResult GetCustom(SanPhamCustomRequest request)
         {
             try
             {
@@ -51,7 +51,7 @@ namespace BE.Controllers.DANHMUC
                 {
                     throw new Exception(MODELS.COMMON.CommonFunc.GetModelStateAPI(ModelState));
                 }
-                var result = _service.GetCustom( PageIndex, RowPerPage, TheLoaiId, NhanHieuId, IsNew, IsBestSelling, IsSale);
+                var result = _service.GetCustom( request);
                 if (result.Error)
                 {
                     throw new Exception(result.Message);
