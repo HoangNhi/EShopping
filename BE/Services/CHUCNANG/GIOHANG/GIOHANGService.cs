@@ -4,6 +4,8 @@ using MODELS.Base;
 using MODELS.BASE;
 using MODELS.CHUCNANG.GIOHANG.Dtos;
 using MODELS.CHUCNANG.GIOHANG.Requests;
+using MODELS.DANHMUC.NHOMPHANLOAI1.Dtos;
+using MODELS.DANHMUC.NHOMPHANLOAI2.Dtos;
 using MODELS.DANHMUC.SANPHAM.Dtos;
 using MODELS.DANHMUC.THELOAI.Dtos;
 using MODELS.HETHONG.LOG;
@@ -129,6 +131,13 @@ namespace BE.Services.CHUCNANG.GIOHANG
                 else
                 {
                     result = _mapper.Map<List<MODELGioHang>>(data);
+                    foreach (var item in result)
+                    {
+                        item.sanPham = _mapper.Map<MODELSanPham>(_context.SanPhams.FirstOrDefault(x => x.Id == item.SanPhamId));
+                        item.nhomPhanLoai1 = _mapper.Map<MODELNhomPhanLoai1>(_context.NhomPhanLoai1s.FirstOrDefault(x => x.Id == item.NhomPhanLoai1Id));
+                        item.nhomPhanLoai2 = _mapper.Map<MODELNhomPhanLoai2>(_context.NhomPhanLoai2s.FirstOrDefault(x => x.Id == item.NhanPhanLoai2Id));
+
+                    }
                 }
                 response.Data = result;
             }
@@ -140,7 +149,7 @@ namespace BE.Services.CHUCNANG.GIOHANG
             return response;
         }
 
-        public BaseResponse<GioHangRequests> GetByPost(GetByIdRequest request)
+        public BaseResponse<List<MODELGioHang>> GetByPost(List<GetByIdRequest> request)
         {
             throw new NotImplementedException();
         }

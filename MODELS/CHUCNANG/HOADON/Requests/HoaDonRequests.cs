@@ -27,6 +27,6 @@ namespace MODELS.CHUCNANG.HOADON.Requests
         /// </summary>
         public int Status { get; set; }
 
-        public List<ChiTietDonHangRequests> ChiTietDonHangRequests { get; set; }
+        public List<ChiTietDonHangRequests>? ChiTietDonHangRequests { get; set; }
     }
 }

@@ -1,4 +1,6 @@
-﻿using System;
+﻿using MODELS.CHUCNANG.DIACHI.Dtos;
+using MODELS.HETHONG.TAIKHOAN.Dtos;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -24,5 +26,9 @@ namespace MODELS.CHUCNANG.HOADON.Dtos
         /// 1: Chờ thanh toán, 2: Chờ giao hàng, 3: Đã giao, 4: Đã hủy
         /// </summary>
         public int Status { get; set; }
+
+        public MODELTaiKhoan? User { get; set; } = null;
+
+        public MODELDiaChi? diaChi { get; set; } = null;
     }
 }

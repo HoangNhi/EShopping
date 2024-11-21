@@ -19,6 +19,9 @@ namespace MODELS.HETHONG.TAIKHOAN.Dtos
         public string PhoneNumber { get; set; } = null!;
         public Guid? RoleId { get; set; }
         public bool? Vertify { get; set; }
+        public bool? IsGoogle { get; set; }
+        public DateTime DateCreate { get; set; }
+        public bool Status { get; set; }
         public string Token { get; set; }
         public MODELRole? Role { get; set; }
         public List<MODELPhanQuyen> ListPhanQuyen { get; set; } = new List<MODELPhanQuyen>();
