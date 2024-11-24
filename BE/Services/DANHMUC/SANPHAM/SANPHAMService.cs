@@ -196,7 +196,7 @@ namespace BE.Services.DANHMUC.SANPHAM
                 {
                     query = query.Where(i => i.IsSale == request.IsSale);
                 }
-                var result = query.Skip((request.PageIndex -  1) * request.RowsPerPage).Take(request.RowsPerPage).ToList();
+                var result = query.Where(x => x.Status != -1).Skip((request.PageIndex -  1) * request.RowsPerPage).Take(request.RowsPerPage).ToList();
                 data = _mapper.Map<List<MODELSanPham>>(result);
                 var page = new GetListPagingResponse();
                 page.PageIndex = request.PageIndex;

@@ -36,6 +36,10 @@ namespace BE.Services.CHUCNANG.GIOHANG
                     x => x.UserId == request.UserId 
                     &&
                     x.SanPhamId == request.SanPhamId
+                    && 
+                    x.NhomPhanLoai1Id == request.NhomPhanLoai1Id
+                    &&
+                    x.NhanPhanLoai2Id == request.NhanPhanLoai2Id
                 ).ToList();
                 //Kiểm tra nếu đã có sản phẩm đó trong giỏ hàng của người dùng
                 if (checkData.Count > 0)
