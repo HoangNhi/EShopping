@@ -124,7 +124,7 @@ namespace BE.Controllers.CHUCNANG
         }
 
         [HttpPost]
-        public IActionResult Delete(Guid request)
+        public IActionResult Delete(GetByIdRequest request)
         {
             try
             {
