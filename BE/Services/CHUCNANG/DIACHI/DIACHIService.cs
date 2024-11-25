@@ -47,7 +47,7 @@ namespace BE.Services.CHUCNANG.DIACHI
             var response = new BaseResponse<string>();
             try
             {
-                var delete = _context.DiaChis.Find(request);
+                var delete = _context.DiaChis.Find(request.Id);
                 if(delete == null)
                 {
                     response.Error = true;
