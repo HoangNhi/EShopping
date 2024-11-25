@@ -12,6 +12,6 @@ namespace BE.Services.CHUCNANG.DIACHI
         BaseResponse<MODELDiaChi> IsDefault(GetByIdRequest request);
         BaseResponse<MODELDiaChi> Create(DiaChiRequests request);
         BaseResponse<MODELDiaChi> Update(DiaChiRequests request);
-        BaseResponse<string> Delete(Guid request);
+        BaseResponse<string> Delete(GetByIdRequest request);
     }
 }
