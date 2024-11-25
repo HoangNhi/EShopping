@@ -42,7 +42,7 @@ namespace BE.Services.CHUCNANG.DIACHI
             return response;
         }
 
-        public BaseResponse<string> Delete(Guid request)
+        public BaseResponse<string> Delete(GetByIdRequest request)
         {
             var response = new BaseResponse<string>();
             try
