@@ -33,5 +33,21 @@
         public const string NHANHIEU_CREATE = "/NhanHieu/Create";
         public const string NHANHIEU_UPDATE = "/NhanHieu/Update";
         public const string NHANHIEU_DELETE = "/NhanHieu/Delete";
+
+        // SANPHAM
+        public const string SANPHAM_GETLISTPAGING = "/SanPham/GetListPaging";
+        public const string SANPHAM_GETBYID = "/SanPham/GetById";
+        public const string SANPHAM_GETBYPOST = "/SanPham/GetByPost";
+        public const string SANPHAM_CREATE = "/SanPham/Create";
+        public const string SANPHAM_UPDATE = "/SanPham/Update";
+        public const string SANPHAM_DELETE = "/SanPham/Delete";
+
+        // HOADON
+        public const string HOADON_GETLISTPAGING = "/HoaDon/GetListPaging";
+        public const string HOADON_GETBYID = "/HoaDon/GetById";
+        public const string HOADON_GETBYPOST = "/HoaDon/GetByPost";
+        public const string HOADON_CREATE = "/HoaDon/Create";
+        public const string HOADON_UPDATE = "/HoaDon/Update";
+        public const string HOADON_DELETE = "/HoaDon/Delete";
     }
 }
