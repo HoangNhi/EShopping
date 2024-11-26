@@ -1,0 +1,251 @@
+﻿@model MODELS.CHUCNANG.HOADON.Requests.HoaDonRequests
+@using Newtonsoft.Json;
+
+<style>
+    .profile-pic {
+        color: transparent;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        width: fit-content
+    }
+
+    .profile-pic input {
+        display: none;
+    }
+
+    .profile-pic img {
+        position: absolute;
+        object-fit: cover;
+        width: 165px;
+        height: 165px;
+        box-shadow: 0 0 10px 0 rgba(255, 255, 255, 0.35);
+        /*border-radius: 100px;*/
+        z-index: 0;
+    }
+
+    .profile-pic .-label {
+        cursor: pointer;
+        height: 165px;
+        width: 165px;
+    }
+
+    .profile-pic:hover .-label {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: rgba(0, 0, 0, 0.8);
+        z-index: 10000;
+        color: #fafafa;
+        transition: background-color 0.2s ease-in-out;
+        margin-bottom: 0;
+    }
+
+    .profile-pic span {
+        display: inline-flex;
+        padding: 0.2em;
+        height: 2em;
+    }
+</style>
+
+<script>
+    $(document).ready(function () {
+        $("#frmHoaDon").submit(async function (event) {
+            event.preventDefault();
+            if ($("#frmHoaDon").valid()) {
+                luuThongTin();
+            }
+        });
+
+        $("#btnLuuTiep").click(function (event) {
+            event.preventDefault();
+            if ($("#frmHoaDon").valid()) { //Nhập hợp lệ
+                luuThongTin(true);
+            }
+        })
+
+        // Load ảnh upload
+        $("#formFile").change(function (event) {
+            readURL(event);
+        });
+
+    });
+
+    async function luuThongTin(isThemTiep = false) {
+        showLoadingElement(true, 'modalLoading')
+        await uploadAnhBia();
+        $.ajax({
+            url: "@Url.Action("Post", "HoaDon")",
+            type: "POST",
+            data: $("#frmHoaDon").serialize(),
+            success: function (response) {
+                showLoadingElement(false, 'modalLoading')
+                if (response.IsSuccess) {
+                    if (response.Data) {
+                        ShowThongBaoThanhCong(updateSuccess);
+                        closePopup();
+                        refreshGrid();
+                    } else {
+                        ShowThongBaoThanhCong(addSuccess);
+                        refreshGrid();
+                        if (isThemTiep) {
+                            themThongTin()
+                        } else {
+                            closePopup();
+                        }
+                    }
+                } else {
+                    ShowThongBaoThatBai(response.Message)
+                }
+            },
+            error: function (xhr, error) {
+                ShowThongBaoThatBai(response.Message)
+            }
+        })
+    }
+
+    function closePopup() {
+        $('#modal-default').modal('hide');
+    }
+
+    function readURL(event) {
+        var input = $("#formFile")[0]
+        if (input.files && input.files[0]) {
+            var ext = getFileExtension(input.files[0].name)
+            var allowedExtensions = @Html.Raw(JsonConvert.SerializeObject(MODELS.COMMON.CommonConst._fileHinhAnhValid));
+            debugger;
+            if (!allowedExtensions.includes(ext)) {
+                event.preventDefault()
+                ShowThongBaoThatBai("Hình ảnh không hợp lệ")
+                $("#formFile").val('')
+                return;
+            }
+
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                $('#img_UpLoad').attr('src', e.target.result);
+            }
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    function getFileExtension(fname) {
+        return fname.slice((fname.lastIndexOf(".") - 1 >>> 0) + 2);
+    }
+
+    async function uploadAnhBia() {
+        //UPLOAD FILE
+        var files = $("#formFile")[0].files;
+        if (files.length > 0) {
+            if (window.FormData !== undefined) {
+                var data = new FormData();
+                data.append("FolderName", $("#Id").val());
+                if (files.length > 0) {
+                    for (var x = 0; x < files.length; x++) {
+                        data.append("file", files[x]);
+                    }
+                }
+
+                return await $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("UploadFile", "UploadFile")',
+                    contentType: false,
+                    processData: false,
+                    data: data,
+                    success: function (data) {
+                        return;
+                    }
+                });
+            } else {
+                showErrorNotify("Vui lòng cập nhật trình duyệt web của bạn!");
+            }
+        }
+    }
+</script>
+
+<div class="card modal-content" id="modalLoading" style="">
+    @using (Html.BeginForm(null, null, FormMethod.Post, new { id = "frmHoaDon" }))
+    {
+        @Html.HiddenFor(model => model.Id)
+        @Html.HiddenFor(model => model.IsEdit)
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <div class="modal-title">
+                @if (Model.IsEdit == true)
+                {
+                    <p class="fw-bold m-0">Cập nhật Hoa Don</p>
+                }
+                else
+                {
+                    <p class="fw-bold m-0">Thêm mới </p>
+                }
+            </div>
+            <button type="button" onclick="closePopup()" class="btn p-0">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+        <div class="modal-body d-flex flex-column justify-content-evenly">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="row align-items-center">
+                        <p class="col-md-4 m-0" style="font-weight: 600">Tên gọi <span style="color: red">*</span></p>
+                        <div class="col-md-8">
+                            <input asp-for="@Model.Id" type="text" class="form-control" value="@Model.Id" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="row align-items-center">
+                        <p class="col-md-4 m-0" style="font-weight: 600">Trạng thái <span style="color: red">*</span></p>
+                        <div class="col-md-8">
+                            <select asp-for="@Model.Status" class="form-control" aria-label="Default select example">
+                                <option value="1">Đang xác nhận</option>
+                                <option value="2">Đã xác nhận</option>
+                                <option value="3">Đang giao hàng</option>
+                                <option value="4">Đã giao hàng</option>
+                                <option value="0">Không hoạt động</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row mt-3">
+                <p class="col-md-2 m-0" style="font-weight: 600">Upload Ảnh</p>
+                <div class="col-sm-4">
+                    <div class="profile-userpic">
+                        <div class="profile-pic">
+                            <label class="-label" for="formFile">
+                                <span class="glyphicon glyphicon-camera"></span>
+                                <span>Đổi ảnh</span>
+                            </label>
+                            <input class="form-control" type="file" id="formFile">
+                             @* @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                             {
+                                 <img class="img_cover img-thumbnail img_cover" id="img_UpLoad" src="@(Model.ImageUrl.Contains("https://") ? Model.ImageUrl : ViewBag.BeUrl + Model.ImageUrl)" alt="Ảnh bìa" width="200" />
+                             }
+                             else
+                             {
+                                 <img class="img_cover img-thumbnail img_cover" id="img_UpLoad" src="@(ViewBag.BeUrl + "Files/NoImage.jpg")" alt="Ảnh bìa" width="200" />
+                             } *@
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-footer d-flex justify-content-end">
+            <button type="submit" class="btn btn-primary ms-2">
+                Lưu
+            </button>
+            @if (Model.IsEdit == false)
+            {
+                <button id="btnLuuTiep" type="button" class="btn btn-primary ms-2">
+                    Lưu và thêm
+                </button>
+            }
+            <button onclick="closePopup()" type="button" class="btn btn-secondary mx-2">
+                Hủy
+            </button>
+        </div>
+    }
+</div>
+
