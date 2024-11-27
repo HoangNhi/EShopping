@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using ENTITIES.DbContent;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.Blazor;
 using MODELS.Base;
 using MODELS.BASE;
@@ -222,7 +223,11 @@ namespace BE.Services.DANHMUC.SANPHAM
                 var data = new List<MODELSanPham>();
                 if (!string.IsNullOrEmpty(request.TextSearch))
                 {
-                    var result = _context.SanPhams.Where(x => x.Name == request.TextSearch && x.Status != -1).Skip((request.PageIndex - 1) * request.RowsPerPage).Take(request.RowsPerPage).ToList();
+                    var result = _context.SanPhams
+                            .Where(x => EF.Functions.Like(x.Name, "%" + request.TextSearch + "%") && x.Status != -1)
+                            .Skip((request.PageIndex - 1) * request.RowsPerPage)
+                            .Take(request.RowsPerPage)
+                            .ToList();
                     data = _mapper.Map<List<MODELSanPham>>(result);
                 }
                 else
